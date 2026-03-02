@@ -1,0 +1,659 @@
+{
+  "source_file": "BIO P1_1733634256.pdf",
+  "paper": {
+    "subject": "Biology",
+    "gradeLevel": "Unknown",
+    "year": 2024,
+    "term": null,
+    "examType": "Mock",
+    "school": null,
+    "source": "ocr_extract",
+    "paperNumber": 1,
+    "totalMarks": null,
+    "timeMinutes": 120
+  },
+  "questions": [
+    {
+      "questionNumber": "2",
+      "section": null,
+      "text": "Sign and write the date of examination in the spaces provided above.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "4",
+      "section": null,
+      "text": "Answers must be written in the spaces provided in the question paper.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "5",
+      "section": null,
+      "text": "Additional pages must not be inserted. questions are missing. Question Maximum Candidate’s Score Score",
+      "marks": null,
+      "hasImage": true,
+      "imageUrl": "/diagrams/BIO P1_1733634256_p1_d1.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "1",
+      "section": null,
+      "text": "Name the causative agent of cholera.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "2",
+      "section": null,
+      "text": "The diagram below represents a cell organelle. (QEATPARRARY NS R CRSA R A T WD S : — ~C",
+      "marks": null,
+      "hasImage": true,
+      "imageUrl": "/diagrams/BIO P1_1733634256_p2_d31.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Identify the organelle.",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Name the part labelled B.",
+          "marks": 1
+        },
+        {
+          "label": "c",
+          "text": "State the function of part labelled A.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "3",
+      "section": null,
+      "text": "State the functions of the following parts of a light microscope.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Condenser.",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Diaphragm. Biology Paper 1 2 4,",
+          "marks": 1
+        },
+        {
+          "label": "a",
+          "text": "Explain three ways in which a red blood cell is adapted to its function.",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "In which form is carbon (IV) oxide transported.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "5",
+      "section": null,
+      "text": "State the functions of the following organelles. (1) Centriole. (i1))  Nucleolus.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "6",
+      "section": null,
+      "text": "The diagram below shows part of plant tissue.",
+      "marks": null,
+      "hasImage": true,
+      "imageUrl": "/diagrams/BIO P1_1733634256_p3_d8.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Name cell labelled X and part labelled",
+          "marks": 2
+        },
+        {
+          "label": "W",
+          "text": "Biology Paper 1 3",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "State two adaptations of cell labelled X to its function.",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "7",
+      "section": null,
+      "text": "(a)  Differentiate between hypogeal germination and epigeal germination.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "State two causes of dormancy in seed.",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "8",
+      "section": null,
+      "text": "(a)  Define polyploidy. Biology Paper 1 4",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "0",
+      "section": null,
+      "text": "(a)  Distinguish between homologous and analogous structure.",
+      "marks": 2,
+      "hasImage": true,
+      "imageUrl": "/diagrams/BIO P1_1733634256_p5_d18.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Explain the term continental drift as used in evolution.",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "10",
+      "section": null,
+      "text": "The diagram below represents a sensory cell.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Identify with a reason the type of neurone above. Reason:",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Name parts labelled. Biology Paper 1 5",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "11",
+      "section": null,
+      "text": "(a) Name three supportive tissues in plants. @w . ..",
+      "marks": 3,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Name the type of muscles found in the gut.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "12",
+      "section": null,
+      "text": "A form one student trying to estimate the size of onion cells observed the following on the microscope’s field of view.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Define the term resolving power.",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "If the student counted 20 cells across the field of view calculate the size of one cell in micrometers.",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "13",
+      "section": null,
+      "text": "(a)  Distinguish between transpiration and guttation. Biology Paper 1 6",
+      "marks": 2,
+      "hasImage": true,
+      "imageUrl": "/diagrams/BIO P1_1733634256_p6_d24.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "State two importance of guttation in hydrolytes.",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "14",
+      "section": null,
+      "text": "The diagram below shows the exchange of gases in alveolus. 4 [N . : ’ e % i \\t\\‘ > u ,‘ . \\‘ ;I'@’: Vs Wohew ) \"', o9 . o _pTt Y",
+      "marks": null,
+      "hasImage": true,
+      "imageUrl": "/diagrams/BIO P1_1733634256_p7_d27.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "State how the alveoli are adapted to their function.",
+          "marks": 3
+        },
+        {
+          "label": "b",
+          "text": "Name the cell labelled A.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "15",
+      "section": null,
+      "text": "(a) Distinguish between respiratory quotient and oxygen debt.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Name the site where anaerobic respiration occurs in the cell. Biology Paper 1 7",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "16",
+      "section": null,
+      "text": "Study the graph below and answer the questions that follow. Time in days",
+      "marks": null,
+      "hasImage": true,
+      "imageUrl": "/diagrams/BIO P1_1733634256_p8_d33.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "What is the name given to the type of graph?",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "What is the name used to describe point X.",
+          "marks": 1
+        },
+        {
+          "label": "c",
+          "text": "State the importance of part X.",
+          "marks": 1
+        },
+        {
+          "label": "d",
+          "text": "Name the phylum in which the graph represented in above occurs.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "17",
+      "section": null,
+      "text": "(a)  Define the term natural selection.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Name three evidence of organic evolution. Biology Paper 1 8",
+          "marks": 3
+        }
+      ]
+    },
+    {
+      "questionNumber": "18",
+      "section": null,
+      "text": "State one adaptation of the following parts of mammalian eye.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "i",
+          "text": "Fovea centralis.",
+          "marks": 1
+        },
+        {
+          "label": "i",
+          "text": "Sclera.",
+          "marks": 1
+        },
+        {
+          "label": "i",
+          "text": "Cilliary body.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "19",
+      "section": null,
+      "text": "Name the cartilage found between vertebrae of the vertebral column.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "20",
+      "section": null,
+      "text": "(a) Differentiate between gaseous exchange and ventilation.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Name the respiratory sites of the following: (1) Fish",
+          "marks": 1
+        },
+        {
+          "label": "i",
+          "text": "Insects Biology Paper 1 9",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "21",
+      "section": null,
+      "text": "(a) Name two cardiovascular diseases.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "If the nerve supply to the heart of a mammal is severed the rythymic heart contraction and relaxation will go on and heart continues to beat. Explain why.",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "22",
+      "section": null,
+      "text": "Name two major branches of Biology.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "23",
+      "section": null,
+      "text": "(a)  State the functions of the following apparatus. (1) Bait trap.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "ii",
+          "text": "Pooter.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "24",
+      "section": null,
+      "text": "State two structural adaptations of veins to their function. Biology Paper 1 10",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "25",
+      "section": null,
+      "text": "Name the process that results to formation of tissue fluid.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "26",
+      "section": null,
+      "text": "What is serum? Biology Paper 1 11",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    }
+  ],
+  "diagrams": [
+    {
+      "filename": "BIO P1_1733634256_p1_d1.png",
+      "page": 1,
+      "bounds": [
+        155,
+        2011,
+        1607,
+        2355
+      ],
+      "width": 1452,
+      "height": 344
+    },
+    {
+      "filename": "BIO P1_1733634256_p1_d2.png",
+      "page": 1,
+      "bounds": [
+        156,
+        1492,
+        1840,
+        1946
+      ],
+      "width": 1684,
+      "height": 454
+    },
+    {
+      "filename": "BIO P1_1733634256_p1_d4.png",
+      "page": 1,
+      "bounds": [
+        468,
+        958,
+        2061,
+        1360
+      ],
+      "width": 1593,
+      "height": 402
+    },
+    {
+      "filename": "BIO P1_1733634256_p1_d5.png",
+      "page": 1,
+      "bounds": [
+        1019,
+        437,
+        1587,
+        961
+      ],
+      "width": 568,
+      "height": 524
+    },
+    {
+      "filename": "BIO P1_1733634256_p2_d31.png",
+      "page": 2,
+      "bounds": [
+        460,
+        542,
+        1600,
+        1020
+      ],
+      "width": 1140,
+      "height": 478
+    },
+    {
+      "filename": "BIO P1_1733634256_p3_d8.png",
+      "page": 3,
+      "bounds": [
+        742,
+        2289,
+        1327,
+        2856
+      ],
+      "width": 585,
+      "height": 567
+    },
+    {
+      "filename": "BIO P1_1733634256_p5_d18.png",
+      "page": 5,
+      "bounds": [
+        345,
+        1537,
+        2078,
+        2006
+      ],
+      "width": 1733,
+      "height": 469
+    },
+    {
+      "filename": "BIO P1_1733634256_p6_d24.png",
+      "page": 6,
+      "bounds": [
+        306,
+        841,
+        2325,
+        1613
+      ],
+      "width": 2019,
+      "height": 772
+    },
+    {
+      "filename": "BIO P1_1733634256_p7_d27.png",
+      "page": 7,
+      "bounds": [
+        569,
+        695,
+        1456,
+        1500
+      ],
+      "width": 887,
+      "height": 805
+    },
+    {
+      "filename": "BIO P1_1733634256_p8_d33.png",
+      "page": 8,
+      "bounds": [
+        508,
+        205,
+        1526,
+        893
+      ],
+      "width": 1018,
+      "height": 688
+    }
+  ],
+  "raw_text": "CANDIDATE’S SIGNATURE..........ccccc....\nIT\nSTAREHE GIRLS’ CENTRE MOCK EXAMINATION 2024\n23111\n\nBIOLOGY\n\nPAPER 1\n\n(THEORY)\n\nTIME: 2 HOURS\nINSTRUCTIONS TO CANDIDATES:\n1. Write your Name, Index Number and School in the spaces provided above.\n2. Sign and write the date of examination in the spaces provided above.\n3. Answer all the questions in the spaces provided.\n4. Answers must be written in the spaces provided in the question paper.\n5. Additional pages must not be inserted.\n6. Check the question paper to ascertain that all the pages are printed and that no\nquestions are missing.\nFOR EXAMINER’S USE ONLY:\nQuestion Maximum Candidate’s\nScore Score\n\nI N\n\n1. Name the causative agent of cholera. (1 mark)\n2. The diagram below represents a cell organelle.\nA :\n(QEATPARRARY\nNS R CRSA R A T WD S : — ~C\n\n(a)  Identify the organelle. (1 mark)\n\n(b)  Name the part labelled B. (1 mark)\n\n(c)  State the function of part labelled A. (1 mark)\n3. State the functions of the following parts of a light microscope.\n\n(a)  Condenser. (1mark)\n\n(b)  Diaphragm. (1 mark)\nBiology Paper 1 2\n\n4, (a)  Explain three ways in which a red blood cell is adapted to its function. (3 marks)\n(b)  In which form is carbon (IV) oxide transported. (1 mark)\n5. State the functions of the following organelles.\n(1) Centriole. (1 mark)\n(i1))  Nucleolus. (1 mark)\n6. The diagram below shows part of plant tissue.\nU\n5 \\\nWy\n~ ’\n(a) Name cell labelled X and part labelled W. (2 marks)\nx\nv\nBiology Paper 1 3\n\n(b)  State two adaptations of cell labelled X to its function.\n7. (a)  Differentiate between hypogeal germination and epigeal germination. (2 marks)\n(b)  State two causes of dormancy in seed. (2 marks)\n8. (a)  Define polyploidy. (1 mark)\nBiology Paper 1 4\n\n0. (a)  Distinguish between homologous and analogous structure. (2 marks)\n(b)  Explain the term continental drift as used in evolution. (2 marks)\n10.  The diagram below represents a sensory cell.\nZ\nM\n(a)  Identify with a reason the type of neurone above. (1 mark)\nReason: (1 mark)\n(b)  Name parts labelled. (2 marks)\nQ -\nz7\nBiology Paper 1 5\n\n11. (a) Name three supportive tissues in plants. (3 marks)\no©o -\n@w . ..\n(iii)\n(b)  Name the type of muscles found in the gut. (1 mark)\n12. A form one student trying to estimate the size of onion cells observed the following on the\nmicroscope’s field of view.\n(a)  Define the term resolving power. (1 mark)\n(b)  If the student counted 20 cells across the field of view calculate the size of one cell in\nmicrometers. (2 marks)\n13.  (a)  Distinguish between transpiration and guttation. (2 marks)\nBiology Paper 1 6\n\n(b)  State two importance of guttation in hydrolytes. (2 marks)\n14.  The diagram below shows the exchange of gases in alveolus.\n£l v\n4 [N .\n: ’ e % i\n“ . / ’ . \"' . \"\n\\t\\‘ > u ,‘ . \\‘ ;I'@’: Vs\n-‘\\‘. : . ? \\‘ /\" 0: \"l'\nWohew ) \"',\no9 . o _pTt Y\n“\\:\\\\‘ - ':'r A\n(a)  State how the alveoli are adapted to their function. (3 marks)\n(b)  Name the cell labelled A. (1 mark)\n15. (a) Distinguish between respiratory quotient and oxygen debt. (2 marks)\n(b)  Name the site where anaerobic respiration occurs in the cell. (1 mark)\nBiology Paper 1 7\n\n16.  Study the graph below and answer the questions that follow.\n5 X\nR=\nS\non\n>\n-\nTime in days\n(a)  What is the name given to the type of graph? (1 mark)\n(b)  What is the name used to describe point X. (1 mark)\n(c)  State the importance of part X. (1 mark)\n(d)  Name the phylum in which the graph represented in above occurs. (1 mark)\n17.  (a)  Define the term natural selection. (1 mark)\n(b)  Name three evidence of organic evolution. (3 marks)\nBiology Paper 1 8\n\n18.  State one adaptation of the following parts of mammalian eye.\n(i)  Fovea centralis. (1 mark)\n(i)  Sclera. (1 mark)\n(i)  Cilliary body. (1 mark)\n19.  Name the cartilage found between vertebrae of the vertebral column. (1 mark)\n20. (a) Differentiate between gaseous exchange and ventilation. (2 marks)\n(b)  Name the respiratory sites of the following:\n(1) Fish (1 mark)\n(i)  Insects (1 mark)\nBiology Paper 1 9\n\n21. (a) Name two cardiovascular diseases. (2 marks)\n(b)  If the nerve supply to the heart of a mammal is severed the rythymic heart contraction\nand relaxation will go on and heart continues to beat. Explain why. (2 marks)\n22.  Name two major branches of Biology. (2 marks)\n23.  (a)  State the functions of the following apparatus.\n(1) Bait trap. (1 mark)\n(ii)  Pooter. (1 mark)\n24.  State two structural adaptations of veins to their function. (2 marks)\nBiology Paper 1 10\n\n25.  Name the process that results to formation of tissue fluid. (1 mark)\n26.  What is serum? (1 mark)\nBiology Paper 1 11",
+  "page_count": 11
+}

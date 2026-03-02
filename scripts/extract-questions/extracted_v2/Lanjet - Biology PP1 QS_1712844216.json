@@ -1,0 +1,795 @@
+{
+  "source_file": "Lanjet - Biology PP1 QS_1712844216.pdf",
+  "paper": {
+    "subject": "Biology",
+    "gradeLevel": "Unknown",
+    "year": 2023,
+    "term": null,
+    "examType": "End Term",
+    "school": null,
+    "source": "ocr_extract",
+    "paperNumber": 1,
+    "totalMarks": null,
+    "timeMinutes": null
+  },
+  "questions": [
+    {
+      "questionNumber": "1",
+      "section": null,
+      "text": "A young scientist observed a bird laying her eggs in a nest and later the eggs hatched into chicks. Name two characteristics shown by the chicks that show a chick is a living thing but an egg is not. v Growth and development = Nutrition s Movement and locomotion = Excretion",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "2",
+      "section": null,
+      "text": "In which two ways are the organelles chloroplast and mitochondria similar. o Both contain enzymes o Both are oval in shape o Both have double membrane",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "3",
+      "section": null,
+      "text": "The illustration below shows a human eye that is defective. e - O - -\"”lll//l",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Identify the eye defect. o Short sightedness (myopia)",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "How would this defect be corrected? o  (Concave (diverging) lens",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "4",
+      "section": null,
+      "text": "(a) What is homeostasis? o Maintenance of a constant internal environment in living organisms.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "State three processes in humans in which homeostasis is involved. o Thermoregulation o  Osmoregulation o Regulation of blood sugar level",
+          "marks": 3
+        }
+      ]
+    },
+    {
+      "questionNumber": "5",
+      "section": null,
+      "text": "(a) In which phase of photosynthesis are carbohydrates formed?  o Dark stage",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "How is the dark stage of photosynthesis dependent to light stage? . o Light stage generates hydrogen ions; and adenosine triphosphate used during carbon",
+          "marks": 2
+        },
+        {
+          "label": "V",
+          "text": "oxide fixation.",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "6",
+      "section": null,
+      "text": "Why are the cooling fans of value even in a closed room? o Fans create air currents; speeding up the loss of heat by radiation and evaporation.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "7",
+      "section": null,
+      "text": "How can the colour of the skin affect the rate of heat loss or heat gain?  o Dark surfaced bodies are the best heat absorbers; bright surfaces absorbs heat the least; good absorbers are also good emitters. In a hot surrounding dark skinned persons will gain heat faster than light skinned person; in cold environment, dark skinned persons lose heat faster.",
+      "marks": 3,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "8",
+      "section": null,
+      "text": "List down three abiotic factors that would influence life in a lake. o PH o Light intensity o Availability of mineral salts and trace elements o Temperature.",
+      "marks": 3,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "9",
+      "section": null,
+      "text": "Distinguish between the terms asexual and sexual reproduction o Sexual; is a type of reproduction that involves fusion of male and female gametes; o Asexual reproduction is a type of reproduction in which offsprings are produced from mature organisms without fertilization.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "10",
+      "section": null,
+      "text": "(a) Define the term germination. o The process by which a plant develops into a seedling.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "State the two types of germination in plants. o [Epigeal o Hypogeal",
+          "marks": 2
+        },
+        {
+          "label": "c",
+          "text": "When does growth start in plants? o When a mature seed germinates.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "11",
+      "section": null,
+      "text": "(a) What is polyploidy?  o Condition of the nucleus of a cell having more than one set of chromosomes as per organisms belonging to that species.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Mating a horse with a donkey produces an infertile animal, a mule. Explain. o The chromosomes are from different species; thus are not homologous to pair up during meiosis",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "12",
+      "section": null,
+      "text": "A part of DNA strand has the following base sequence: G-G-C-C-T-A-T-C.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "what is the sequence of the complimentary strand? o C-C-G-G-A-T-A-G",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "what will be the sequence of m-RNA transcribed from this part of DNA? (1mtk) o C-C-G-G-A-U-A-G {c) How does DNA differ from RNA? Double stranded Single stranded Confined in the nucleus Found in nuclease and cytoplasm Has nitrogenous base; adenine guanine cytosine Has nitrogenous base adenine ;guanine; cytosine and thymine and uracil",
+          "marks": 3
+        }
+      ]
+    },
+    {
+      "questionNumber": "13",
+      "section": null,
+      "text": "A student made a set up shown below to study a physiological process e jublagile: | iy",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "In which beaker did the dialysis tubing reduce in size?",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Account for your answer in",
+          "marks": 2
+        },
+        {
+          "label": "a",
+          "text": "above. o Sucrose solution is hypertonic; thus it gains water molecules by osmosis; o Accept: Water is hypotonic, thus water molecules move out of the dialysis tubing by osmosis; hence dialysis tube decrease in size",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "14",
+      "section": null,
+      "text": "Give two reasons why lumbar vertebrae have long and broad transverse processes. o Increase surface area for attachment of abdominal muscles; o Provide support /withstand weight of the abdomen.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "15",
+      "section": null,
+      "text": "Give two ways in which seed dormancy benefit a plant. o Allows time for dispersal o Allows maturation of embryo o FEnables plant to survive harsh environment",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "16",
+      "section": null,
+      "text": "State three precautions one should observe while conducting experiments in food test.  o Avoid contaminating the reagents, avoid burning filter paper; avoid spilling reagents; avoid misuse of food substance",
+      "marks": 3,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "17",
+      "section": null,
+      "text": "Use the diagram of the heart shown below to answer the questions that follow Fo0nd HeV 3.4 Y =0u L T 3!\\; - iy ]‘;f o]",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "From the diagram, give a reason to show that X is the left ventricle. o  Thicker muscular wall",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Name a class of organisms where all members have the heart structure above o  Mammalia; Aves;",
+          "marks": 1
+        },
+        {
+          "label": "c",
+          "text": "Why are the muscles found in the heart above said to be myogenic? o Contract without nervous stimulation/Initiate contraction on their own;",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "18",
+      "section": null,
+      "text": "State the role of the following in the nitrogen cycle.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Thiobacillus denitrificans. o  Converts nitrates to nitrogen gas and ammonia",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "Nitrococcus bacteria. o  Oxidize ammonia to nitrites",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "19",
+      "section": null,
+      "text": "The diagram below shows the structure of germinating pollen grain",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Name the type of cell division that formed the parts labelled",
+          "marks": 1
+        },
+        {
+          "label": "A",
+          "text": "°  mitosis",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "State the role of part labelled B? o Regulate Growth of pollen tube;",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "20",
+      "section": null,
+      "text": "The chart below is a summary of blood clotting mechanism in a man. Name;",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "The metal ion represented by",
+          "marks": 1
+        },
+        {
+          "label": "Y",
+          "text": "o calcium ions",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "The end product of the mechanism represented by",
+          "marks": 1
+        },
+        {
+          "label": "Z",
+          "text": "o fibrin",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "19",
+      "section": null,
+      "text": "The following is part of a kidney nephron oNGzORg Y",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "1) Name the process represented by the arrows. o ultrafiltration process",
+          "marks": 1
+        },
+        {
+          "label": "ii",
+          "text": "Name the conditions necessary for the process named in",
+          "marks": null
+        },
+        {
+          "label": "a",
+          "text": "(i) above to take place. o High blood pressure o Selectively permeable membranes",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "Identify with a reason vessel",
+          "marks": 1
+        },
+        {
+          "label": "A",
+          "text": "o Afferent arteriole: carries blood to the glomerulus for ultrafiltration process",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "20",
+      "section": null,
+      "text": "Name any two blood components that are present in vessel (A) but are absent in vessel B. o  Nitrogenous waste; o  Glucose ; o  Amino acids.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "21",
+      "section": null,
+      "text": "State the function of the following during pregnancy.",
+      "marks": 3,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Amnion o forms amnuiotic cavity ;and encloses foetus and amniotic fluid",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "Amniotic fluid o provides aquatic media for the foetus ; o absorb shock; prevents desiccation of the foetus (¢) Umbilical cord o Connects placenta and the foetus ; o supplying foetus with oxygen and the nutrients; o Removes metabolic waste.",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "22",
+      "section": null,
+      "text": "Below is a diagram of an organism. e T T T T HROVASOle s T s et G :}J. :,.\"';..\"\".I[ﬁ;-\"\"‘ B S P cyt()plawsm R R SR e ﬁ:f_,_;\"}\\~—i \"’fgﬁ, cellmembran% ,n L contiacklevasiisle, | . 0o T e e",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Name the kingdom to which the organism belongs. o  Protoctista / Protista",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Give a reason for your answer in",
+          "marks": 1
+        },
+        {
+          "label": "a",
+          "text": "(i) above. o Single-celled eukaryotic organism.",
+          "marks": null
+        },
+        {
+          "label": "c",
+          "text": "Explain the process by which the food gets into the organism. o Membrane forms pseudopodia which is extended to surround and engulf the food particles and then form a food vacuole.",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "23",
+      "section": null,
+      "text": "State two characteristics features of members of division bryophyte. o Presence of rhizoids o Absence of vascular tissues o Body parts not differentiated into roots, stem and leaves",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "24",
+      "section": null,
+      "text": "(a) 1) Name the cartilage between the bones of the vertebral column o [ntervertebral disk. i1) State the function of the cartilage named in (a)(i) above. o Absorb shock; reduce friction during movement; allows for certain degree of flexibility of vertebral column.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "25",
+      "section": null,
+      "text": "Why do herbivores have large eyes on the side of their heads? o To give them a wider field of view that enables them to track their enemies from far and therefore take precautions.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "26",
+      "section": null,
+      "text": "Suggest three measures that can be taken to control infection of man by protozoan parasites.  o Proper disposal of human waste/faeces; o Destroy breeding sites of vectors o Proper cooking of food /boiling of drinking water; o Use of insecticide against vectors / drugs against pathogens o Use of protective dwelling /mosquito nets to prevent vector bites/ proper hygiene;",
+      "marks": 3,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "27",
+      "section": null,
+      "text": "In a family, all off springs have blood group AB. What are the possible blood groups of? the parents? o AA and BB ;(must indicate the two genotypes to get one mark.)",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "28",
+      "section": null,
+      "text": "List the changes that take place during inhalation in the breathing cycle of a mammal in the following:",
+      "marks": 3,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Rib cage thoracic cavity o Moves upwards and outwards",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "Diaphragm o  Flattens (due to contraction of muscles);",
+          "marks": null
+        },
+        {
+          "label": "c",
+          "text": "External intercostal muscles o contract",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "29",
+      "section": null,
+      "text": "Evolution is an ongoing process, state two pieces of evidence which suggest that evolution is still taking place. o Natural selection in action; o [Industrial melanism; o Resistance to drugs; pesticides; and acaricides",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    }
+  ],
+  "diagrams": [
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p1_d1.png",
+      "page": 1,
+      "bounds": [
+        72,
+        2318,
+        2328,
+        2816
+      ],
+      "width": 2256,
+      "height": 498
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p1_d4.png",
+      "page": 1,
+      "bounds": [
+        149,
+        1377,
+        2356,
+        1904
+      ],
+      "width": 2207,
+      "height": 527
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p2_d4.png",
+      "page": 2,
+      "bounds": [
+        380,
+        2937,
+        1022,
+        3168
+      ],
+      "width": 642,
+      "height": 231
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p2_d20.png",
+      "page": 2,
+      "bounds": [
+        906,
+        1571,
+        1605,
+        1893
+      ],
+      "width": 699,
+      "height": 322
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p2_d26.png",
+      "page": 2,
+      "bounds": [
+        380,
+        1135,
+        858,
+        1322
+      ],
+      "width": 478,
+      "height": 187
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p3_d12.png",
+      "page": 3,
+      "bounds": [
+        417,
+        1837,
+        1348,
+        2122
+      ],
+      "width": 931,
+      "height": 285
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p5_d8.png",
+      "page": 5,
+      "bounds": [
+        378,
+        2101,
+        1317,
+        2333
+      ],
+      "width": 939,
+      "height": 232
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p5_d22.png",
+      "page": 5,
+      "bounds": [
+        778,
+        147,
+        1922,
+        792
+      ],
+      "width": 1144,
+      "height": 645
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p6_d7.png",
+      "page": 6,
+      "bounds": [
+        162,
+        1747,
+        1640,
+        2426
+      ],
+      "width": 1478,
+      "height": 679
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p6_d21.png",
+      "page": 6,
+      "bounds": [
+        1026,
+        147,
+        1839,
+        898
+      ],
+      "width": 813,
+      "height": 751
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p7_d9.png",
+      "page": 7,
+      "bounds": [
+        361,
+        2367,
+        1048,
+        2554
+      ],
+      "width": 687,
+      "height": 187
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p7_d14.png",
+      "page": 7,
+      "bounds": [
+        125,
+        1667,
+        1657,
+        2143
+      ],
+      "width": 1532,
+      "height": 476
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p7_d24.png",
+      "page": 7,
+      "bounds": [
+        252,
+        148,
+        2036,
+        1004
+      ],
+      "width": 1784,
+      "height": 856
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p8_d17.png",
+      "page": 8,
+      "bounds": [
+        118,
+        1179,
+        1359,
+        1802
+      ],
+      "width": 1241,
+      "height": 623
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p8_d21.png",
+      "page": 8,
+      "bounds": [
+        455,
+        924,
+        1383,
+        1182
+      ],
+      "width": 928,
+      "height": 258
+    },
+    {
+      "filename": "Lanjet - Biology PP1 QS_1712844216_p9_d19.png",
+      "page": 9,
+      "bounds": [
+        398,
+        1521,
+        1956,
+        1957
+      ],
+      "width": 1558,
+      "height": 436
+    }
+  ],
+  "raw_text": "LANJET EVALUATION EXAMINATION\n231/1 - BIOLOGY - Paper 1\nJuly/August=- 2023 = 2 Flours\nName: .....ooovviiiiiiiiieee Admu No\nIndex NO....oovvvvviiiine o SINALUTE. L DAL L\nInstruction To Candidates\na) Write your name and admission number in the spaces provided above.\nb) Sign and write the date of the examination in the spaces provided.\nc) Answer all the questions in this question paper.\nd) Answers must be written in the spaces provided\ne) This paper consists of 10 printed pages.\nt) Candidates should check the question paper to ascertain that all the pages are printed as indicated and\nthat no questions are missing.\ng) Candidates should answer all the questions in english.\nFor Examiner’s use only\nCandidate’s Score\n--\n\n1. A young scientist observed a bird laying her eggs in a nest and later the eggs hatched into chicks. Name\ntwo characteristics shown by the chicks that show a chick is a living thing but an egg is not. (2mks)\nv Growth and development\n= Nutrition\ns Movement and locomotion\n= Excretion\n2. In which two ways are the organelles chloroplast and mitochondria similar.  (2mrks)\no Both contain enzymes\no Both are oval in shape\no Both have double membrane\n3. The illustration below shows a human eye that is defective.\ne - O - -\"”lll//l\n@\n(a) Identify the eye defect. (1mrk)\no Short sightedness (myopia)\n(b) How would this defect be corrected? (1mrk)\no  (Concave (diverging) lens\n4. (a) What is homeostasis? (1mrk)\no Maintenance of a constant internal environment in living organisms.\n(b) State three processes in humans in which homeostasis is involved.  (3mrks)\no Thermoregulation\no  Osmoregulation\no Regulation of blood sugar level\n\n5. (a) In which phase of photosynthesis are carbohydrates formed?\n(1mrk)\no Dark stage\n(b) How is the dark stage of photosynthesis dependent to light stage? (2mrks).\no Light stage generates hydrogen ions; and adenosine triphosphate used during carbon (V) oxide\nfixation.\n6. Why are the cooling fans of value even in a closed room? (2mrks)\no Fans create air currents; speeding up the loss of heat by radiation and evaporation.\n7. How can the colour of the skin affect the rate of heat loss or heat gain?\n(3mrks)\n\no Dark surfaced bodies are the best heat absorbers; bright surfaces absorbs heat the least; good absorbers\nare also good emitters. In a hot surrounding dark skinned persons will gain heat faster than light skinned\nperson; in cold environment, dark skinned persons lose heat faster.\n\n8. List down three abiotic factors that would influence life in a lake. (3mrks)\n\no PH\n\no Light intensity\n\no Availability of mineral salts and trace elements\n\no Temperature.\n\n9. Distinguish between the terms asexual and sexual reproduction (2mrks)\n\no Sexual; is a type of reproduction that involves fusion of male and female gametes;\n\no Asexual reproduction is a type of reproduction in which offsprings are produced from mature organisms\nwithout fertilization.\n\n10. (a) Define the term germination. (1mrk)\no The process by which a plant develops into a seedling.\n(b) State the two types of germination in plants. (2mrks)\n\no [Epigeal\no Hypogeal\n(c) When does growth start in plants? (1mrk)\no When a mature seed germinates.\n11. (a) What is polyploidy?\n(1mrk)\no Condition of the nucleus of a cell having more than one set of chromosomes as per organisms belonging to\nthat species.\n(a) Mating a horse with a donkey produces an infertile animal, a mule. Explain. (2mrks)\no The chromosomes are from different species; thus are not homologous to pair up during meiosis\n12. A part of DNA strand has the following base sequence: G-G-C-C-T-A-T-C.\n(a) what is the sequence of the complimentary strand? (1mrk)\no C-C-G-G-A-T-A-G\n(b) what will be the sequence of m-RNA transcribed from this part of DNA? (1mtk)\no C-C-G-G-A-U-A-G\n{c) How does DNA differ from RNA? (3mrks)\nDouble stranded Single stranded\nConfined in the nucleus Found in nuclease and cytoplasm\nHas nitrogenous base; adenine guanine cytosine Has nitrogenous base adenine ;guanine; cytosine\nand thymine and uracil\n13. A student made a set up shown below to study a physiological process\n\n‘ \\\n! (R I [ Y \\\ne jublagile: | iy\na) In which beaker did the dialysis tubing reduce in size? (1mrk)\no B\nb) Account for your answer in a) above. (2mrks)\no Sucrose solution is hypertonic; thus it gains water molecules by osmosis;\no Accept: Water is hypotonic, thus water molecules move out of the dialysis tubing by osmosis; hence\ndialysis tube decrease in size\n14. Give two reasons why lumbar vertebrae have long and broad transverse processes. (2mrks)\no Increase surface area for attachment of abdominal muscles;\no Provide support /withstand weight of the abdomen.\n15. Give two ways in which seed dormancy benefit a plant.  (2mrks)\no Allows time for dispersal\no Allows maturation of embryo\no FEnables plant to survive harsh environment\n16. State three precautions one should observe while conducting experiments in food test.\n(3mrks)\no Avoid contaminating the reagents, avoid burning filter paper; avoid spilling reagents; avoid misuse\nof food substance\n17. Use the diagram of the heart shown below to answer the questions that follow\n\nFo0nd\nR ,'5:3\").;\"{.9?-\nHeV 3.4 Y =0u L\nT 3!\\; - iy ]‘;f o]\n\na) From the diagram, give a reason to show that X is the left ventricle. (1mrk)\no  Thicker muscular wall\nb) Name a class of organisms where all members have the heart structure above\no  Mammalia; Aves; (1mrk)\nc) Why are the muscles found in the heart above said to be myogenic? (1mrk)\no Contract without nervous stimulation/Initiate contraction on their own;\n\n18. State the role of the following in the nitrogen cycle. (2mrks)\n(a) Thiobacillus denitrificans.\no  Converts nitrates to nitrogen gas and ammonia\n(b) Nitrococcus bacteria.\no  Oxidize ammonia to nitrites\n\n19. The diagram below shows the structure of germinating pollen grain\n\ng s\n(a) Name the type of cell division that formed the parts labelled A.  (1mrk)\n°  mitosis\n(b) State the role of part labelled B? (1mrk)\n\no Regulate Growth of pollen tube;\n\n20. The chart below is a summary of blood clotting mechanism in a man.\n\n|\n-\nName;\n(a) The metal ion represented by Y. (1mk)\no calcium ions\n(b) The end product of the mechanism represented by Z. (1mk)\no fibrin\n19. The following is part of a kidney nephron\noNGzORg Y\n(a) 1) Name the process represented by the arrows. (1mrk)\no ultrafiltration process\nii) Name the conditions necessary for the process named in (a) (i) above to take place.\no High blood pressure\no Selectively permeable membranes\n(b) Identify with a reason vessel A. (1mrk)\no Afferent arteriole: carries blood to the glomerulus for ultrafiltration process\n20. Name any two blood components that are present in vessel (A) but are absent in vessel B.\no  Nitrogenous waste;\no  Glucose ;\n\no  Amino acids.\n21. State the function of the following during pregnancy. (3mrks)\n(a) Amnion\no forms amnuiotic cavity ;and encloses foetus and amniotic fluid\n(b) Amniotic fluid\no provides aquatic media for the foetus ;\no absorb shock; prevents desiccation of the foetus\n(¢) Umbilical cord\no Connects placenta and the foetus ;\no supplying foetus with oxygen and the nutrients;\no Removes metabolic waste.\n22. Below is a diagram of an organism.\ne T T T T HROVASOle s T s et\nG :}J. :,.\"';..\"\".I[ﬁ;-\"\"‘ B S P cyt()plawsm R R SR\ne ﬁ:f_,_;\"}\\~—i \"’fgﬁ, cellmembran%\nN ’r'““-‘ ”.;f\"”-l-’- .-e‘:_«'-’# YR R ,\n,n L contiacklevasiisle, | . 0o T e e\n(a) Name the kingdom to which the organism belongs. (1mrk)\no  Protoctista / Protista\n(b) Give a reason for your answer in (a) (i) above. (1mrk)\no Single-celled eukaryotic organism.\n(c) Explain the process by which the food gets into the organism. (2mrks)\no Membrane forms pseudopodia which is extended to surround and engulf the food particles and then form a\nfood vacuole.\n23. State two characteristics features of members of division bryophyte. (2mrks)\no Presence of rhizoids\no Absence of vascular tissues\no Body parts not differentiated into roots, stem and leaves\n\n24. (a) 1) Name the cartilage between the bones of the vertebral column\no [ntervertebral disk.\ni1) State the function of the cartilage named in (a)(i) above. (1 mark)\no Absorb shock; reduce friction during movement; allows for certain degree of flexibility of vertebral\ncolumn.\n25. Why do herbivores have large eyes on the side of their heads? (1mrk)\no To give them a wider field of view that enables them to track their enemies from far and therefore take\nprecautions.\n26. Suggest three measures that can be taken to control infection of man by protozoan parasites.\n(3mks)\no Proper disposal of human waste/faeces;\no Destroy breeding sites of vectors\no Proper cooking of food /boiling of drinking water;\no Use of insecticide against vectors / drugs against pathogens\no Use of protective dwelling /mosquito nets to prevent vector bites/ proper hygiene;\n27. In a family, all off springs have blood group AB. What are the possible blood groups of?\nthe parents? (1mrk)\no AA and BB ;(must indicate the two genotypes to get one mark.)\n28. List the changes that take place during inhalation in the breathing cycle of a mammal in the following:\n(3mrks)\n(a) Rib cage thoracic cavity\no Moves upwards and outwards\n(b) Diaphragm\no  Flattens (due to contraction of muscles);\n\n(c) External intercostal muscles\no contract\n29. Evolution is an ongoing process, state two pieces of evidence which suggest that evolution is still taking\nplace. (2mrks)\no Natural selection in action;\no [Industrial melanism;\no Resistance to drugs; pesticides; and acaricides",
+  "page_count": 10
+}

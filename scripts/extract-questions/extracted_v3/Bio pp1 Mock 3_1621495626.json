@@ -1,0 +1,737 @@
+{
+  "source_file": "Bio pp1 Mock 3_1621495626.pdf",
+  "paper": {
+    "subject": "Biology",
+    "gradeLevel": "Unknown",
+    "year": 2024,
+    "term": null,
+    "examType": "End Term",
+    "school": null,
+    "source": "ocr_extract",
+    "paperNumber": null,
+    "totalMarks": null,
+    "timeMinutes": null
+  },
+  "questions": [
+    {
+      "questionNumber": "2",
+      "section": null,
+      "text": "(1) Name two member of Kingdom protoctista. (i1) State the function of the diagram in a light microscope.",
+      "marks": 2,
+      "hasImage": true,
+      "imageUrl": "/diagrams/Bio pp1 Mock 3_1621495626_p1_d7.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "3",
+      "section": null,
+      "text": "Study the diagram below and answer questions that follow. ®) & H]",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Identify the structure above.",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Give a reason for your answer.",
+          "marks": 1
+        },
+        {
+          "label": "c",
+          "text": "State one primary function of the stem.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "4",
+      "section": null,
+      "text": "(a) State the difference in the behavior of chromosomes between anaphase 1 and 2.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "What causes movement of chromosomes to opposite poles of a cell during cell division?",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "5",
+      "section": null,
+      "text": "(a) What are co-dominant genes?",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Give one trait in man that shows multiple allelism.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "6",
+      "section": null,
+      "text": "State two disorder that result from gene mutations.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "7",
+      "section": null,
+      "text": "(a) State the site of secretion of cerebrospinal fluid.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "State one function of the cerebrospinal fluid.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "8",
+      "section": null,
+      "text": "Sate two functions of thyroxin in mammals.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "9",
+      "section": null,
+      "text": "State one difference between nervous and endocrine system based on the nature response.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "10",
+      "section": null,
+      "text": "A patient suffering from defects of the pancreas. Explain what would happen.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "11",
+      "section": null,
+      "text": "(a) Name the tissue that is found in all mammalian blood vessels.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Sate one structural similarity between aorta and vena cava.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "12",
+      "section": null,
+      "text": "Name the spore producing structures in",
+      "marks": null,
+      "hasImage": true,
+      "imageUrl": "/diagrams/Bio pp1 Mock 3_1621495626_p2_d5.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Bryophyta",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Pteridophyta.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "13",
+      "section": null,
+      "text": "(a) Name the part of the brain that regulates breathing.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Give two ways through which the body responds to increased concentration of carbon (IV) oxide. ",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "14",
+      "section": null,
+      "text": "(a) Where does deamination take place?",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "What is the immediate nitrogenous waste product in the above process?",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "15",
+      "section": null,
+      "text": "Give two characteristics of the inverted pyramid of biomass.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "16",
+      "section": null,
+      "text": "The diagram below represents a certain organism. Use it to answer questions that follow.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Identify the organism.",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "To which kingdom does the organism belong?",
+          "marks": 1
+        },
+        {
+          "label": "c",
+          "text": "State the disease in human beings caused by the above organism.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "17",
+      "section": null,
+      "text": "Different between Convergent and Divergent evolution.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "18",
+      "section": null,
+      "text": "The diagram shows the position of an formed in a defective eye.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Identify the defect.",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Draw a diagram to show how the defect can be corrected.",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "19",
+      "section": null,
+      "text": "Explain how panting assists in regulation of the body temperature in dog.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "20",
+      "section": null,
+      "text": "(a) Name the type of muscle found on the walls of the alimentary canal.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Explain the term reducing sugars.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "21",
+      "section": null,
+      "text": "(a) State the role of M- RNA in living cells. Below is a sequence in a section of a DNA. Work out the base sequence of RNA copied from the above strand. A-T-G-C-T-A",
+      "marks": 1,
+      "hasImage": true,
+      "imageUrl": "/diagrams/Bio pp1 Mock 3_1621495626_p3_d7.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "22",
+      "section": null,
+      "text": "Explain how the following structures act as evidence of organic evolution.",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Homologous structure.",
+          "marks": 2
+        },
+        {
+          "label": "b",
+          "text": "Vestigial structure.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "23",
+      "section": null,
+      "text": "In an experiment, its obsevered that when maggots are exposed to light, they move to data areas. On the other hand, Euglena and chlamydomonas move towards light. (1) Name the type of response exhibited by the organism. (i1) Sate one advantages of the response shown by Englena and chlamydomonas. 24, (1) The corpus luteum breacks down prematurely in pregnancy, a miscarriage is likely to results . Explain. (i1) Sate the role of the following hormones during lactation in mammals.",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Oxytori",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "Prolacticin",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "25",
+      "section": null,
+      "text": "(a) State two features that enables members of the class reptilian survive on land.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Identify one class within the phylum chordate mose members show external fertilization.",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "26",
+      "section": null,
+      "text": "The diagram below represents a bone obtained from a mammal.",
+      "marks": null,
+      "hasImage": true,
+      "imageUrl": "/diagrams/Bio pp1 Mock 3_1621495626_p4_d2.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Name the bone.",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Name the (1) Bone which articulates with the bone named in",
+          "marks": 1
+        },
+        {
+          "label": "a",
+          "text": "above at the cavity labeled",
+          "marks": null
+        },
+        {
+          "label": "K",
+          "text": "(1) Joint formed by the bones. 217.",
+          "marks": null
+        },
+        {
+          "label": "a",
+          "text": "Describe what happens during the dark stage of photosynthesis.",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "Name the micro- organism responsible for the conversion of Nitrites to Nitrites in soil.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "28",
+      "section": null,
+      "text": "The diagram below represents a cell structure as seen under an electron ;30 microscope. (1) Name the structure. (i1) State one function of the part marked X .",
+      "marks": 1,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "29",
+      "section": null,
+      "text": "The diagram below shows an outline of respiration in yeast cells.",
+      "marks": null,
+      "hasImage": true,
+      "imageUrl": "/diagrams/Bio pp1 Mock 3_1621495626_p5_d7.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "3",
+      "section": null,
+      "text": "carbon > | Compound S+ compound R Carhon (TV) oxide Further stages of respiration",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Sate the location of glycolysis in yeast cells.",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "Name one substance, other than glucose, which must be present for glycolysis to occur.",
+          "marks": 1
+        },
+        {
+          "label": "c",
+          "text": "Name compound R and S.",
+          "marks": 1
+        }
+      ]
+    },
+    {
+      "questionNumber": "30",
+      "section": null,
+      "text": "The diameter of the diagram of a cell was found to be Scm. The magnification of the eye piece lens was X10 while that of the objectives lens was X40. What was the actual size of the cell? Show your working.",
+      "marks": 3,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": null
+    },
+    {
+      "questionNumber": "31",
+      "section": null,
+      "text": "(a) Explain why standing motionless for a long time may result in fainting.",
+      "marks": 2,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Give a reason why athletes train in high altitude in preparation for competetions in low altitude. ",
+          "marks": 2
+        }
+      ]
+    },
+    {
+      "questionNumber": "32",
+      "section": null,
+      "text": "Use the food web below to answer the questions that follow. Crocodile Large ﬁsh/ Small fish Moisquito larvae \\ Microscopic plant",
+      "marks": null,
+      "hasImage": false,
+      "imageUrl": null,
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "Construct a food chain ending with crocodile as a quaternary consumer.",
+          "marks": 1
+        },
+        {
+          "label": "b",
+          "text": "NametheOrganlc1nthefoodwebthathasOnlyonepredator(]mrk)",
+          "marks": null
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p1_d7.png",
+      "page": 1,
+      "bounds": [
+        271,
+        2173,
+        2426,
+        2701
+      ],
+      "width": 2155,
+      "height": 528
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p1_d9.png",
+      "page": 1,
+      "bounds": [
+        271,
+        1683,
+        2426,
+        2183
+      ],
+      "width": 2155,
+      "height": 500
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p1_d12.png",
+      "page": 1,
+      "bounds": [
+        728,
+        1025,
+        1343,
+        1585
+      ],
+      "width": 615,
+      "height": 560
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p2_d5.png",
+      "page": 2,
+      "bounds": [
+        269,
+        2315,
+        2426,
+        2816
+      ],
+      "width": 2157,
+      "height": 501
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p2_d7.png",
+      "page": 2,
+      "bounds": [
+        270,
+        1770,
+        2390,
+        2305
+      ],
+      "width": 2120,
+      "height": 535
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p2_d13.png",
+      "page": 2,
+      "bounds": [
+        268,
+        735,
+        2425,
+        1378
+      ],
+      "width": 2157,
+      "height": 643
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p3_d7.png",
+      "page": 3,
+      "bounds": [
+        269,
+        1598,
+        2427,
+        3046
+      ],
+      "width": 2158,
+      "height": 1448
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p3_d14.png",
+      "page": 3,
+      "bounds": [
+        483,
+        187,
+        1224,
+        665
+      ],
+      "width": 741,
+      "height": 478
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p4_d2.png",
+      "page": 4,
+      "bounds": [
+        710,
+        2843,
+        1224,
+        3222
+      ],
+      "width": 514,
+      "height": 379
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p4_d8.png",
+      "page": 4,
+      "bounds": [
+        271,
+        1855,
+        2427,
+        2413
+      ],
+      "width": 2156,
+      "height": 558
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p4_d11.png",
+      "page": 4,
+      "bounds": [
+        533,
+        1013,
+        1516,
+        1798
+      ],
+      "width": 983,
+      "height": 785
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p5_d7.png",
+      "page": 5,
+      "bounds": [
+        269,
+        1683,
+        2426,
+        2308
+      ],
+      "width": 2157,
+      "height": 625
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p5_d8.png",
+      "page": 5,
+      "bounds": [
+        462,
+        953,
+        1749,
+        1669
+      ],
+      "width": 1287,
+      "height": 716
+    },
+    {
+      "filename": "Bio pp1 Mock 3_1621495626_p6_d2.png",
+      "page": 6,
+      "bounds": [
+        420,
+        188,
+        1845,
+        872
+      ],
+      "width": 1425,
+      "height": 684
+    }
+  ],
+  "raw_text": "1 (a) State two environment problems that can be solved by studying Biology. (2mrks)\n(b) Sate two precautions taken during collection of specimens. (2mrks)\n2. (1) Name two member of Kingdom protoctista. (2mrks)\n(i1) State the function of the diagram in a light microscope. (1mrk)\n3. Study the diagram below and answer questions that follow.\nTR\n&\n®) & H]\n\\ N\n(a) Identify the structure above. (1mrk)\n(b) Give a reason for your answer. (1mrk)\n(c) State one primary function of the stem. (1mrk)\n4. (a) State the difference in the behavior of chromosomes between anaphase 1 and 2. (1mrk)\n(b) What causes movement of chromosomes to opposite poles of a cell during cell division? (1mrk)\n5. (a) What are co-dominant genes? (1mrk)\n(b) Give one trait in man that shows multiple allelism. (1mrk)\n6. State two disorder that result from gene mutations. (2mrks)\n7. (a) State the site of secretion of cerebrospinal fluid. (1mrk)\n(b) State one function of the cerebrospinal fluid. (1mrk)\n8. Sate two functions of thyroxin in mammals. (2mrks)\n\n9. State one difference between nervous and endocrine system based on the nature response.(1mrk)\n10. A patient suffering from defects of the pancreas. Explain what would happen. (2mrks)\n11.  (a) Name the tissue that is found in all mammalian blood vessels. (1mrk)\n(b) Sate one structural similarity between aorta and vena cava. (1mrk)\n12.  Name the spore producing structures in\n(a) Bryophyta (1mrk)\n(b) Pteridophyta. (1mrk)\n13. (a) Name the part of the brain that regulates breathing. (1mrk)\n(b) Give two ways through which the body responds to increased concentration of carbon (IV) oxide.\n(2mrks)\n14. (a) Where does deamination take place? (1mrk)\n(b) What is the immediate nitrogenous waste product in the above process? (1mrk)\n15.  Give two characteristics of the inverted pyramid of biomass. (2mrks)\n16.  The diagram below represents a certain organism. Use it to answer questions that follow.\n(a) Identify the organism. (1mrk)\n(b) To which kingdom does the organism belong? (1mrk)\n(c) State the disease in human beings caused by the above organism. (1mrk)\n17.  Different between Convergent and Divergent evolution. (2mrks)\n18.  The diagram shows the position of an formed in a defective eye.\n\n(a) Identify the defect. (1mrk)\n(b) Draw a diagram to show how the defect can be corrected. (2mrks)\n19.  Explain how panting assists in regulation of the body temperature in dog. (2mrks)\n20.  (a) Name the type of muscle found on the walls of the alimentary canal. (1mrk)\n(b) Explain the term reducing sugars. (1mrk)\n21.  (a) State the role of M- RNA in living cells. (1mrk)\n(b)\nBelow is a sequence in a section of a DNA. Work out the base sequence of RNA copied from the above\nstrand. (1mrk)\nA-T-G-C-T-A\n22.  Explain how the following structures act as evidence of organic evolution.\n(a) Homologous structure. (2mrks)\n(b) Vestigial structure. (1mrk)\n23.  In an experiment, its obsevered that when maggots are exposed to light, they move to data areas. On the\nother hand, Euglena and chlamydomonas move towards light.\n(1) Name the type of response exhibited by the organism. (1mrk)\n(i1) Sate one advantages of the response shown by Englena and chlamydomonas. (1mrk)\n24, (1) The corpus luteum breacks down prematurely in pregnancy, a miscarriage is likely to results .\nExplain. (2mrks)\n(i1) Sate the role of the following hormones during lactation in mammals. (2mrks)\n\n(a) Oxytori\n\n(b) Prolacticin\n25.  (a) State two features that enables members of the class reptilian survive on land. (2mrks)\n\n(b) Identify one class within the phylum chordate mose members show external fertilization. (2mrks)\n26.  The diagram below represents a bone obtained from a mammal.\n\nJ\n| g\n\n(a) Name the bone. (1mrk)\n\n(b) Name the\n\n(1) Bone which articulates with the bone named in (a) above at the cavity labeled K. (1mrk)\n\n(1) Joint formed by the bones. (1mrk)\n217. (a) Describe what happens during the dark stage of photosynthesis. (2mrks)\n\n(b) Name the micro- organism responsible for the conversion of Nitrites to Nitrites in soil. (1mrk)\n28.  The diagram below represents a cell structure as seen under an\n\nelectron ;30 microscope.\n\n0\" \"o\n\nX\nY\n(1) Name the structure. (1mrk)\n(i1) State one function of the part marked X . (1mrk)\n29.  The diagram below shows an outline of respiration in yeast cells.\n3 carbon > | Compound S+\ncompound R Carhon (TV) oxide\nFurther stages\nof respiration\n(a) Sate the location of glycolysis in yeast cells. (1mrk)\n(b) Name one substance, other than glucose, which must be present for glycolysis to occur. (1mrk)\n(c) Name compound R and S. (1mrk)\n30.  The diameter of the diagram of a cell was found to be Scm. The magnification of the eye piece lens was\nX10 while that of the objectives lens was X40. What was the actual size of the cell? Show your working.\n(3mrks)\n31. (a) Explain why standing motionless for a long time may result in fainting. (2mrks)\n(b) Give a reason why athletes train in high altitude in preparation for competetions in low altitude.\n(2mrks)\n32.  Use the food web below to answer the questions that follow.\n\nCrocodile\nLarge ﬁsh/\n|\nSmall fish Moisquito larvae\n\\ Microscopic plant\n(a) Construct a food chain ending with crocodile as a quaternary consumer. (1mrk)\n(b)NametheOrganlc1nthefoodwebthathasOnlyonepredator(]mrk)",
+  "page_count": 6
+}

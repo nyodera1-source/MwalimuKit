@@ -1,0 +1,219 @@
+{
+  "source_file": "2024-KCSE-BIOLOGY-P2-TEACHER_CO_KE.pdf",
+  "paper": {
+    "subject": "Biology",
+    "gradeLevel": "Unknown",
+    "year": 2024,
+    "term": null,
+    "examType": "KCSE",
+    "school": null,
+    "source": "ocr_extract",
+    "paperNumber": 1,
+    "totalMarks": 40,
+    "timeMinutes": null
+  },
+  "questions": [
+    {
+      "questionNumber": "4",
+      "section": "A",
+      "text": "During an ecological study in a lake ecosystem, a group of students made the following observations on the feeding relationships among some organisms. g s - Lobsters feed on algae £ o Small fish feed on lobsters, worms and caterpillars _52_ o Caterpillars feed on algae § = Worms feed on caterpillar & = Large fish feed on small fish § = - Penguins feed on small fish, lobsters and worms. % (a) From the students' observations, construct a food web for the ecosystem.",
+      "marks": 5,
+      "hasImage": true,
+      "imageUrl": "/diagrams/2024-KCSE-BIOLOGY-P2-TEACHER_CO_KE_p5_d23.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "b",
+          "text": "Frigm the food web constructed in 4(a), extract a food chain with the penguin as a secondary consumer. e e e",
+          "marks": 1
+        },
+        {
+          "label": "c",
+          "text": "Explain how spillage of-oil-from-water-vessels-is-likely-to-affect-this-lake-ecosystem—— et eoe et eeeh et eaeateeheebete et EaseaseEeaes £t et esAebeRe e ses £ s eeaeAen£eEeRe SEEes s eaeaees£ebete eeEes s enseeeaeeseaneneaen Cete",
+          "marks": null
+        }
+      ]
+    },
+    {
+      "questionNumber": "5",
+      "section": "A",
+      "text": "The following diagram represents part of a cell structure as seen under an electron microscope. Q T HUAE Tt . ‘ a4l [ v Al s | ; 1. H . & Pores:",
+      "marks": null,
+      "hasImage": true,
+      "imageUrl": "/diagrams/2024-KCSE-BIOLOGY-P2-TEACHER_CO_KE_p6_d19.png",
+      "topic": null,
+      "subTopic": null,
+      "answer": null,
+      "subQuestions": [
+        {
+          "label": "a",
+          "text": "(i)ldentify the structure represented. 5 .e St . X P R + P C——",
+          "marks": 1
+        },
+        {
+          "label": "ii",
+          "text": "State two functions of the structure. jf‘—‘“”_”\";\\ e",
+          "marks": 2
+        },
+        {
+          "label": "T",
+          "text": "+ i T Yo o W “‘“ W/w,,,.“\"‘ S",
+          "marks": null
+        },
+        {
+          "label": "iii",
+          "text": "SEiggest two ways in which the functioning of the structure can be impaired.",
+          "marks": 2
+        },
+        {
+          "label": "b",
+          "text": "Name two structures found in plant cells but not in animal cells.",
+          "marks": 2
+        },
+        {
+          "label": "c",
+          "text": "What is the purpose of staining cells before observing them under a light microscope?  = SECTION B Ansi@?er question 6 {compulsory} and either question 7 or 8 in the spaces provided after question 8. 6 An ﬁ;\\vestigation was carried out to monitor trends of growth in a group of boys and girls for a period of 20 yearsETheir average weights were recorded at two years' intervals as shown in the table. Age(Years) | 7 Average weights{kg) T T 8 | a7 | %8",
+          "marks": 1
+        },
+        {
+          "label": "a",
+          "text": "On the same axes, draw line graphs of average weights of girls and boys against their ages. é ’V — = = b—‘ ; ‘ L _ | . \"",
+          "marks": 8
+        },
+        {
+          "label": "b",
+          "text": "From the graph,determine the:",
+          "marks": null
+        },
+        {
+          "label": "i",
+          "text": "weight of boys at the age of 13 years;",
+          "marks": 1
+        },
+        {
+          "label": "ii",
+          "text": "growth rate of girls between the 13\" and 15\" year [(on Y e o Y pas) Q ‘ i L -4 :'” . ! M e 'i [ et L H = T o T e - ,_,‘. L T 5 R R S ol . _ _ _ - _ o _ o : _ .",
+          "marks": 3
+        },
+        {
+          "label": "c",
+          "text": "Ac'éfount for the trend in the growth of girls between the 14 and 18 year",
+          "marks": 2
+        },
+        {
+          "label": "d",
+          "text": ":@part from sex and age; state three other-factors that affect the rate of growth in humans. T T o M| S - a0 ‘ ‘ P T S TR AP R",
+          "marks": 3
+        },
+        {
+          "label": "e",
+          "text": "Other than weight, state a parameter that can be used to establish growth in humans. ",
+          "marks": 1
+        },
+        {
+          "label": "f",
+          "text": "Why do girls above 12 years require more iron in their diet than boys of the same age? 7",
+          "marks": 2
+        },
+        {
+          "label": "a",
+          "text": "Explain the effects of hypothyroidism in adults.",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "Describe the hearing process in humans. 8",
+          "marks": 16
+        },
+        {
+          "label": "a",
+          "text": "Describe how urea is formed in humans.",
+          "marks": null
+        },
+        {
+          "label": "b",
+          "text": "Describe the path followed by urea from the site of formation until it is eliminated from the body. ",
+          "marks": 15
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "filename": "2024-KCSE-BIOLOGY-P2-TEACHER_CO_KE_p1_d26.png",
+      "page": 1,
+      "bounds": [
+        121,
+        181,
+        703,
+        488
+      ],
+      "width": 582,
+      "height": 307
+    },
+    {
+      "filename": "2024-KCSE-BIOLOGY-P2-TEACHER_CO_KE_p3_d18.png",
+      "page": 3,
+      "bounds": [
+        115,
+        447,
+        1926,
+        880
+      ],
+      "width": 1811,
+      "height": 433
+    },
+    {
+      "filename": "2024-KCSE-BIOLOGY-P2-TEACHER_CO_KE_p5_d23.png",
+      "page": 5,
+      "bounds": [
+        570,
+        601,
+        1566,
+        1002
+      ],
+      "width": 996,
+      "height": 401
+    },
+    {
+      "filename": "2024-KCSE-BIOLOGY-P2-TEACHER_CO_KE_p6_d19.png",
+      "page": 6,
+      "bounds": [
+        802,
+        424,
+        1670,
+        1249
+      ],
+      "width": 868,
+      "height": 825
+    },
+    {
+      "filename": "2024-KCSE-BIOLOGY-P2-TEACHER_CO_KE_p7_d3.png",
+      "page": 7,
+      "bounds": [
+        115,
+        1465,
+        1891,
+        2477
+      ],
+      "width": 1776,
+      "height": 1012
+    },
+    {
+      "filename": "2024-KCSE-BIOLOGY-P2-TEACHER_CO_KE_p8_d10.png",
+      "page": 8,
+      "bounds": [
+        115,
+        141,
+        1947,
+        2055
+      ],
+      "width": 1832,
+      "height": 1914
+    }
+  ],
+  "raw_text": "Teacher.colke\n2024 KCSE\nBIOLOGY\nPAPER 11\nQUESTION PAPER\nSECTION A (40 marks)\n3 Answer all the questions in this section in the spaces provided.\nQ\n1§The following word equation represents a biological process that occurs in green plants.\nCazbon (IV) oxide + water Glucose + Product E\n\n=\n\n[}\n\n(a))Name the cell organelle where the illustrated process takes place in green plants. (1 mark)\n\n>~\n\n&\n\n&\n\n(Uk})) (i) Give the likely identity of product E. (12 mark)\n\n=\n\ng\n(ii)Suuégest ways in which the rate of production of E can be increased. (3 marks)\n\n)\n'gH’”j““il\"‘\n(c) Suggest one possib‘le ‘sc‘)urce‘of carbon (IV) oxide'if the above process was artificially conducted in\n\n> — . — - - - - - - - - - - —\n\na sch@ol laboratory. (1 mark)\n\n2\n\na\n(d) Explain how the illustrated process is significant in nature. (2 marks)\n\nKenya Certifi CC’B%%éQE‘Prﬁé’%X (ﬁﬂ&%@r‘eg]g%ﬁ materials from https://teacher.co.ke/notes\n231/2\n\n[(on Y e o Y\nTeacher’colke\nw\n2\no\n=)\n~\n)\ni\n8\n)\n=\n[S]\n]\n()\n£\n>\nw\nQ.\n)\n=\ng\ne\net\n[%2]\ns\n~\n2\n]\ng\n[Sa]\n|Sa]\ne\n&5\n4’5—3 ‘ i e K \"‘, ; 1(1 \\‘\\ . ‘11\no i L h . B [ S Y‘f ““ .,,/*v\"\"‘v‘ R\nﬂS C— - - P L\n2 T T R T - - ST\n= ! ,vi,—‘;“‘ o ) N i | v ~v_,—\\ . o ) i . L\nﬂS _ _ PR - _ . - _ — B ~ 77\n@]\n=\n2\n@]\nA\nKenya Certifi Caﬁoﬁfnléggﬂﬁ'gﬁﬁl (ﬁﬁéﬁ-q:{é%nregigi%ﬁl materials from https://teacher.co.ke/notes\n231/2\n\nTeacher.colke\n2 In an experiment, the number of red blood cells present in three samples of blood labelled F,\nG and H was estimated.Different concentrations of salt solution were then separately added to\nthe samples. After an hour, the number of red blood cells present in each sample was counted\nand recorded as shown in the table below.\nBlood sample | Salt solution % concentration Number of red blood cells\nadded\n\nNumber remained the same\n\n=\n. $6 | 06 | Fewercellsobserved\nNo cells observed\n\n)\n\nG\n(a)Ndme the physiological process being investigated in the experiment. (1 mark)\n\n~\n\n>~\n\n£\n(b) Azfcount for the results made in blood sample F. (2 marks)\n\n[0]\n\no\n\n_‘.-Cj ” 1\\,“\\ }“ “‘ \\Yl ;,? i A :\n(c)Acgount for the difference i,h,‘appearrancc‘g of redblood cells in‘'samples F and G|at the end of the\nexpefiment. (2 marks)’ e S\n\n= \" s [ e e\n\n)\n(d) With a reason, predict the possible observation that would be made if blood sample F was treated\nwith a salt concentration of 2.6% (2 marks)\n(e) State the importance of the process being investigated above during urine formation\n\n(1 mark)\nDownload this and other FREE revision materials from https://teacher.co.ke/notes\n\nCEee\nTeacher’colke\n3 A genetic investigation on a certain population established that, in human beings, premature\nbaldness is controlled by a dorminant gene, N located on the Y chromosome.\n(a) Work out the phenotypic ratio of the offspring of a couple comprising of a normal mother\nand a father with premature baldness. (5 marks)\n\ng\n-------{-------------------------------------------------------------------------------------------oo-oo-oon------oo-oon--n---oo-oo---n--n---oo-oo\n\nS :\n\nQ\n(b) V,\\;/_shat is the probability that this couple would have a daughter with premature baldness?\n(1 mark)\n\n<\n\n>\n\n=\n(c)NaOme two sex-linked traits in human beings associated with the X-chromosome (2 marks)\n\nS\n\n=\n\n&3\n\n&3\n\n~\n\n[O] i A - W i §\n\n= L . ol i [ [ :\n\n= ‘ \"“,,,,rw !“N‘f~i I B R |\n\n=1 E— .\n\n=\n\n5]\n\n<\n\no\n\n3\n\nQ\n\nA\n\nDownload this and other FREE revision materials from https://teacher.co.ke/notes\n\ns\nTeacher’colke\n5\n\n4 During an ecological study in a lake ecosystem, a group of students made the following\n\nobservations on the feeding relationships among some organisms.\ng s - Lobsters feed on algae\no\n£ o Small fish feed on lobsters, worms and caterpillars\n_52_ o Caterpillars feed on algae\n§ = Worms feed on caterpillar\n& = Large fish feed on small fish\n[&]\n§ = - Penguins feed on small fish, lobsters and worms.\n~\n~\n% (a) From the students' observations, construct a food web for the ecosystem. (5 marks)\nB\n)\n%\n<\né .\n\n(b) Frigm the food web constructed in 4(a), extract a food chain with the penguin as a secondary consumer.\n(1 mark) e e e\n= ‘ L Y A IR B = T\n© , - — - [ — — - I\n(c) Explain how spillage of-oil-from-water-vessels-is-likely-to-affect-this-lake-ecosystem——\n]\n2\no]\net eoe et eeeh et eaeateeheebete et EaseaseEeaes £t et esAebeRe e ses £ s eeaeAen£eEeRe SEEes s eaeaees£ebete eeEes s enseeeaeeseaneneaen\nDownload this and other FREE revision materials from https://teacher.co.ke/notes\n\nCete\nTeacher’colke\n7\n5 The following diagram represents part of a cell structure as seen under an electron microscope.\n\nQ T HUAE Tt . ‘ a4l\n\n[ v Al s | ; 1. H .\n\n[S) P\n\n& Pores:\n\nBy .\n\n(a) (i)ldentify the structure represented.\n\n5 (1 mark)\n\nE\n\n=\n\n.e St . X P R + P C——\n(ii) State two functions of the structure. jf‘—‘“”_”\";\\ e T ) (2 marks)\n\n+ i T Yo o W “‘“ W/w,,,.“\"‘ S\n........élll.........................’....‘.:.!.....:;.:__:‘.‘:.k.zi::.v..rl“...:.fl...‘fi.‘...i.‘.‘...\\.Vv.::I'f\"?ilk.‘.:.TA.fl.f.....»::7.‘.7......V.T..if‘..:f;.._i.‘.....................................\n(iii) SEiggest two ways in which the functioning of the structure can be impaired. (2 marks)\n\n=\n(b) Name two structures found in plant cells but not in animal cells. (2 marks)\n\nDownload this and other FREE revision materials from https://teacher.co.ke/notes\n\nTeacher’colke\n7\n(c) What is the purpose of staining cells before observing them under a light\nmicroscope?\n(1 mark)\nV)\nS\nS\n)\n=\nS\n8\n=\niy\n2\n= SECTION B (40 marks)\n£\nQ\nAnsi@?er question 6 {compulsory} and either question 7 or 8 in the spaces provided after question 8.\nI\ns\n6 An ﬁ;\\vestigation was carried out to monitor trends of growth in a group of boys and girls for a period of 20\nyearsETheir average weights were recorded at two years' intervals as shown in the table.\n=\nAge(Years) | 7 Average weights{kg) T T\n8 | a7 | %8\n(a) On the same axes, draw line graphs of average weights of girls and boys against their ages.(8 marks)\nDownload this and other FREE revision materials from https://teacher.co.ke/notes\n\nTeacher.colke\n<\n<\n\"¢\nC\n<\nC\n[¢\ng\n£\n¢\n£\n<\n5\né ’V — = = b—‘\n; ‘ L _ | . \"\nT\nO .\n(b)From the graph,determine the:\ng\n(i) weight of boys at the age of 13 years; (1 mark)\n(ii) growth rate of girls between the 13\" and 15\" year (3 marks)\nDownload this and other FREE revision materials from https://teacher.co.ke/notes\n\n[(on Y e o Y\nTeacher’colke\nw\n[«5]\nP\no\n=\n~\n(<]\n~<\ne\n(&)\no\n[«5]\n<\nQ\nIS\n[«5]\n£\n~\n™~\nw\no\nit\n=\n£\no\n&\n2\n<\n=\n[«5]\npas)\n5\nE\n[J\nQ ‘ i L -4 :'” . ! M e 'i [ et L H\n= T o T e - ,_,‘. L T\n5 R R S\nol . _ _ _ - _ o _ o : _ .\nE)\no]\n5\n<\n=\n2\no\na\nDownload this and other FREE revision materials from https://teacher.co.ke/notes\n\nTeacher.colke\n\n3\n\nIS\n\n£\n\n(<]\n\nA\n\ng\n\n)\n\n=\n\n&\n\n[«5]\n\n<\n\n>~\n\n2\n\n=\n\ng\n\n&\n\nc) Ac'éfount for the trend in the growth of girls between the 14 and 18 year (2 marks)\n\ng\n.........E................................................................................................................................................................................\n.........O..f‘...............................'..._.:,.......................7..7.......‘.........T......................'.._..........r.\".....;’.;........7..4.1........................................\n\n© B S\n\n(d):@part from sex and age; state three other-factors that affect the rate of growth in humans.\nT T o M| S - a0\n(3 marks) ‘ ‘ P T S TR AP R\n(e)Other than weight, state a parameter that can be used to establish growth in humans.\n(1 mark)\n(f) Why do girls above 12 years require more iron in their diet than boys of the same age? (2 marks)\n7 (a) Explain the effects of hypothyroidism in adults. (4 marks)\n(b)Describe the hearing process in humans. (16 marks)\n8 (a) Describe how urea is formed in humans. (5 marks)\n(b) Describe the path followed by urea from the site of formation until it is eliminated from the body.\n(15 marks)\nDownload this and other FREE revision materials from https://teacher.co.ke/notes",
+  "page_count": 10
+}

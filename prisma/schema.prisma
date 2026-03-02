@@ -1,0 +1,294 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── AUTH & PROFILE ───
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  fullName      String   @map("full_name")
+  county        String?
+  tscNumber     String?  @map("tsc_number")
+  primaryGradeId String? @map("primary_grade_id")
+  primaryAreas  String[] @map("primary_areas")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  primaryGrade  Grade?   @relation(fields: [primaryGradeId], references: [id])
+
+  lessonPlans   LessonPlan[]
+  schemesOfWork SchemeOfWork[]
+  exams         Exam[]
+  teachingNotes TeachingNotes[]
+
+  @@map("users")
+}
+
+// ─── CBE CURRICULUM (Read-only, seeded from KICD) ───
+
+model Grade {
+  id    String @id @default(cuid())
+  level Int    @unique
+  name  String
+
+  learningAreas LearningArea[]
+  users         User[]
+  lessonPlans   LessonPlan[]
+  schemesOfWork SchemeOfWork[]
+  exams         Exam[]
+  teachingNotes TeachingNotes[]
+
+  @@map("grades")
+}
+
+model LearningArea {
+  id      String @id @default(cuid())
+  gradeId String @map("grade_id")
+  name    String
+  order   Int    @default(0)
+
+  grade   Grade    @relation(fields: [gradeId], references: [id], onDelete: Cascade)
+  strands Strand[]
+
+  lessonPlans   LessonPlan[]
+  schemesOfWork SchemeOfWork[]
+  exams         Exam[]
+  teachingNotes TeachingNotes[]
+
+  @@unique([gradeId, name])
+  @@map("learning_areas")
+}
+
+model Strand {
+  id             String @id @default(cuid())
+  learningAreaId String @map("learning_area_id")
+  name           String
+  order          Int    @default(0)
+
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id], onDelete: Cascade)
+  subStrands   SubStrand[]
+
+  lessonPlans   LessonPlan[]
+  teachingNotes TeachingNotes[]
+
+  @@unique([learningAreaId, name])
+  @@map("strands")
+}
+
+model SubStrand {
+  id       String @id @default(cuid())
+  strandId String @map("strand_id")
+  name     String
+  order    Int    @default(0)
+
+  strand Strand @relation(fields: [strandId], references: [id], onDelete: Cascade)
+  slos   SLO[]
+
+  lessonPlans   LessonPlan[]
+  teachingNotes TeachingNotes[]
+
+  @@unique([strandId, name])
+  @@map("sub_strands")
+}
+
+model SLO {
+  id             String  @id @default(cuid())
+  subStrandId    String  @map("sub_strand_id")
+  description    String
+  cognitiveLevel String? @map("cognitive_level")
+  order          Int     @default(0)
+
+  subStrand    SubStrand       @relation(fields: [subStrandId], references: [id], onDelete: Cascade)
+  competencies SLOCompetency[]
+
+  @@map("slos")
+}
+
+model CoreCompetency {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String?
+
+  slos SLOCompetency[]
+
+  @@map("core_competencies")
+}
+
+model SLOCompetency {
+  sloId        String @map("slo_id")
+  competencyId String @map("competency_id")
+
+  slo        SLO            @relation(fields: [sloId], references: [id], onDelete: Cascade)
+  competency CoreCompetency @relation(fields: [competencyId], references: [id], onDelete: Cascade)
+
+  @@id([sloId, competencyId])
+  @@map("slo_competencies")
+}
+
+// ─── DOCUMENT TABLES (shells for Phase 1 dashboard, fully used Phase 2) ───
+
+model LessonPlan {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  gradeId        String   @map("grade_id")
+  learningAreaId String   @map("learning_area_id")
+  strandId       String   @map("strand_id")
+  subStrandId    String   @map("sub_strand_id")
+  sloIds         String[] @map("slo_ids")
+  competencyIds  String[] @map("competency_ids")
+  title          String?
+  content        Json?
+  status         String   @default("draft")
+  isTemplate     Boolean  @default(false) @map("is_template")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grade        Grade        @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+  strand       Strand       @relation(fields: [strandId], references: [id])
+  subStrand    SubStrand    @relation(fields: [subStrandId], references: [id])
+
+  @@map("lesson_plans")
+}
+
+model SchemeOfWork {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  gradeId        String   @map("grade_id")
+  learningAreaId String   @map("learning_area_id")
+  term           Int
+  year           Int
+  title          String?
+  weeks          Json?
+  status         String   @default("draft")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grade        Grade        @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+
+  @@map("schemes_of_work")
+}
+
+model Exam {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  gradeId        String   @map("grade_id")
+  learningAreaId String   @map("learning_area_id")
+  examType       String   @map("exam_type")
+  assessmentType String?  @map("assessment_type") // "end_term", "mid_term", "cat", "formative"
+  term           Int
+  year           Int
+  title          String?
+  totalMarks     Int?     @map("total_marks")
+  timeMinutes    Int?     @map("time_minutes")
+  instructions   String?
+  strandIds      String[] @map("strand_ids")
+  subStrandIds   String[] @map("sub_strand_ids")
+  sloIds         String[] @map("slo_ids")
+  competencyIds  String[] @map("competency_ids")
+  status         String   @default("draft")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grade        Grade          @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea   @relation(fields: [learningAreaId], references: [id])
+  questions    ExamQuestion[]
+
+  @@map("exams")
+}
+
+model ExamQuestion {
+  id             String   @id @default(cuid())
+  examId         String   @map("exam_id")
+  orderNum       Int      @map("order_num")
+  section        String?                         // "A", "B", "C"
+  text           String
+  marks          Int
+  imageUrl       String?  @map("image_url")      // base64 data URI or URL
+  hasImage       Boolean  @default(false) @map("has_image")
+  answer         String?                         // marking scheme
+  cognitiveLevel String?  @map("cognitive_level") // remember/understand/apply/analyze/evaluate/create
+  sloId          String?  @map("slo_id")
+  subQuestions   Json?    @map("sub_questions")   // [{label, text, marks}]
+  source         String?  @default("ai")          // "ai", "manual", "imported"
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  exam Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@map("exam_questions")
+}
+
+// ─── QUESTION BANK (8-4-4 + CBE past papers) ───
+
+model QuestionPaper {
+  id          String   @id @default(cuid())
+  subject     String                          // e.g. "Mathematics", "Biology"
+  gradeLevel  String   @map("grade_level")    // e.g. "Form 1", "Form 4", "Grade 7"
+  year        Int                             // 2010–2026
+  term        Int?                            // 1, 2, 3 or null for annual/KCSE
+  examType    String   @map("exam_type")      // "End Term", "Mid Term", "KCSE", "Mock"
+  school      String?                         // source school name
+  source      String?                         // website URL or "manual"
+  paperNumber Int?     @map("paper_number")   // Paper 1, Paper 2, etc.
+  totalMarks  Int?     @map("total_marks")
+  timeMinutes Int?     @map("time_minutes")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  questions Question[]
+
+  @@map("question_papers")
+}
+
+model Question {
+  id             String   @id @default(cuid())
+  paperId        String   @map("paper_id")
+  questionNumber String   @map("question_number") // "1", "2", "3" (top-level number)
+  section        String?                          // "A", "B", "C" or null
+  text           String                           // full question text
+  marks          Int?
+  imageUrl       String?  @map("image_url")
+  hasImage       Boolean  @default(false) @map("has_image")
+  topic          String?                          // strand/topic tag for search
+  subTopic       String?  @map("sub_topic")       // sub-strand tag
+  answer         String?                          // marking scheme answer
+  subQuestions   Json?    @map("sub_questions")    // [{label:"a", text:"...", marks:2}]
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  paper QuestionPaper @relation(fields: [paperId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
+
+model TeachingNotes {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  gradeId        String   @map("grade_id")
+  learningAreaId String   @map("learning_area_id")
+  strandId       String   @map("strand_id")
+  subStrandId    String   @map("sub_strand_id")
+  title          String?
+  noteType       String   @map("note_type")
+  content        Json?
+  status         String   @default("draft")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grade        Grade        @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+  strand       Strand       @relation(fields: [strandId], references: [id])
+  subStrand    SubStrand    @relation(fields: [subStrandId], references: [id])
+
+  @@map("teaching_notes")
+}
