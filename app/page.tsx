@@ -141,8 +141,7 @@ export default async function HomePage() {
               </Button>
               <Button
                 size="lg"
-                variant="outline"
-                className="rounded-full border-2 border-white text-white hover:bg-white/10 px-8"
+                className="rounded-full border-2 border-white bg-white/20 text-white hover:bg-white/30 px-8 font-semibold"
                 asChild
               >
                 <Link href="/login">Log In</Link>
