@@ -67,36 +67,34 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Top Info Bar */}
-      <div className="bg-blue-600 text-blue-100 text-xs py-2 px-4 lg:px-8">
-        <div className="max-w-6xl mx-auto flex items-center justify-center gap-4">
-          <a href="tel:+254700000000" className="flex items-center gap-1.5 hover:text-white transition-colors">
-            <Phone className="h-3 w-3" />
-            <span>+254 700 000 000</span>
-          </a>
-          <span className="text-blue-300">|</span>
-          <a href="mailto:info@mwalimukit.com" className="flex items-center gap-1.5 hover:text-white transition-colors">
-            <Mail className="h-3 w-3" />
-            <span>info@mwalimukit.com</span>
-          </a>
-        </div>
-      </div>
-
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100 px-4 lg:px-8 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-blue-500 flex items-center justify-center">
-            <GraduationCap className="h-4 w-4 text-white" />
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100 px-4 lg:px-8 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-blue-500 flex items-center justify-center">
+              <GraduationCap className="h-4 w-4 text-white" />
+            </div>
+            <h1 className="text-xl font-bold text-gray-900"><em>MwalimuKit</em></h1>
           </div>
-          <h1 className="text-xl font-bold text-gray-900"><em>MwalimuKit</em></h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="rounded-full border-gray-300" asChild>
-            <Link href="/login">Log In</Link>
-          </Button>
-          <Button className="rounded-full bg-blue-500 hover:bg-blue-600" asChild>
-            <Link href="/signup">Sign Up Free</Link>
-          </Button>
+          <div className="hidden md:flex items-center gap-4 text-xs text-gray-500">
+            <a href="tel:+254700000000" className="flex items-center gap-1.5 hover:text-gray-900 transition-colors">
+              <Phone className="h-3 w-3" />
+              <span>+254 700 000 000</span>
+            </a>
+            <span className="text-gray-300">|</span>
+            <a href="mailto:info@mwalimukit.com" className="flex items-center gap-1.5 hover:text-gray-900 transition-colors">
+              <Mail className="h-3 w-3" />
+              <span>info@mwalimukit.com</span>
+            </a>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" className="rounded-full border-gray-300" asChild>
+              <Link href="/login">Log In</Link>
+            </Button>
+            <Button className="rounded-full bg-blue-500 hover:bg-blue-600" asChild>
+              <Link href="/signup">Sign Up Free</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
