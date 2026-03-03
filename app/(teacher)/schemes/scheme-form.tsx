@@ -144,6 +144,10 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     defaults?.schemeData?.entries || []
   );
 
+  // AI enhancement state
+  const [aiEnhancing, setAiEnhancing] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
   // Previous term carryover
   const [carryoverEnabled, setCarryoverEnabled] = useState(
     defaults?.schemeData?.carryoverEnabled || false
@@ -424,6 +428,58 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
     setEntries(newEntries);
   }, [strands, selectedSubStrandIds, breaks, firstWeek, firstLesson, lastWeek, lastLesson, lessonsPerWeek, referenceBook, carryoverEnabled, carryoverTopic, carryoverSubTopic, carryoverObjectives, carryoverLessons]);
+
+  // Enhance entries with AI
+  const enhanceWithAI = async () => {
+    if (entries.length === 0) return;
+    setAiEnhancing(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/schemes/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gradeId,
+          learningAreaId,
+          referenceBook,
+          entries: entries.map((e) => ({
+            week: e.week,
+            lesson: e.lesson,
+            topic: e.topic,
+            subTopic: e.subTopic,
+            objectives: e.objectives,
+          })),
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Enhancement failed");
+      }
+      const { enhanced } = await res.json();
+      // Merge enhanced content back into entries by week number
+      setEntries((prev) =>
+        prev.map((entry) => {
+          const match = enhanced.find(
+            (e: { week: number; objectives: string; tlActivities: string; tlAids: string }) =>
+              e.week === entry.week
+          );
+          if (match) {
+            return {
+              ...entry,
+              objectives: match.objectives || entry.objectives,
+              tlActivities: match.tlActivities || entry.tlActivities,
+              tlAids: match.tlAids || entry.tlAids,
+            };
+          }
+          return entry;
+        })
+      );
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : "Failed to enhance");
+    } finally {
+      setAiEnhancing(false);
+    }
+  };
 
   const schemeDataJson = JSON.stringify({
     schoolName,
@@ -879,13 +935,39 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
             )}
 
             <div className="border-t pt-4 space-y-3">
-              <Button type="button" variant="secondary" onClick={generateEntries}>
-                <Wand2 className="h-4 w-4 mr-2" />
-                Generate Scheme
-              </Button>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button type="button" variant="secondary" onClick={generateEntries}>
+                  <Wand2 className="h-4 w-4 mr-2" />
+                  Generate Scheme
+                </Button>
+                {entries.length > 0 && (
+                  <Button
+                    type="button"
+                    className="bg-purple-600 hover:bg-purple-700"
+                    onClick={enhanceWithAI}
+                    disabled={aiEnhancing}
+                  >
+                    {aiEnhancing ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Enhancing...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="h-4 w-4 mr-2" />
+                        Enhance with AI
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">
                 Distributes {selectedSubStrandIds.length} subtopics across Week {firstWeek}–{lastWeek}, {lessonsPerWeek} lessons/week.
+                {entries.length > 0 && " Click 'Enhance with AI' to improve objectives, activities, and teaching aids."}
               </p>
+              {aiError && (
+                <p className="text-xs text-red-600">{aiError}</p>
+              )}
             </div>
 
             {entries.length > 0 && (() => {

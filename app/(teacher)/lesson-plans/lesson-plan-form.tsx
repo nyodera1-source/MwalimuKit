@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { CascadeDropdown } from "@/components/cbe/cascade-dropdown";
 import { CompetencyCheckboxGroup } from "@/components/cbe/competency-checkbox-group";
 import { createLessonPlan, updateLessonPlan } from "./actions";
-import { Eye, Loader2, CheckCircle, Lightbulb } from "lucide-react";
+import { Eye, Loader2, CheckCircle, Lightbulb, Wand2 } from "lucide-react";
 
 interface LessonPlanContent {
   date?: string;
@@ -110,10 +110,19 @@ export function LessonPlanForm({
   const formRef = useRef<HTMLFormElement>(null);
   const autoSaveTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Refs for suggestion application
+  // AI generation state
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  // Refs for suggestion application and AI population
   const objectivesRef = useRef<HTMLTextAreaElement>(null);
   const inquiryRef = useRef<HTMLInputElement>(null);
   const resourcesRef = useRef<HTMLTextAreaElement>(null);
+  const digitalResourcesRef = useRef<HTMLTextAreaElement>(null);
+  const introductionRef = useRef<HTMLTextAreaElement>(null);
+  const developmentRef = useRef<HTMLTextAreaElement>(null);
+  const conclusionRef = useRef<HTMLTextAreaElement>(null);
+  const assessmentDescRef = useRef<HTMLTextAreaElement>(null);
 
   // Track cascade names for auto-title
   const [cascadeNames, setCascadeNames] = useState<{
@@ -181,6 +190,65 @@ export function LessonPlanForm({
     applySuggestion("keyInquiryQuestion");
     applySuggestion("resources");
     setShowSuggestions(false);
+  };
+
+  // Helper to set a field value via native setter (triggers React change events)
+  function setFieldValue(
+    ref: React.RefObject<HTMLTextAreaElement | HTMLInputElement | null>,
+    value: string,
+    isInput = false
+  ) {
+    if (!ref.current || !value) return;
+    const proto = isInput
+      ? HTMLInputElement.prototype
+      : HTMLTextAreaElement.prototype;
+    const setter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
+    if (setter) {
+      setter.call(ref.current, value);
+      ref.current.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  }
+
+  // Generate entire lesson plan with AI
+  const generateWithAI = async () => {
+    if (!subStrandId) return;
+    setAiGenerating(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/lesson-plans/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gradeId,
+          learningAreaId,
+          strandId,
+          subStrandId,
+          sloIds: sloIds.length > 0 ? sloIds : undefined,
+          competencyIds: competencyIds.length > 0 ? competencyIds : undefined,
+          duration: Number(duration),
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Generation failed");
+      }
+      const { plan } = await res.json();
+      // Populate all fields
+      setFieldValue(objectivesRef, plan.objectives);
+      setFieldValue(inquiryRef, plan.keyInquiryQuestion, true);
+      setFieldValue(resourcesRef, plan.resources);
+      setFieldValue(digitalResourcesRef, plan.digitalResources);
+      setFieldValue(introductionRef, plan.activitiesIntroduction);
+      setFieldValue(developmentRef, plan.activitiesDevelopment);
+      setFieldValue(conclusionRef, plan.activitiesConclusion);
+      setFieldValue(assessmentDescRef, plan.assessmentDescription);
+      if (plan.assessmentStrategy) setAssessmentStrategy(plan.assessmentStrategy);
+      setShowSuggestions(false);
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : "Failed to generate");
+    } finally {
+      setAiGenerating(false);
+    }
   };
 
   // Auto-save for existing plans (every 30 seconds)
@@ -323,6 +391,47 @@ export function LessonPlanForm({
                     Dismiss
                   </Button>
                 </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* AI Generation Banner */}
+      {subStrandId && (
+        <Card className="border-purple-200 bg-purple-50/50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <Wand2 className="h-5 w-5 text-purple-600 mt-0.5 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <p className="text-sm font-medium text-purple-900">
+                  Generate complete lesson plan with AI
+                </p>
+                <p className="text-xs text-purple-700">
+                  AI will fill in objectives, activities, resources, and assessment based on the selected curriculum and SLOs. You can edit everything after.
+                </p>
+                {aiError && (
+                  <p className="text-xs text-red-600">{aiError}</p>
+                )}
+                <Button
+                  type="button"
+                  size="sm"
+                  className="bg-purple-600 hover:bg-purple-700"
+                  onClick={generateWithAI}
+                  disabled={aiGenerating}
+                >
+                  {aiGenerating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      Generate with AI
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           </CardContent>
@@ -475,6 +584,7 @@ export function LessonPlanForm({
             <div>
               <Label htmlFor="digitalResources">Digital Resources</Label>
               <Textarea
+                ref={digitalResourcesRef}
                 id="digitalResources"
                 name="digitalResources"
                 defaultValue={content.digitalResources}
@@ -500,6 +610,7 @@ export function LessonPlanForm({
               </Badge>
             </Label>
             <Textarea
+              ref={introductionRef}
               id="activitiesIntroduction"
               name="activitiesIntroduction"
               defaultValue={content.activities?.introduction}
@@ -516,6 +627,7 @@ export function LessonPlanForm({
               </Badge>
             </Label>
             <Textarea
+              ref={developmentRef}
               id="activitiesDevelopment"
               name="activitiesDevelopment"
               defaultValue={content.activities?.development}
@@ -532,6 +644,7 @@ export function LessonPlanForm({
               </Badge>
             </Label>
             <Textarea
+              ref={conclusionRef}
               id="activitiesConclusion"
               name="activitiesConclusion"
               defaultValue={content.activities?.conclusion}
@@ -570,6 +683,7 @@ export function LessonPlanForm({
             <div>
               <Label htmlFor="assessmentDescription">Assessment Details</Label>
               <Textarea
+                ref={assessmentDescRef}
                 id="assessmentDescription"
                 name="assessmentDescription"
                 defaultValue={content.assessmentDescription}
