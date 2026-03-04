@@ -7,9 +7,6 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 10;
   const contentWidth = pageWidth - margin * 2;
-  const MAX_PAGES = 4; // 1 cover page + 3 content pages
-  let truncated = false;
-  let entriesOmitted = 0;
 
   // ════════════════════════════════════════
   // PAGE 1: COVER PAGE
@@ -53,14 +50,14 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
   doc.addPage();
   let y = margin;
 
-  // Column widths for 9 columns (A4 landscape = 297mm, content ≈ 277mm)
-  const colRatios = [10, 10, 28, 30, 52, 50, 34, 35, 28];
+  // Column widths for 8 columns (A4 landscape = 297mm, content ≈ 277mm)
+  const colRatios = [10, 10, 28, 30, 52, 50, 34, 35];
   const totalRatio = colRatios.reduce((a, b) => a + b, 0);
   const cols = colRatios.map((r) => (r / totalRatio) * contentWidth);
 
   const headers = [
     "WK", "LSN", "STRAND", "SUB-STRAND", "OBJECTIVES",
-    "T/L ACTIVITIES", "T/L AIDS", "REFERENCE", "REMARKS",
+    "T/L ACTIVITIES", "T/L AIDS", "REFERENCE",
   ];
 
   const HEADER_COLOR = [55, 65, 81] as const; // Professional dark gray
@@ -94,29 +91,13 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
     y += headerHeight;
   }
 
-  function checkPageBreak(needed: number): boolean {
-    const currentPage = doc.getNumberOfPages();
-
-    // If we're on the last allowed page and adding content would exceed it, truncate
-    if (currentPage >= MAX_PAGES && y + needed > pageHeight - margin - 12) {
-      truncated = true;
-      return false; // Signal to stop adding content
-    }
-
-    // If adding content would exceed current page but we can add another page
+  function checkPageBreak(needed: number) {
     if (y + needed > pageHeight - margin - 12) {
-      if (currentPage < MAX_PAGES) {
-        doc.addPage();
-        y = margin;
-        drawPageHeader();
-        drawTableHeader();
-        return true;
-      } else {
-        truncated = true;
-        return false;
-      }
+      doc.addPage();
+      y = margin;
+      drawPageHeader();
+      drawTableHeader();
     }
-    return true;
   }
 
   drawPageHeader();
@@ -165,11 +146,7 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
       const weekLabel = startWeek === endWeek ? String(startWeek) : `${startWeek}-${endWeek}`;
 
       const rowHeight = 7;
-      if (!checkPageBreak(rowHeight + 1)) {
-        // Count remaining items (excluding breaks for accuracy)
-        entriesOmitted = displayItems.slice(idx).filter(i => i.kind === "lesson").length;
-        break;
-      }
+      checkPageBreak(rowHeight + 1);
 
       doc.setFillColor(...LIGHT_BG);
       doc.rect(margin, y, cols[0], rowHeight, "FD");
@@ -199,7 +176,6 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
       entry.tlActivities || "—",
       entry.tlAids || "—",
       entry.reference || "—",
-      entry.remarks || "",
     ];
 
     // Calculate row height
@@ -213,11 +189,7 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
     }
 
     const rowHeight = Math.max(6, maxLines * LINE_HEIGHT + 2);
-    if (!checkPageBreak(rowHeight + 1)) {
-      // Count remaining items
-      entriesOmitted = displayItems.slice(idx).filter(i => i.kind === "lesson").length;
-      break;
-    }
+    checkPageBreak(rowHeight + 1);
 
     let x = margin;
     for (let i = 0; i < cols.length; i++) {
@@ -229,25 +201,6 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
       x += cols[i];
     }
     y += rowHeight;
-  }
-
-  // Add truncation notice if entries were omitted
-  if (truncated && entriesOmitted > 0) {
-    y += 2;
-    const noticeHeight = 8;
-    // Draw notice box spanning full table width
-    doc.setFillColor(255, 243, 224); // Light orange background
-    doc.rect(margin, y, contentWidth, noticeHeight, "F");
-    doc.setFontSize(8);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(180, 83, 9); // Orange text
-    doc.text(
-      `⚠ ${entriesOmitted} week(s) omitted to fit 3-page limit. Reduce content or split into multiple schemes.`,
-      pageWidth / 2,
-      y + 5,
-      { align: "center" }
-    );
-    doc.setTextColor(0, 0, 0);
   }
 
   // ── Footer: Page numbers + school name ──

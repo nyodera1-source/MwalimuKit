@@ -7,39 +7,21 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   const margin = 15;
   const contentWidth = pageWidth - margin * 2;
   let y = margin;
-  const MAX_PAGES = 3;
-  let truncated = false;
 
   const HEADER_COLOR = [55, 65, 81] as const; // Professional dark gray (gray-700)
   const GRAY_BG = [249, 250, 251] as const; // Light gray (gray-50)
   const LINE_HEIGHT = 5;
 
-  function checkPageBreak(needed: number): boolean {
+  function checkPageBreak(needed: number) {
     const pageHeight = doc.internal.pageSize.getHeight();
-    const currentPage = doc.getNumberOfPages();
-
-    // If we're on the last allowed page and adding content would exceed it, truncate
-    if (currentPage >= MAX_PAGES && y + needed > pageHeight - margin - 15) {
-      truncated = true;
-      return false; // Signal to stop adding content
-    }
-
-    // If adding content would exceed current page but we can add another page
     if (y + needed > pageHeight - margin) {
-      if (currentPage < MAX_PAGES) {
-        doc.addPage();
-        y = margin;
-        return true;
-      } else {
-        truncated = true;
-        return false;
-      }
+      doc.addPage();
+      y = margin;
     }
-    return true;
   }
 
-  function drawSectionHeader(title: string): boolean {
-    if (!checkPageBreak(10)) return false;
+  function drawSectionHeader(title: string) {
+    checkPageBreak(10);
     doc.setFillColor(...HEADER_COLOR);
     doc.rect(margin, y, contentWidth, 7, "F");
     doc.setTextColor(255, 255, 255);
@@ -48,16 +30,15 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
     doc.text(title, margin + 3, y + 5);
     doc.setTextColor(0, 0, 0);
     y += 9;
-    return true;
   }
 
-  function drawRow(label: string, value: string): boolean {
+  function drawRow(label: string, value: string) {
     const labelWidth = 45;
     const valueWidth = contentWidth - labelWidth;
     const valueLines = doc.splitTextToSize(value || "—", valueWidth - 6);
     const rowHeight = Math.max(7, valueLines.length * LINE_HEIGHT + 3);
 
-    if (!checkPageBreak(rowHeight + 2)) return false;
+    checkPageBreak(rowHeight + 2);
 
     // Label cell
     doc.setFillColor(...GRAY_BG);
@@ -73,12 +54,12 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
     doc.text(valueLines, margin + labelWidth + 3, y + 4.5);
 
     y += rowHeight;
-    return true;
   }
 
-  function drawListRow(label: string, items: string[]): boolean {
+  function drawListRow(label: string, items: string[]) {
     if (items.length === 0) {
-      return drawRow(label, "—");
+      drawRow(label, "—");
+      return;
     }
 
     const labelWidth = 45;
@@ -90,7 +71,7 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
     }
     const rowHeight = Math.max(7, bulletLines.length * LINE_HEIGHT + 3);
 
-    if (!checkPageBreak(rowHeight + 2)) return false;
+    checkPageBreak(rowHeight + 2);
 
     doc.setFillColor(...GRAY_BG);
     doc.rect(margin, y, labelWidth, rowHeight, "FD");
@@ -104,7 +85,6 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
     doc.text(bulletLines, margin + labelWidth + 3, y + 4.5);
 
     y += rowHeight;
-    return true;
   }
 
   // "LESSON PLAN" header
@@ -150,56 +130,36 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   doc.setTextColor(0, 0, 0);
   y += 8;
 
-  // Draw content sections (with early termination if page limit reached)
-  do {
-    // Curriculum Details (essential - highest priority)
-    if (!drawSectionHeader("Curriculum Details")) break;
-    if (!drawRow("Grade", data.grade)) break;
-    if (!drawRow("Learning Area", data.learningArea)) break;
-    if (!drawRow("Strand", data.strand)) break;
-    if (!drawRow("Sub-Strand", data.subStrand)) break;
-    if (!drawListRow("Specific Learning Outcomes", data.slos)) break;
-    if (!drawRow("Core Competencies", data.competencies.join(", ") || "—")) break;
-    y += 3;
+  // Curriculum Details
+  drawSectionHeader("Curriculum Details");
+  drawRow("Grade", data.grade);
+  drawRow("Learning Area", data.learningArea);
+  drawRow("Strand", data.strand);
+  drawRow("Sub-Strand", data.subStrand);
+  drawListRow("Specific Learning Outcomes", data.slos);
+  drawRow("Core Competencies", data.competencies.join(", ") || "—");
+  y += 3;
 
-    // Lesson Content (essential)
-    if (!drawSectionHeader("Lesson Content")) break;
-    if (!drawRow("Lesson Objectives", data.objectives)) break;
-    if (!drawRow("Key Inquiry Question", data.keyInquiryQuestion)) break;
-    if (!drawRow("Learning Resources", data.resources)) break;
-    if (!drawRow("Digital Resources", data.digitalResources)) break;
-    y += 3;
+  // Lesson Content
+  drawSectionHeader("Lesson Content");
+  drawRow("Lesson Objectives", data.objectives);
+  drawRow("Key Inquiry Question", data.keyInquiryQuestion);
+  drawRow("Learning Resources", data.resources);
+  drawRow("Digital Resources", data.digitalResources);
+  y += 3;
 
-    // Teaching Activities (essential)
-    if (!drawSectionHeader("Teaching & Learning Activities")) break;
-    if (!drawRow("Introduction", data.activities.introduction || "")) break;
-    if (!drawRow("Development", data.activities.development || "")) break;
-    if (!drawRow("Conclusion", data.activities.conclusion || "")) break;
-    y += 3;
+  // Teaching Activities
+  drawSectionHeader("Teaching & Learning Activities");
+  drawRow("Introduction", data.activities.introduction || "");
+  drawRow("Development", data.activities.development || "");
+  drawRow("Conclusion", data.activities.conclusion || "");
+  y += 3;
 
-    // Assessment & Reflection (can be truncated if necessary)
-    if (!drawSectionHeader("Assessment & Reflection")) break;
-    if (!drawRow("Assessment Strategy", data.assessmentStrategy)) break;
-    if (!drawRow("Assessment Details", data.assessmentDescription)) break;
-    drawRow("Reflection", data.reflection);
-  } while (false);
-
-  // Add truncation notice if content was cut off
-  if (truncated) {
-    if (checkPageBreak(12)) {
-      doc.setFillColor(255, 243, 224); // Light orange background
-      doc.rect(margin, y, contentWidth, 10, "F");
-      doc.setFontSize(8);
-      doc.setFont("helvetica", "italic");
-      doc.setTextColor(180, 83, 9); // Orange text
-      doc.text(
-        "⚠ Content truncated to fit 3-page limit. Edit lesson plan to reduce content length.",
-        margin + 3,
-        y + 6
-      );
-      doc.setTextColor(0, 0, 0);
-    }
-  }
+  // Assessment & Reflection
+  drawSectionHeader("Assessment & Reflection");
+  drawRow("Assessment Strategy", data.assessmentStrategy);
+  drawRow("Assessment Details", data.assessmentDescription);
+  drawRow("Reflection", data.reflection);
 
   // Footer on each page
   const totalPages = doc.getNumberOfPages();
