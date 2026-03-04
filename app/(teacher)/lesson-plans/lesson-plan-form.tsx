@@ -108,6 +108,7 @@ export function LessonPlanForm({
   // Auto-save state
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const formRef = useRef<HTMLFormElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
   const autoSaveTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // AI generation state
@@ -281,6 +282,13 @@ export function LessonPlanForm({
     }
   }, [isEdit, doAutoSave]);
 
+  // Scroll to error when validation fails
+  useEffect(() => {
+    if (state?.error && errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [state?.error]);
+
   const content = defaults?.content || {};
   const today = new Date().toISOString().split("T")[0];
 
@@ -305,7 +313,7 @@ export function LessonPlanForm({
 
       {/* Error message */}
       {state?.error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+        <div ref={errorRef} className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
           {state.error}
         </div>
       )}
@@ -714,6 +722,11 @@ export function LessonPlanForm({
       {/* Actions */}
       <Card>
         <CardContent className="pt-6">
+          {state?.error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm mb-4">
+              {state.error}
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex items-center gap-2">
               <Checkbox
