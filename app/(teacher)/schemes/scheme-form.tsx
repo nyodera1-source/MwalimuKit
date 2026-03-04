@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { CascadeDropdown, type CascadeSelection } from "@/components/cbe/cascade-dropdown";
 import { createSchemeOfWork, updateSchemeOfWork } from "./actions";
+import { getReferenceBookOptions } from "@/lib/data/reference-books";
 import {
   ArrowRight,
   ArrowLeft,
@@ -114,6 +115,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
   const [year, setYear] = useState(String(defaults?.year || currentYear));
   const [schoolName, setSchoolName] = useState(defaults?.schemeData?.schoolName || "");
   const [referenceBook, setReferenceBook] = useState(defaults?.schemeData?.referenceBook || "");
+  const [customReferenceBook, setCustomReferenceBook] = useState("");
   const [cascadeNames, setCascadeNames] = useState<{ grade?: string; learningArea?: string }>({});
 
   // Step 2: Topic selection
@@ -310,6 +312,10 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
   // Generate entries grouped by week (matching reference PDF format)
   const generateEntries = useCallback(() => {
+    const actualReferenceBook =
+      referenceBook === "Other (specify below)" && customReferenceBook
+        ? customReferenceBook
+        : referenceBook;
     const breakWeekSet = new Set<number>();
     for (const b of breaks) {
       for (let w = b.weekNumber; w < b.weekNumber + b.duration; w++) {
@@ -358,8 +364,8 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
         subTopic: carryoverSubTopic,
         objectives,
         tlActivities: makeTlActivities(carryoverSubTopic, objectives),
-        tlAids: makeTlAids(referenceBook, objectives),
-        reference: referenceBook || "",
+        tlAids: makeTlAids(actualReferenceBook, objectives),
+        reference: actualReferenceBook || "",
         remarks: "Spillover from previous term",
       });
 
@@ -420,14 +426,14 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
         subTopic: subTopicNames,
         objectives,
         tlActivities: makeTlActivities(subTopicNames, objectives),
-        tlAids: makeTlAids(referenceBook, objectives),
-        reference: referenceBook || "",
+        tlAids: makeTlAids(actualReferenceBook, objectives),
+        reference: actualReferenceBook || "",
         remarks: "",
       });
     }
 
     setEntries(newEntries);
-  }, [strands, selectedSubStrandIds, breaks, firstWeek, firstLesson, lastWeek, lastLesson, lessonsPerWeek, referenceBook, carryoverEnabled, carryoverTopic, carryoverSubTopic, carryoverObjectives, carryoverLessons]);
+  }, [strands, selectedSubStrandIds, breaks, firstWeek, firstLesson, lastWeek, lastLesson, lessonsPerWeek, referenceBook, customReferenceBook, carryoverEnabled, carryoverTopic, carryoverSubTopic, carryoverObjectives, carryoverLessons]);
 
   // Enhance entries with AI
   const enhanceWithAI = async () => {
@@ -481,9 +487,14 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     }
   };
 
+  const finalReferenceBook =
+    referenceBook === "Other (specify below)" && customReferenceBook
+      ? customReferenceBook
+      : referenceBook;
+
   const schemeDataJson = JSON.stringify({
     schoolName,
-    referenceBook,
+    referenceBook: finalReferenceBook,
     lessonsPerWeek,
     firstWeek,
     firstLesson,
@@ -567,13 +578,42 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                 />
               </div>
               <div>
-                <Label htmlFor="referenceBook">Reference Book</Label>
-                <Input
-                  id="referenceBook"
+                <Label htmlFor="referenceBook">Reference Book (KICD Approved)</Label>
+                <Select
                   value={referenceBook}
-                  onChange={(e) => setReferenceBook(e.target.value)}
-                  placeholder="e.g., Access & Learn Chemistry"
-                />
+                  onValueChange={(val) => {
+                    setReferenceBook(val);
+                    if (val !== "Other (specify below)") setCustomReferenceBook("");
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select reference book" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cascadeNames.grade && cascadeNames.learningArea ? (
+                      getReferenceBookOptions(
+                        cascadeNames.grade,
+                        cascadeNames.learningArea
+                      ).map((book) => (
+                        <SelectItem key={book} value={book}>
+                          {book}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="none" disabled>
+                        Select grade and subject first
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                {referenceBook === "Other (specify below)" && (
+                  <Input
+                    className="mt-2"
+                    placeholder="Enter custom reference book"
+                    value={customReferenceBook}
+                    onChange={(e) => setCustomReferenceBook(e.target.value)}
+                  />
+                )}
               </div>
             </div>
 
