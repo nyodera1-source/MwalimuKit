@@ -68,12 +68,8 @@ export default async function NewActivityFormPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {subjectExperiments.map((exp) => {
-                const materials = Array.isArray(exp.materials)
-                  ? exp.materials
-                  : [];
-                const concepts = Array.isArray(exp.relatedConcepts)
-                  ? exp.relatedConcepts
-                  : [];
+                const materials = (exp.materials || []) as string[];
+                const concepts = (exp.relatedConcepts || []) as string[];
 
                 return (
                   <Link
@@ -105,7 +101,7 @@ export default async function NewActivityFormPage() {
                             Related Concepts
                           </p>
                           <div className="flex flex-wrap gap-1">
-                            {concepts.slice(0, 3).map((concept, idx) => (
+                            {concepts.slice(0, 3).map((concept: string, idx: number) => (
                               <Badge key={idx} variant="outline" className="text-xs">
                                 {concept}
                               </Badge>
