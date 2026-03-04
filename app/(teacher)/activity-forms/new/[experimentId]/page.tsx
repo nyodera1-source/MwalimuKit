@@ -27,18 +27,32 @@ export default async function NewActivityFromExperimentPage({
   if (!exp) notFound();
 
   // Cast JSON fields to proper types for ActivityForm
-  const experiment = {
+  const experiment: {
+    id: string;
+    name: string;
+    subject: string;
+    gradeId: string;
+    learningAreaId: string;
+    aim: string;
+    materials: string[];
+    procedure: string[];
+    safetyNotes: string[];
+    expectedResults: string;
+    relatedConcepts: string[];
+    grade: { name: string };
+    learningArea: { name: string };
+  } = {
     id: exp.id,
     name: exp.name,
     subject: exp.subject,
     gradeId: exp.gradeId,
     learningAreaId: exp.learningAreaId,
     aim: exp.aim,
-    materials: (exp.materials as string[]) || [],
-    procedure: (exp.procedure as string[]) || [],
-    safetyNotes: (exp.safetyNotes as string[]) || [],
+    materials: Array.isArray(exp.materials) ? exp.materials : [],
+    procedure: Array.isArray(exp.procedure) ? exp.procedure : [],
+    safetyNotes: Array.isArray(exp.safetyNotes) ? exp.safetyNotes : [],
     expectedResults: exp.expectedResults,
-    relatedConcepts: (exp.relatedConcepts as string[]) || [],
+    relatedConcepts: Array.isArray(exp.relatedConcepts) ? exp.relatedConcepts : [],
     grade: exp.grade,
     learningArea: exp.learningArea,
   };
