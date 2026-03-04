@@ -29,6 +29,7 @@ import {
   Trash2,
   ChevronDown,
   ChevronRight,
+  Save,
 } from "lucide-react";
 
 // ─── Types ───
@@ -1057,7 +1058,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               </div>
               <p className="text-xs text-muted-foreground">
                 Distributes {selectedSubStrandIds.length} subtopics across Week {firstWeek}–{lastWeek}, {lessonsPerWeek} lessons/week.
-                {entries.length > 0 && " Click 'Enhance with AI' to improve objectives, activities, and teaching aids."}
+                {entries.length > 0 && " You can edit entries in the table below, then click 'Save Scheme' when ready."}
               </p>
               {aiError && (
                 <p className="text-xs text-red-600">{aiError}</p>
@@ -1163,10 +1164,12 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               <Button type="button" variant="outline" onClick={() => setStep(3)}>
                 <ArrowLeft className="h-4 w-4 mr-2" /> Back
               </Button>
-              <Button type="submit" disabled={pending || entries.length === 0}>
-                {pending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Eye className="h-4 w-4 mr-2" />}
-                Save & Preview
-              </Button>
+              {entries.length > 0 && (
+                <Button type="submit" disabled={pending}>
+                  {pending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+                  Save Scheme
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
