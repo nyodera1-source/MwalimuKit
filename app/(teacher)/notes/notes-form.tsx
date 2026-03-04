@@ -353,7 +353,7 @@ export function NotesForm({ defaultGradeId, defaults, isEdit }: NotesFormProps) 
               ) : (
                 <Save className="h-4 w-4 mr-2" />
               )}
-              Save Draft
+              Save
             </Button>
             <Button
               type="button"
@@ -365,7 +365,7 @@ export function NotesForm({ defaultGradeId, defaults, isEdit }: NotesFormProps) 
               ) : (
                 <Check className="h-4 w-4 mr-2" />
               )}
-              Publish
+              Finish
             </Button>
           </div>
         </div>
