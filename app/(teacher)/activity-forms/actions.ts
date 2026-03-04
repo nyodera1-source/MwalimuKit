@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 
 // ─── Create Activity Form ───
 
-export async function createActivityForm(formData: FormData) {
+export async function createActivityForm(prevState: { error?: string } | null, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
 
@@ -53,7 +53,7 @@ export async function createActivityForm(formData: FormData) {
 
 // ─── Update Activity Form ───
 
-export async function updateActivityForm(formData: FormData) {
+export async function updateActivityForm(prevState: { error?: string } | null, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
 
