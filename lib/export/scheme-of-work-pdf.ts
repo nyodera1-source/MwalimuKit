@@ -7,7 +7,7 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 10;
   const contentWidth = pageWidth - margin * 2;
-  const MAX_PAGES = 3;
+  const MAX_PAGES = 4; // 1 cover page + 3 content pages
   let truncated = false;
   let entriesOmitted = 0;
 
