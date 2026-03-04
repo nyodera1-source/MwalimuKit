@@ -27,6 +27,7 @@ model User {
   schemesOfWork SchemeOfWork[]
   exams         Exam[]
   teachingNotes TeachingNotes[]
+  activityForms ActivityForm[]
 
   @@map("users")
 }
@@ -38,12 +39,14 @@ model Grade {
   level Int    @unique
   name  String
 
-  learningAreas LearningArea[]
-  users         User[]
-  lessonPlans   LessonPlan[]
-  schemesOfWork SchemeOfWork[]
-  exams         Exam[]
-  teachingNotes TeachingNotes[]
+  learningAreas  LearningArea[]
+  users          User[]
+  lessonPlans    LessonPlan[]
+  schemesOfWork  SchemeOfWork[]
+  exams          Exam[]
+  teachingNotes  TeachingNotes[]
+  labExperiments LabExperiment[]
+  activityForms  ActivityForm[]
 
   @@map("grades")
 }
@@ -57,10 +60,12 @@ model LearningArea {
   grade   Grade    @relation(fields: [gradeId], references: [id], onDelete: Cascade)
   strands Strand[]
 
-  lessonPlans   LessonPlan[]
-  schemesOfWork SchemeOfWork[]
-  exams         Exam[]
-  teachingNotes TeachingNotes[]
+  lessonPlans    LessonPlan[]
+  schemesOfWork  SchemeOfWork[]
+  exams          Exam[]
+  teachingNotes  TeachingNotes[]
+  labExperiments LabExperiment[]
+  activityForms  ActivityForm[]
 
   @@unique([gradeId, name])
   @@map("learning_areas")
@@ -291,4 +296,56 @@ model TeachingNotes {
   subStrand    SubStrand    @relation(fields: [subStrandId], references: [id])
 
   @@map("teaching_notes")
+}
+
+// ─── ACTIVITY FORMS (Lab Reports, Practicals) ───
+
+model LabExperiment {
+  id             String   @id @default(cuid())
+  name           String                          // "Testing for Starch in Foods"
+  subject        String                          // "Biology", "Chemistry", "Physics"
+  gradeId        String   @map("grade_id")
+  learningAreaId String   @map("learning_area_id")
+  strandId       String?  @map("strand_id")
+  aim            String                          // Experiment objective
+  materials      Json                            // Array of materials needed
+  procedure      Json                            // Array of numbered steps
+  safetyNotes    Json     @map("safety_notes")  // Array of safety precautions
+  expectedResults String  @map("expected_results")
+  relatedConcepts Json    @map("related_concepts") // Array of concepts/theories
+  sloIds         String[] @map("slo_ids")        // References to related SLOs
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  grade        Grade        @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+
+  activityForms ActivityForm[]
+
+  @@map("lab_experiments")
+}
+
+model ActivityForm {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  experimentId    String   @map("experiment_id")
+  gradeId         String   @map("grade_id")
+  learningAreaId  String   @map("learning_area_id")
+  title           String?                         // Optional custom title
+  activityDate    DateTime @map("activity_date")  // Date of the activity
+  classGroup      String?  @map("class_group")    // e.g., "Form 2 East"
+  observations    String?                         // Student observations (teacher fills)
+  results         String?                         // Results recorded
+  teacherNotes    String?  @map("teacher_notes")  // Additional teacher notes
+  teacherCopy     Json?    @map("teacher_copy")   // AI-generated discussion/answers
+  status          String   @default("draft")      // "draft" | "completed"
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  experiment   LabExperiment @relation(fields: [experimentId], references: [id])
+  grade        Grade         @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea  @relation(fields: [learningAreaId], references: [id])
+
+  @@map("activity_forms")
 }
