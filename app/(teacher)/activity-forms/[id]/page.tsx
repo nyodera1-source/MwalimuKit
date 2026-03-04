@@ -31,32 +31,18 @@ export default async function EditActivityFormPage({
   if (!form || form.userId !== session.user.id) notFound();
 
   // Cast JSON fields to proper types for ActivityForm
-  const experiment: {
-    id: string;
-    name: string;
-    subject: string;
-    gradeId: string;
-    learningAreaId: string;
-    aim: string;
-    materials: string[];
-    procedure: string[];
-    safetyNotes: string[];
-    expectedResults: string;
-    relatedConcepts: string[];
-    grade: { name: string };
-    learningArea: { name: string };
-  } = {
+  const experiment = {
     id: form.experiment.id,
     name: form.experiment.name,
     subject: form.experiment.subject,
     gradeId: form.experiment.gradeId,
     learningAreaId: form.experiment.learningAreaId,
     aim: form.experiment.aim,
-    materials: Array.isArray(form.experiment.materials) ? form.experiment.materials : [],
-    procedure: Array.isArray(form.experiment.procedure) ? form.experiment.procedure : [],
-    safetyNotes: Array.isArray(form.experiment.safetyNotes) ? form.experiment.safetyNotes : [],
+    materials: (form.experiment.materials || []) as string[],
+    procedure: (form.experiment.procedure || []) as string[],
+    safetyNotes: (form.experiment.safetyNotes || []) as string[],
     expectedResults: form.experiment.expectedResults,
-    relatedConcepts: Array.isArray(form.experiment.relatedConcepts) ? form.experiment.relatedConcepts : [],
+    relatedConcepts: (form.experiment.relatedConcepts || []) as string[],
     grade: form.experiment.grade,
     learningArea: form.experiment.learningArea,
   };
