@@ -18,6 +18,7 @@ import {
 import { CascadeDropdown, type CascadeSelection } from "@/components/cbe/cascade-dropdown";
 import { createSchemeOfWork, updateSchemeOfWork } from "./actions";
 import { getReferenceBookOptions } from "@/lib/data/reference-books";
+import { BREAK_TYPES, getPublicHolidayOptions } from "@/lib/data/scheme-breaks";
 import {
   ArrowRight,
   ArrowLeft,
@@ -48,6 +49,8 @@ interface BreakEntry {
   title: string;
   weekNumber: number;
   duration: number;
+  breakType?: string; // Selected break type from dropdown
+  customTitle?: string; // Only used when breakType is "Custom"
 }
 
 interface LessonEntry {
@@ -227,7 +230,13 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
   const addBreak = () => {
     setBreaks((prev) => [
       ...prev,
-      { title: "", weekNumber: Math.ceil((firstWeek + lastWeek) / 2), duration: 1 },
+      {
+        title: "Mid-Term Break",
+        breakType: "Mid-Term Break",
+        weekNumber: Math.ceil((firstWeek + lastWeek) / 2),
+        duration: 1,
+        customTitle: "",
+      },
     ]);
   };
 
@@ -935,14 +944,60 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
-                        <Label className="text-xs">Title of Break/Interruption</Label>
-                        <Input
-                          value={b.title}
-                          onChange={(e) => updateBreak(index, { title: e.target.value })}
-                          placeholder="e.g., Mid Term, Exams, Reporting..."
-                          className="text-sm"
-                        />
+                        <Label className="text-xs">Type of Break/Interruption</Label>
+                        <Select
+                          value={b.breakType || "Mid-Term Break"}
+                          onValueChange={(v) => {
+                            const updates: Partial<BreakEntry> = { breakType: v };
+                            // Set title based on break type
+                            if (v === "Public Holiday") {
+                              updates.title = ""; // Will be set when holiday is selected
+                            } else if (v === "Custom (Type your own)") {
+                              updates.title = b.customTitle || "";
+                            } else {
+                              updates.title = v;
+                            }
+                            updateBreak(index, updates);
+                          }}
+                        >
+                          <SelectTrigger className="text-sm"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {BREAK_TYPES.map((type) => (
+                              <SelectItem key={type} value={type}>{type}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
+                      {b.breakType === "Public Holiday" && (
+                        <div>
+                          <Label className="text-xs">Select Holiday</Label>
+                          <Select
+                            value={b.title}
+                            onValueChange={(v) => updateBreak(index, { title: v })}
+                          >
+                            <SelectTrigger className="text-sm"><SelectValue placeholder="Choose holiday" /></SelectTrigger>
+                            <SelectContent>
+                              {getPublicHolidayOptions().map((holiday) => (
+                                <SelectItem key={holiday} value={holiday}>{holiday}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                      {b.breakType === "Custom (Type your own)" && (
+                        <div>
+                          <Label className="text-xs">Custom Title</Label>
+                          <Input
+                            value={b.customTitle || ""}
+                            onChange={(e) => {
+                              const custom = e.target.value;
+                              updateBreak(index, { customTitle: custom, title: custom });
+                            }}
+                            placeholder="Enter custom break name"
+                            className="text-sm"
+                          />
+                        </div>
+                      )}
                       <div>
                         <Label className="text-xs">How long? (weeks)</Label>
                         <Select value={String(b.duration)} onValueChange={(v) => updateBreak(index, { duration: Number(v) })}>
