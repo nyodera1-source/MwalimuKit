@@ -149,7 +149,7 @@ export default async function PreviewActivityFormPage({
             <div>
               <h4 className="text-sm font-semibold mb-1">Related Concepts</h4>
               <div className="flex flex-wrap gap-1">
-                {exp.relatedConcepts.map((concept, idx) => (
+                {((exp.relatedConcepts as string[]) || []).map((concept, idx) => (
                   <Badge key={idx} variant="outline" className="text-xs">
                     {concept}
                   </Badge>
