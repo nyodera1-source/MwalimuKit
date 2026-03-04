@@ -69,10 +69,18 @@ IMPORTANT RULES:
   * Development: ~${devTime} minutes (main teaching-learning activities)
   * Conclusion: ~${conclusionTime} minutes (recap, assignment, reflection)
 - For activities: use learner-centered approaches (group work, pair work, experiments, role play, demonstrations)
-- Weave core competencies naturally into activities — don't just list them
 - Resources should be locally available in Kenyan schools
 - Assessment should be formative and practical
 - Write objectives starting with "By the end of the lesson, the learner should be able to:"
+
+CRITICAL - COMPETENCY-BASED APPROACH:
+CBC emphasizes developing core competencies through every lesson. You MUST:
+1. Design each teaching activity to EXPLICITLY develop one or more of the selected competencies
+2. In your activities description, show HOW each activity develops specific competencies
+   Example: "Learners work in groups to solve problems (develops Critical Thinking and Communication)"
+3. Ensure assessment measures competency demonstration, not just content recall
+4. Make competencies visible and intentional — teachers should see exactly which competency each activity targets
+5. Vary activities to develop different competencies throughout the lesson
 
 Return your response as a JSON object with these exact keys:
 {
@@ -101,10 +109,14 @@ Duration: ${duration} minutes
 Specific Learning Outcomes (SLOs):
 ${sloList}
 
-Core Competencies to integrate:
+Core Competencies to EXPLICITLY develop through this lesson:
 ${competencyList}
 
-Generate a complete, ready-to-teach lesson plan.`;
+IMPORTANT: Design ALL teaching activities to intentionally develop these specific competencies.
+In each activity description, show HOW that activity develops the competencies (e.g., "group discussion develops Communication and Collaboration").
+Ensure your assessment measures competency demonstration, not just knowledge recall.
+
+Generate a complete, competency-focused, ready-to-teach lesson plan.`;
 
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-5-20250929",
