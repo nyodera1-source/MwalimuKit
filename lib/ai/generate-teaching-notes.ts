@@ -120,6 +120,13 @@ Please generate comprehensive teaching notes covering all the SLOs above.`;
   jsonStr = jsonStr.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
   jsonStr = jsonStr.trim();
 
+  // Debug logging
+  console.log("=== AI Response Debug ===");
+  console.log("Raw text length:", text.length);
+  console.log("First 200 chars:", text.substring(0, 200));
+  console.log("After fence removal:", jsonStr.substring(0, 200));
+  console.log("========================");
+
   try {
     const parsed = JSON.parse(jsonStr) as GeneratedNotes;
     return {
@@ -131,7 +138,9 @@ Please generate comprehensive teaching notes covering all the SLOs above.`;
       assessmentQuestions: parsed.assessmentQuestions || "",
       teacherTips: parsed.teacherTips || "",
     };
-  } catch {
+  } catch (parseError) {
+    console.error("JSON parse error:", parseError);
+    console.error("Failed to parse JSON string:", jsonStr.substring(0, 500));
     // If JSON parsing fails, try to salvage by finding last complete }
     const lastBrace = jsonStr.lastIndexOf("}");
     if (lastBrace > 0) {
