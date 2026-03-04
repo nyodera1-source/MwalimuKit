@@ -160,7 +160,7 @@ export async function duplicateActivityForm(id: string) {
         observations: original.observations,
         results: original.results,
         teacherNotes: original.teacherNotes,
-        teacherCopy: original.teacherCopy,
+        teacherCopy: original.teacherCopy ? original.teacherCopy as any : undefined,
         status: "draft",
       },
     });
