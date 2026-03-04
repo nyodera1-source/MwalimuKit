@@ -7,6 +7,9 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 10;
   const contentWidth = pageWidth - margin * 2;
+  const MAX_PAGES = 3;
+  let truncated = false;
+  let entriesOmitted = 0;
 
   // ════════════════════════════════════════
   // PAGE 1: COVER PAGE
@@ -91,13 +94,29 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
     y += headerHeight;
   }
 
-  function checkPageBreak(needed: number) {
-    if (y + needed > pageHeight - margin - 12) {
-      doc.addPage();
-      y = margin;
-      drawPageHeader();
-      drawTableHeader();
+  function checkPageBreak(needed: number): boolean {
+    const currentPage = doc.getNumberOfPages();
+
+    // If we're on the last allowed page and adding content would exceed it, truncate
+    if (currentPage >= MAX_PAGES && y + needed > pageHeight - margin - 12) {
+      truncated = true;
+      return false; // Signal to stop adding content
     }
+
+    // If adding content would exceed current page but we can add another page
+    if (y + needed > pageHeight - margin - 12) {
+      if (currentPage < MAX_PAGES) {
+        doc.addPage();
+        y = margin;
+        drawPageHeader();
+        drawTableHeader();
+        return true;
+      } else {
+        truncated = true;
+        return false;
+      }
+    }
+    return true;
   }
 
   drawPageHeader();
@@ -138,13 +157,19 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
     return a.kind === "break" ? -1 : 1;
   });
 
-  for (const item of displayItems) {
+  for (let idx = 0; idx < displayItems.length; idx++) {
+    const item = displayItems[idx];
+
     if (item.kind === "break") {
       const { startWeek, endWeek, title } = item.row;
       const weekLabel = startWeek === endWeek ? String(startWeek) : `${startWeek}-${endWeek}`;
 
       const rowHeight = 7;
-      checkPageBreak(rowHeight + 1);
+      if (!checkPageBreak(rowHeight + 1)) {
+        // Count remaining items (excluding breaks for accuracy)
+        entriesOmitted = displayItems.slice(idx).filter(i => i.kind === "lesson").length;
+        break;
+      }
 
       doc.setFillColor(...LIGHT_BG);
       doc.rect(margin, y, cols[0], rowHeight, "FD");
@@ -188,7 +213,11 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
     }
 
     const rowHeight = Math.max(6, maxLines * LINE_HEIGHT + 2);
-    checkPageBreak(rowHeight + 1);
+    if (!checkPageBreak(rowHeight + 1)) {
+      // Count remaining items
+      entriesOmitted = displayItems.slice(idx).filter(i => i.kind === "lesson").length;
+      break;
+    }
 
     let x = margin;
     for (let i = 0; i < cols.length; i++) {
@@ -200,6 +229,25 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
       x += cols[i];
     }
     y += rowHeight;
+  }
+
+  // Add truncation notice if entries were omitted
+  if (truncated && entriesOmitted > 0) {
+    y += 2;
+    const noticeHeight = 8;
+    // Draw notice box spanning full table width
+    doc.setFillColor(255, 243, 224); // Light orange background
+    doc.rect(margin, y, contentWidth, noticeHeight, "F");
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(180, 83, 9); // Orange text
+    doc.text(
+      `⚠ ${entriesOmitted} week(s) omitted to fit 3-page limit. Reduce content or split into multiple schemes.`,
+      pageWidth / 2,
+      y + 5,
+      { align: "center" }
+    );
+    doc.setTextColor(0, 0, 0);
   }
 
   // ── Footer: Page numbers + school name ──
