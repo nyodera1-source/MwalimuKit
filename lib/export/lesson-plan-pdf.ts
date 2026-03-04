@@ -8,8 +8,8 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   const contentWidth = pageWidth - margin * 2;
   let y = margin;
 
-  const BLUE = [37, 99, 235] as const;
-  const GRAY_BG = [245, 245, 245] as const;
+  const HEADER_COLOR = [55, 65, 81] as const; // Professional dark gray (gray-700)
+  const GRAY_BG = [249, 250, 251] as const; // Light gray (gray-50)
   const LINE_HEIGHT = 5;
 
   function checkPageBreak(needed: number) {
@@ -22,7 +22,7 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
 
   function drawSectionHeader(title: string) {
     checkPageBreak(10);
-    doc.setFillColor(...BLUE);
+    doc.setFillColor(...HEADER_COLOR);
     doc.rect(margin, y, contentWidth, 7, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
@@ -90,7 +90,7 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   // "LESSON PLAN" header
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(...BLUE);
+  doc.setTextColor(...HEADER_COLOR);
   doc.text("LESSON PLAN", pageWidth / 2, y, { align: "center" });
   y += 8;
 
@@ -104,7 +104,7 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   }
 
   // Divider line
-  doc.setDrawColor(...BLUE);
+  doc.setDrawColor(...HEADER_COLOR);
   doc.setLineWidth(0.5);
   doc.line(margin, y, pageWidth - margin, y);
   y += 5;
@@ -112,7 +112,7 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   // Title
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(...BLUE);
+  doc.setTextColor(...HEADER_COLOR);
   const titleLines = doc.splitTextToSize(data.title, contentWidth);
   doc.text(titleLines, pageWidth / 2, y, { align: "center" });
   y += titleLines.length * 6 + 2;

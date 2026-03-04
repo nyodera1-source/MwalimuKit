@@ -60,8 +60,8 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
     "T/L ACTIVITIES", "T/L AIDS", "REFERENCE", "REMARKS",
   ];
 
-  const BLUE = [37, 99, 235] as const;
-  const AMBER_BG = [255, 251, 235] as const;
+  const HEADER_COLOR = [55, 65, 81] as const; // Professional dark gray
+  const LIGHT_BG = [249, 250, 251] as const; // Light gray background
   const LINE_HEIGHT = 3.5;
 
   function drawPageHeader() {
@@ -79,7 +79,7 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
     const headerHeight = 8;
     let x = margin;
     for (let i = 0; i < headers.length; i++) {
-      doc.setFillColor(...BLUE);
+      doc.setFillColor(...HEADER_COLOR);
       doc.rect(x, y, cols[i], headerHeight, "F");
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(8);
@@ -146,7 +146,7 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
       const rowHeight = 7;
       checkPageBreak(rowHeight + 1);
 
-      doc.setFillColor(...AMBER_BG);
+      doc.setFillColor(...LIGHT_BG);
       doc.rect(margin, y, cols[0], rowHeight, "FD");
       doc.setFontSize(7);
       doc.setFont("helvetica", "bold");
@@ -154,7 +154,7 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
       doc.text(weekLabel, margin + 2, y + 4.5);
 
       const mergedWidth = contentWidth - cols[0];
-      doc.setFillColor(...AMBER_BG);
+      doc.setFillColor(...LIGHT_BG);
       doc.rect(margin + cols[0], y, mergedWidth, rowHeight, "FD");
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
