@@ -109,7 +109,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
   const [step, setStep] = useState(1);
 
-  // Step 1: Subject & School Details
+  // Step 1: Learning Area & School Details
   const [gradeId, setGradeId] = useState(defaults?.gradeId || "");
   const [learningAreaId, setLearningAreaId] = useState(defaults?.learningAreaId || "");
   const [title, setTitle] = useState(defaults?.title || "");
@@ -568,62 +568,22 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
         ))}
       </div>
 
-      {/* ─── Step 1: Subject & School Details ─── */}
+      {/* ─── Step 1: Learning Area & School Details ─── */}
       {step === 1 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Subject & School Details</CardTitle>
+            <CardTitle className="text-lg">Learning Area & School Details</CardTitle>
             <p className="text-sm text-muted-foreground">Fields marked with * are mandatory</p>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="schoolName">School</Label>
-                <Input
-                  id="schoolName"
-                  value={schoolName}
-                  onChange={(e) => setSchoolName(e.target.value)}
-                  placeholder="e.g., Lions High School"
-                />
-              </div>
-              <div>
-                <Label htmlFor="referenceBook">Reference Book (KICD Approved)</Label>
-                <Select
-                  value={referenceBook}
-                  onValueChange={(val) => {
-                    setReferenceBook(val);
-                    if (val !== "Other (specify below)") setCustomReferenceBook("");
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select reference book" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cascadeNames.grade && cascadeNames.learningArea ? (
-                      getReferenceBookOptions(
-                        cascadeNames.grade,
-                        cascadeNames.learningArea
-                      ).map((book) => (
-                        <SelectItem key={book} value={book}>
-                          {book}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="none" disabled>
-                        Select grade and subject first
-                      </SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-                {referenceBook === "Other (specify below)" && (
-                  <Input
-                    className="mt-2"
-                    placeholder="Enter custom reference book"
-                    value={customReferenceBook}
-                    onChange={(e) => setCustomReferenceBook(e.target.value)}
-                  />
-                )}
-              </div>
+            <div>
+              <Label htmlFor="schoolName">School</Label>
+              <Input
+                id="schoolName"
+                value={schoolName}
+                onChange={(e) => setSchoolName(e.target.value)}
+                placeholder="e.g., Lions High School"
+              />
             </div>
 
             <CascadeDropdown
@@ -637,6 +597,45 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               showStrand={false}
               showSLO={false}
             />
+
+            <div>
+              <Label htmlFor="referenceBook">Reference Book (KICD Approved)</Label>
+              <Select
+                value={referenceBook}
+                onValueChange={(val) => {
+                  setReferenceBook(val);
+                  if (val !== "Other (specify below)") setCustomReferenceBook("");
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select reference book" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cascadeNames.grade && cascadeNames.learningArea ? (
+                    getReferenceBookOptions(
+                      cascadeNames.grade,
+                      cascadeNames.learningArea
+                    ).map((book) => (
+                      <SelectItem key={book} value={book}>
+                        {book}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="none" disabled>
+                      Select grade and learning area first
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+              {referenceBook === "Other (specify below)" && (
+                <Input
+                  className="mt-2"
+                  placeholder="Enter custom reference book"
+                  value={customReferenceBook}
+                  onChange={(e) => setCustomReferenceBook(e.target.value)}
+                />
+              )}
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
