@@ -104,7 +104,7 @@ Please generate comprehensive teaching notes covering all the SLOs above.`;
 
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-5-20250929",
-    max_tokens: 4096,
+    max_tokens: 8192, // Increased from 4096 - teaching notes need more space for 7 sections
     system: systemPrompt,
     messages: [{ role: "user", content: userPrompt }],
   });
@@ -141,7 +141,37 @@ Please generate comprehensive teaching notes covering all the SLOs above.`;
   } catch (parseError) {
     console.error("JSON parse error:", parseError);
     console.error("Failed to parse JSON string:", jsonStr.substring(0, 500));
-    // If JSON parsing fails, try to salvage by finding last complete }
+
+    // Check if truncated (unterminated string error)
+    const isTruncated = parseError instanceof SyntaxError &&
+                        parseError.message.includes("Unterminated string");
+
+    if (isTruncated) {
+      console.warn("Response appears truncated. Attempting to salvage...");
+      // Find the last complete field by looking for the last comma or opening brace
+      // Then close the unterminated string and object
+      const lastComma = jsonStr.lastIndexOf('",');
+      if (lastComma > 0) {
+        try {
+          const salvaged = jsonStr.slice(0, lastComma + 1) + "\n}";
+          const parsed = JSON.parse(salvaged) as GeneratedNotes;
+          console.log("Successfully salvaged truncated response");
+          return {
+            introduction: parsed.introduction || "",
+            keyConcepts: parsed.keyConcepts || "",
+            detailedExplanations: parsed.detailedExplanations || "",
+            examples: parsed.examples || "",
+            studentActivities: parsed.studentActivities || "",
+            assessmentQuestions: parsed.assessmentQuestions || "",
+            teacherTips: parsed.teacherTips || "",
+          };
+        } catch (salvageError) {
+          console.error("Salvage attempt failed:", salvageError);
+        }
+      }
+    }
+
+    // Try traditional salvage method
     const lastBrace = jsonStr.lastIndexOf("}");
     if (lastBrace > 0) {
       try {
