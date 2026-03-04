@@ -115,10 +115,10 @@ Please generate comprehensive teaching notes covering all the SLOs above.`;
 
   // Parse JSON — handle markdown code fences
   let jsonStr = text.trim();
-  const fenceMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (fenceMatch) {
-    jsonStr = fenceMatch[1].trim();
-  }
+
+  // Remove markdown code fences (handles ```json, ```, or incomplete fences)
+  jsonStr = jsonStr.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
+  jsonStr = jsonStr.trim();
 
   try {
     const parsed = JSON.parse(jsonStr) as GeneratedNotes;

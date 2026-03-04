@@ -172,13 +172,21 @@ export default async function PreviewNotesPage({
           {SECTIONS.map(({ key, label }) => {
             const value = content[key];
             if (!value) return null;
+
+            // Split into paragraphs and render with proper spacing
+            const paragraphs = value.split(/\n\n+/).filter(p => p.trim());
+
             return (
               <Card key={key}>
                 <CardHeader>
                   <CardTitle className="text-lg">{label}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm whitespace-pre-wrap">{value}</p>
+                <CardContent className="prose prose-sm max-w-none">
+                  {paragraphs.map((para, idx) => (
+                    <p key={idx} className="mb-3 last:mb-0 text-sm leading-relaxed whitespace-pre-wrap">
+                      {para.trim()}
+                    </p>
+                  ))}
                 </CardContent>
               </Card>
             );
