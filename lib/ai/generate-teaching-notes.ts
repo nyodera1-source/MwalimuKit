@@ -77,6 +77,14 @@ IMPORTANT RULES:
 - For Languages: include vocabulary, sentence structures, and communication activities
 - For Humanities: include key facts, dates, and analytical frameworks
 
+FORMATTING RULES:
+- DO NOT use Markdown syntax (no **, *, #, etc.)
+- Use CAPITALIZATION for emphasis instead of bold (e.g., "IMPORTANT NOTE:")
+- Use numbered lists: 1. 2. 3. or lettered lists: a) b) c)
+- Use bullet points with dashes: - Point one
+- Separate sections with double line breaks
+- Keep formatting clean and readable as plain text
+
 Return your response as a JSON object with these exact keys:
 {
   "introduction": "...",
@@ -88,7 +96,9 @@ Return your response as a JSON object with these exact keys:
   "teacherTips": "..."
 }
 
-Each value should be a multi-paragraph string with rich content. Use numbered lists, bullet points, and clear formatting within each section.`;
+Each value should be a multi-paragraph string with rich content.
+Use numbered lists (1. 2. 3.), bullet points (- item), and clear formatting.
+CRITICAL: Do NOT use Markdown syntax (**bold**, *italic*, etc.) - use plain text with CAPITALIZATION for emphasis.`;
 
   const userPrompt = `Create ${noteType} notes for:
 
