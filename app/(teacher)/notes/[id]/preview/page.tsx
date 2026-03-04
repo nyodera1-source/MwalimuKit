@@ -55,11 +55,42 @@ export default async function PreviewNotesPage({
         dangerouslySetInnerHTML={{
           __html: `
             .preview-protected {
-              -webkit-user-select: none;
-              -moz-user-select: none;
-              -ms-user-select: none;
-              user-select: none;
+              -webkit-user-select: none !important;
+              -moz-user-select: none !important;
+              -ms-user-select: none !important;
+              user-select: none !important;
+              -webkit-touch-callout: none !important;
             }
+            .preview-protected * {
+              -webkit-user-select: none !important;
+              -moz-user-select: none !important;
+              -ms-user-select: none !important;
+              user-select: none !important;
+              -webkit-touch-callout: none !important;
+            }
+            .preview-protected::selection {
+              background: transparent;
+            }
+            .preview-protected *::selection {
+              background: transparent;
+            }
+          `,
+        }}
+      />
+
+      {/* Disable context menu and selection */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            document.addEventListener('DOMContentLoaded', function() {
+              const protected = document.querySelector('.preview-protected');
+              if (protected) {
+                protected.addEventListener('contextmenu', e => e.preventDefault());
+                protected.addEventListener('copy', e => e.preventDefault());
+                protected.addEventListener('cut', e => e.preventDefault());
+                protected.addEventListener('selectstart', e => e.preventDefault());
+              }
+            });
           `,
         }}
       />
