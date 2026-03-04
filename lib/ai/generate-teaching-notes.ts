@@ -69,13 +69,15 @@ ${getNoteTypeInstruction(noteType)}
 
 IMPORTANT RULES:
 - Content must be appropriate for ${grade} level
-- Use Kenyan context, examples, and references where possible
+- Use natural, locally-relevant examples without being overly specific about companies/organizations
 - Align strictly to the provided Specific Learning Outcomes (SLOs)
 - Use clear, teacher-friendly language
 - Include enough detail that a teacher can teach directly from these notes
 - For Mathematics/Science: include worked examples with step-by-step solutions
 - For Languages: include vocabulary, sentence structures, and communication activities
 - For Humanities: include key facts, dates, and analytical frameworks
+- Examples should feel natural and authentic, not obviously AI-generated
+- Avoid phrases like "Kenya-specific" or "Kenyan examples" - just use them naturally
 
 FORMATTING RULES:
 - DO NOT use Markdown syntax (no **, *, #, etc.)

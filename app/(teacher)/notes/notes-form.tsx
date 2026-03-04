@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Sparkles, Save, Check } from "lucide-react";
+import { Loader2, Save, Check } from "lucide-react";
 import { createTeachingNotes, updateTeachingNotes } from "./actions";
 
 // ─── Types ───
@@ -292,16 +292,12 @@ export function NotesForm({ defaultGradeId, defaults, isEdit }: NotesFormProps) 
                 disabled={generating || !subStrandId}
                 variant={hasContent ? "outline" : "default"}
               >
-                {generating ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Sparkles className="h-4 w-4 mr-2" />
-                )}
-                {hasContent ? "Regenerate Notes" : "Generate Notes with AI"}
+                {generating && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                {hasContent ? "Regenerate Notes" : "Generate Notes"}
               </Button>
               {!subStrandId && (
                 <p className="text-xs text-muted-foreground">
-                  Select curriculum above to enable AI generation
+                  Select curriculum above to enable generation
                 </p>
               )}
             </div>
