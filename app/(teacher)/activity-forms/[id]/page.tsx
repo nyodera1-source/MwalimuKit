@@ -30,6 +30,23 @@ export default async function EditActivityFormPage({
 
   if (!form || form.userId !== session.user.id) notFound();
 
+  // Cast JSON fields to proper types for ActivityForm
+  const experiment = {
+    id: form.experiment.id,
+    name: form.experiment.name,
+    subject: form.experiment.subject,
+    gradeId: form.experiment.gradeId,
+    learningAreaId: form.experiment.learningAreaId,
+    aim: form.experiment.aim,
+    materials: (form.experiment.materials as string[]) || [],
+    procedure: (form.experiment.procedure as string[]) || [],
+    safetyNotes: (form.experiment.safetyNotes as string[]) || [],
+    expectedResults: form.experiment.expectedResults,
+    relatedConcepts: (form.experiment.relatedConcepts as string[]) || [],
+    grade: form.experiment.grade,
+    learningArea: form.experiment.learningArea,
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
@@ -48,7 +65,7 @@ export default async function EditActivityFormPage({
 
       {/* Form */}
       <ActivityForm
-        experiment={form.experiment}
+        experiment={experiment}
         defaults={{
           id: form.id,
           title: form.title,

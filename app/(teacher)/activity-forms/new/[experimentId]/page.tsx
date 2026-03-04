@@ -16,7 +16,7 @@ export default async function NewActivityFromExperimentPage({
 
   const { experimentId } = await params;
 
-  const experiment = await prisma.labExperiment.findUnique({
+  const exp = await prisma.labExperiment.findUnique({
     where: { id: experimentId },
     include: {
       grade: { select: { name: true } },
@@ -24,7 +24,24 @@ export default async function NewActivityFromExperimentPage({
     },
   });
 
-  if (!experiment) notFound();
+  if (!exp) notFound();
+
+  // Cast JSON fields to proper types for ActivityForm
+  const experiment = {
+    id: exp.id,
+    name: exp.name,
+    subject: exp.subject,
+    gradeId: exp.gradeId,
+    learningAreaId: exp.learningAreaId,
+    aim: exp.aim,
+    materials: (exp.materials as string[]) || [],
+    procedure: (exp.procedure as string[]) || [],
+    safetyNotes: (exp.safetyNotes as string[]) || [],
+    expectedResults: exp.expectedResults,
+    relatedConcepts: (exp.relatedConcepts as string[]) || [],
+    grade: exp.grade,
+    learningArea: exp.learningArea,
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
