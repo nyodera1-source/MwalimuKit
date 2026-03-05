@@ -7,6 +7,7 @@ export interface ActivityFormExportData {
   learningArea: string;
   activityDate: Date;
   classGroup: string | null;
+  schoolName?: string | null;
   aim: string;
   materials: string[];
   procedure: string[];
@@ -90,6 +91,15 @@ export function generateStudentCopyPdf(data: ActivityFormExportData): Buffer {
       y += 6;
     }
     y += 3;
+  }
+
+  // ─── School Name (if provided) ───
+  if (data.schoolName) {
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...HEADER_COLOR);
+    doc.text(data.schoolName.toUpperCase(), pageWidth / 2, y, { align: "center" });
+    y += 7;
   }
 
   // ─── Title ───
@@ -269,6 +279,15 @@ export function generateTeacherCopyPdf(data: ActivityFormExportData): Buffer {
       }
     }
     y += 3;
+  }
+
+  // ─── School Name (if provided) ───
+  if (data.schoolName) {
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...HEADER_COLOR);
+    doc.text(data.schoolName.toUpperCase(), pageWidth / 2, y, { align: "center" });
+    y += 7;
   }
 
   // ─── Title ───
