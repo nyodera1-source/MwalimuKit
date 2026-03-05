@@ -45,8 +45,9 @@ model Grade {
   schemesOfWork  SchemeOfWork[]
   exams          Exam[]
   teachingNotes  TeachingNotes[]
-  labExperiments LabExperiment[]
-  activityForms  ActivityForm[]
+  labExperiments          LabExperiment[]
+  activityForms           ActivityForm[]
+  socialStudiesActivities SocialStudiesActivity[]
 
   @@map("grades")
 }
@@ -64,8 +65,9 @@ model LearningArea {
   schemesOfWork  SchemeOfWork[]
   exams          Exam[]
   teachingNotes  TeachingNotes[]
-  labExperiments LabExperiment[]
-  activityForms  ActivityForm[]
+  labExperiments          LabExperiment[]
+  activityForms           ActivityForm[]
+  socialStudiesActivities SocialStudiesActivity[]
 
   @@unique([gradeId, name])
   @@map("learning_areas")
@@ -82,7 +84,8 @@ model Strand {
 
   lessonPlans    LessonPlan[]
   teachingNotes  TeachingNotes[]
-  labExperiments LabExperiment[]
+  labExperiments          LabExperiment[]
+  socialStudiesActivities SocialStudiesActivity[]
 
   @@unique([learningAreaId, name])
   @@map("strands")
@@ -350,4 +353,31 @@ model ActivityForm {
   learningArea LearningArea  @relation(fields: [learningAreaId], references: [id])
 
   @@map("activity_forms")
+}
+
+// ─── SOCIAL STUDIES ACTIVITIES ───
+
+model SocialStudiesActivity {
+  id               String   @id @default(cuid())
+  name             String
+  activityType     String   @map("activity_type") // "map_work", "research", "debate", "field_study", "case_study"
+  gradeId          String   @map("grade_id")
+  learningAreaId   String   @map("learning_area_id")
+  strandId         String?  @map("strand_id")
+  aim              String
+  materials        Json                            // Array of materials/resources
+  instructions     Json                            // Array of activity steps
+  backgroundInfo   String   @map("background_info") // Context for the activity
+  expectedOutcome  String   @map("expected_outcome") // What students should produce
+  discussionPoints Json     @map("discussion_points") // Array of discussion questions
+  relatedConcepts  Json     @map("related_concepts")
+  sloIds           String[] @map("slo_ids")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  grade        Grade        @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+  strand       Strand?      @relation(fields: [strandId], references: [id])
+
+  @@map("social_studies_activities")
 }
