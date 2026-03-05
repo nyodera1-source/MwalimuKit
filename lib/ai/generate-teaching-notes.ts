@@ -9,6 +9,7 @@ export interface GenerateNotesInput {
   subStrand: string;
   sloDescriptions: string[];
   noteType: "lecture" | "discussion" | "revision";
+  fast?: boolean; // Use faster model for browse/preview generation
 }
 
 export interface GeneratedNotes {
@@ -115,8 +116,10 @@ ${sloList}
 Please generate comprehensive teaching notes covering all the SLOs above.`;
 
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 8192, // Increased from 4096 - teaching notes need more space for 7 sections
+    model: input.fast
+      ? "claude-haiku-4-5-20251001"
+      : "claude-sonnet-4-5-20250929",
+    max_tokens: input.fast ? 4096 : 8192,
     system: systemPrompt,
     messages: [{ role: "user", content: userPrompt }],
   });

@@ -173,7 +173,7 @@ export function NotesExplorer() {
 
     setNoteState("generating");
 
-    // Use the existing /api/notes/generate endpoint (known to work)
+    // Use the existing /api/notes/generate endpoint with fast mode (Haiku)
     const aiRes = await fetch("/api/notes/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -183,6 +183,7 @@ export function NotesExplorer() {
         strandId: selection.strandId,
         subStrandId,
         noteType: "lecture",
+        fast: true,
       }),
     });
 

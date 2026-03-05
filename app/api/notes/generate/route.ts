@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { gradeId, learningAreaId, strandId, subStrandId, noteType } = body;
+  const { gradeId, learningAreaId, strandId, subStrandId, noteType, fast } = body;
 
   if (!gradeId || !learningAreaId || !strandId || !subStrandId || !noteType) {
     return NextResponse.json(
@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
       subStrand: subStrand.name,
       sloDescriptions: slos.map((s) => s.description),
       noteType,
+      fast: !!fast,
     });
 
     return NextResponse.json({ notes });
