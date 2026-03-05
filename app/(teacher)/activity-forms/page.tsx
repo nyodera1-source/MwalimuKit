@@ -28,6 +28,7 @@ export default async function ActivityFormsPage() {
     include: {
       grade: { select: { name: true, level: true } },
       learningArea: { select: { name: true } },
+      strand: { select: { name: true } },
     },
     orderBy: [{ gradeId: "asc" }, { subject: "asc" }],
   });
@@ -119,8 +120,12 @@ export default async function ActivityFormsPage() {
                             {exp.aim}
                           </p>
                           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-                            <span>{materials.length} materials needed</span>
                             <span>{exp.learningArea.name}</span>
+                            {exp.strand && (
+                              <span className="text-pink-600 dark:text-pink-400 font-medium">
+                                {exp.strand.name}
+                              </span>
+                            )}
                           </div>
                         </CardContent>
                       </Card>

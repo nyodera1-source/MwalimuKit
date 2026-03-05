@@ -35,6 +35,7 @@ export default async function ExperimentPreviewPage({
     include: {
       grade: { select: { name: true } },
       learningArea: { select: { name: true } },
+      strand: { select: { name: true } },
     },
   });
 
@@ -74,6 +75,11 @@ export default async function ExperimentPreviewPage({
                       {experiment.subject}
                     </Badge>
                     <Badge variant="secondary">{experiment.learningArea.name}</Badge>
+                    {experiment.strand && (
+                      <Badge variant="outline" className="border-pink-300 text-pink-600 dark:border-pink-700 dark:text-pink-400">
+                        {experiment.strand.name}
+                      </Badge>
+                    )}
                   </div>
                 </div>
                 <FlaskConical className="h-8 w-8 text-muted-foreground shrink-0" />

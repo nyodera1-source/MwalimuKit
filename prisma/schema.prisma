@@ -80,8 +80,9 @@ model Strand {
   learningArea LearningArea @relation(fields: [learningAreaId], references: [id], onDelete: Cascade)
   subStrands   SubStrand[]
 
-  lessonPlans   LessonPlan[]
-  teachingNotes TeachingNotes[]
+  lessonPlans    LessonPlan[]
+  teachingNotes  TeachingNotes[]
+  labExperiments LabExperiment[]
 
   @@unique([learningAreaId, name])
   @@map("strands")
@@ -319,6 +320,7 @@ model LabExperiment {
 
   grade        Grade        @relation(fields: [gradeId], references: [id])
   learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+  strand       Strand?      @relation(fields: [strandId], references: [id])
 
   activityForms ActivityForm[]
 
