@@ -35,7 +35,12 @@ export async function POST(req: NextRequest) {
   }
 
   if (existing?.status === "generating") {
-    return NextResponse.json({ status: "generating" }, { status: 202 });
+    // Check if stuck (generating for more than 2 minutes = stale)
+    const ageMs = Date.now() - new Date(existing.updatedAt).getTime();
+    if (ageMs < 120_000) {
+      return NextResponse.json({ status: "generating" }, { status: 202 });
+    }
+    // Stale — fall through to re-generate
   }
 
   // Fetch curriculum context

@@ -93,10 +93,18 @@ export function NotesExplorer() {
 
   function startPolling(subStrandId: string) {
     stopPolling();
+    const startTime = Date.now();
     pollingRef.current = setInterval(async () => {
       // Stop if user changed selection
       if (currentSubStrandRef.current !== subStrandId) {
         stopPolling();
+        return;
+      }
+      // Timeout after 90 seconds
+      if (Date.now() - startTime > 90_000) {
+        stopPolling();
+        setNoteState("error");
+        setError("Generation is taking too long. Please try again.");
         return;
       }
       try {
@@ -110,6 +118,11 @@ export function NotesExplorer() {
             setNote(data);
             setNoteState("ready");
           }
+        } else if (res.status === 404) {
+          // Note was cleaned up (failed/stale) — stop polling, allow retry
+          stopPolling();
+          setNoteState("error");
+          setError("Generation failed. Please try again.");
         }
       } catch {
         // Keep polling on network errors
