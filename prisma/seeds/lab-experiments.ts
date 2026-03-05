@@ -613,7 +613,9 @@ const experiments = [
 async function main() {
   console.log("🔬 Seeding lab experiments...");
 
-  // First, delete all existing experiments to avoid duplicates
+  // First, delete activity forms referencing experiments, then delete experiments
+  const deletedForms = await prisma.activityForm.deleteMany({});
+  console.log(`🗑️  Deleted ${deletedForms.count} existing activity forms`);
   const deleted = await prisma.labExperiment.deleteMany({});
   console.log(`🗑️  Deleted ${deleted.count} existing experiments`);
 
