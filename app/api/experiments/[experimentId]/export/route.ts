@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateStudentCopyPdf, generateTeacherCopyPdf } from "@/lib/export/activity-form-pdf";
-import { generateActivityDiscussion } from "@/lib/ai/generate-activity-discussion";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -33,31 +32,6 @@ export async function GET(
     return NextResponse.json({ error: "Experiment not found" }, { status: 404 });
   }
 
-  // Generate AI content for Teacher Copy
-  let teacherCopy: { discussionAnswers?: string; assessmentNotes?: string } | undefined;
-
-  if (type === "teacher") {
-    try {
-      console.log("Generating AI discussion for teacher copy...");
-      const aiContent = await generateActivityDiscussion({
-        experimentName: experiment.name,
-        subject: experiment.subject,
-        grade: experiment.grade.name,
-        aim: experiment.aim,
-        procedure: experiment.procedure as string[],
-        expectedResults: experiment.expectedResults,
-        relatedConcepts: experiment.relatedConcepts as string[],
-      });
-
-      teacherCopy = {
-        discussionAnswers: aiContent.discussionAnswers,
-        assessmentNotes: aiContent.assessmentNotes,
-      };
-    } catch (error) {
-      console.error("Failed to generate AI discussion:", error);
-    }
-  }
-
   const pdfData = {
     experimentName: experiment.name,
     subject: experiment.subject,
@@ -75,7 +49,6 @@ export async function GET(
     results: null,
     teacherNotes: null,
     expectedResults: experiment.expectedResults,
-    teacherCopy,
   };
 
   const pdf =
