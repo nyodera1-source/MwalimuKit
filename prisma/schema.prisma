@@ -48,6 +48,7 @@ model Grade {
   labExperiments          LabExperiment[]
   activityForms           ActivityForm[]
   socialStudiesActivities SocialStudiesActivity[]
+  curriculumNotes         CurriculumNote[]
 
   @@map("grades")
 }
@@ -68,6 +69,7 @@ model LearningArea {
   labExperiments          LabExperiment[]
   activityForms           ActivityForm[]
   socialStudiesActivities SocialStudiesActivity[]
+  curriculumNotes         CurriculumNote[]
 
   @@unique([gradeId, name])
   @@map("learning_areas")
@@ -86,6 +88,7 @@ model Strand {
   teachingNotes  TeachingNotes[]
   labExperiments          LabExperiment[]
   socialStudiesActivities SocialStudiesActivity[]
+  curriculumNotes         CurriculumNote[]
 
   @@unique([learningAreaId, name])
   @@map("strands")
@@ -100,8 +103,9 @@ model SubStrand {
   strand Strand @relation(fields: [strandId], references: [id], onDelete: Cascade)
   slos   SLO[]
 
-  lessonPlans   LessonPlan[]
-  teachingNotes TeachingNotes[]
+  lessonPlans    LessonPlan[]
+  teachingNotes  TeachingNotes[]
+  curriculumNote CurriculumNote?
 
   @@unique([strandId, name])
   @@map("sub_strands")
@@ -380,4 +384,26 @@ model SocialStudiesActivity {
   strand       Strand?      @relation(fields: [strandId], references: [id])
 
   @@map("social_studies_activities")
+}
+
+// ─── CURRICULUM NOTES (Cached, shared across teachers) ───
+
+model CurriculumNote {
+  id             String   @id @default(cuid())
+  gradeId        String   @map("grade_id")
+  learningAreaId String   @map("learning_area_id")
+  strandId       String   @map("strand_id")
+  subStrandId    String   @unique @map("sub_strand_id")
+  title          String
+  content        Json
+  status         String   @default("generating")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  grade        Grade        @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+  strand       Strand       @relation(fields: [strandId], references: [id])
+  subStrand    SubStrand    @relation(fields: [subStrandId], references: [id])
+
+  @@map("curriculum_notes")
 }

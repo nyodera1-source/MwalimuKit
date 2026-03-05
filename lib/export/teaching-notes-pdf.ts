@@ -7,6 +7,8 @@ export interface TeachingNotesExportData {
   strand: string;
   subStrand: string;
   noteType: string;
+  schoolName?: string;
+  classGroup?: string;
   introduction: string;
   keyConcepts: string;
   detailedExplanations: string;
@@ -104,6 +106,17 @@ export function generateTeachingNotesPdf(
     }
 
     y += 3;
+  }
+
+  // ─── School Name ───
+  if (data.schoolName) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    doc.text(data.schoolName.toUpperCase(), pageWidth / 2, y, {
+      align: "center",
+    });
+    y += 7;
   }
 
   // ─── Title ───
