@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const { subStrandId } = await req.json();
+  const { subStrandId, content: providedContent } = await req.json();
   if (!subStrandId) {
     return NextResponse.json(
       { error: "subStrandId required" },
@@ -35,12 +35,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (existing?.status === "generating") {
-    // Check if stuck (generating for more than 2 minutes = stale)
     const ageMs = Date.now() - new Date(existing.updatedAt).getTime();
     if (ageMs < 120_000) {
       return NextResponse.json({ status: "generating" }, { status: 202 });
     }
-    // Stale — fall through to re-generate
   }
 
   // Fetch curriculum context
@@ -70,7 +68,35 @@ export async function POST(req: NextRequest) {
   const strand = subStrand.strand;
   const title = `${learningArea.name}: ${subStrand.name}`;
 
-  // Create placeholder (lock) via upsert
+  // If client already has generated content, just save it (Phase 2 of client flow)
+  if (providedContent) {
+    const saved = await prisma.curriculumNote.upsert({
+      where: { subStrandId },
+      create: {
+        gradeId: grade.id,
+        learningAreaId: learningArea.id,
+        strandId: strand.id,
+        subStrandId,
+        title,
+        content: providedContent,
+        status: "ready",
+      },
+      update: {
+        content: providedContent,
+        status: "ready",
+        title,
+      },
+      include: {
+        grade: { select: { name: true } },
+        learningArea: { select: { name: true } },
+        strand: { select: { name: true } },
+        subStrand: { select: { name: true } },
+      },
+    });
+    return NextResponse.json(saved);
+  }
+
+  // No provided content — generate via AI (works if maxDuration is supported)
   let noteRecord;
   try {
     noteRecord = await prisma.curriculumNote.upsert({
@@ -90,7 +116,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "generating" }, { status: 202 });
   }
 
-  // Generate via AI
   try {
     const content = await generateTeachingNotes({
       grade: grade.name,
@@ -103,7 +128,11 @@ export async function POST(req: NextRequest) {
 
     const updated = await prisma.curriculumNote.update({
       where: { id: noteRecord.id },
-      data: { content: JSON.parse(JSON.stringify(content)), status: "ready", title },
+      data: {
+        content: JSON.parse(JSON.stringify(content)),
+        status: "ready",
+        title,
+      },
       include: {
         grade: { select: { name: true } },
         learningArea: { select: { name: true } },

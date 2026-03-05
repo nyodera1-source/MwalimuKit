@@ -72,6 +72,7 @@ export function NotesExplorer() {
   const [error, setError] = useState<string | null>(null);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const currentSubStrandRef = useRef<string | null>(null);
+  const lastSelectionRef = useRef<CascadeSelection | null>(null);
 
   // Download card state
   const [schoolName, setSchoolName] = useState("");
@@ -130,62 +131,135 @@ export function NotesExplorer() {
     }, 3000);
   }
 
-  const fetchOrGenerate = useCallback(async (subStrandId: string) => {
-    currentSubStrandRef.current = subStrandId;
-    stopPolling();
-    setNoteState("loading");
-    setError(null);
+  const fetchOrGenerate = useCallback(
+    async (subStrandId: string, selection: CascadeSelection) => {
+      currentSubStrandRef.current = subStrandId;
+      stopPolling();
+      setNoteState("loading");
+      setError(null);
 
-    try {
-      // Try cached first
-      const res = await fetch(
-        `/api/curriculum-notes?subStrandId=${subStrandId}`
-      );
-      if (res.ok) {
-        const data = await res.json();
-        if (data.status === "ready") {
-          setNote(data);
-          setNoteState("ready");
+      try {
+        // Try cached first
+        const res = await fetch(
+          `/api/curriculum-notes?subStrandId=${subStrandId}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === "ready") {
+            setNote(data);
+            setNoteState("ready");
+            return;
+          }
+          if (data.status === "generating") {
+            setNoteState("generating");
+            startPolling(subStrandId);
+            return;
+          }
+        }
+
+        // Not cached — try server-side generation first
+        setNoteState("generating");
+        const genRes = await fetch("/api/curriculum-notes/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subStrandId }),
+        });
+
+        if (genRes.ok) {
+          const data = await genRes.json();
+          if (data.status === "generating") {
+            startPolling(subStrandId);
+          } else if (data.id) {
+            setNote(data);
+            setNoteState("ready");
+          }
           return;
         }
-        if (data.status === "generating") {
-          setNoteState("generating");
+
+        if (genRes.status === 202) {
           startPolling(subStrandId);
           return;
         }
-      }
 
-      // Not cached — trigger generation
-      setNoteState("generating");
-      const genRes = await fetch("/api/curriculum-notes/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subStrandId }),
-      });
-
-      if (genRes.ok) {
-        const data = await genRes.json();
-        if (data.status === "generating") {
-          startPolling(subStrandId);
-        } else if (data.status === "ready") {
-          setNote(data);
-          setNoteState("ready");
-        } else {
-          // Full note returned
-          setNote(data);
-          setNoteState("ready");
+        // Server-side generation failed (likely timeout) —
+        // fall back to client-side generation using existing working endpoint
+        await generateClientSide(subStrandId, selection);
+      } catch {
+        // Network error on primary — try client-side fallback
+        try {
+          await generateClientSide(subStrandId, selection);
+        } catch {
+          setNoteState("error");
+          setError(
+            "Network error. Please check your connection and try again."
+          );
         }
-      } else if (genRes.status === 202) {
-        startPolling(subStrandId);
-      } else {
-        setNoteState("error");
-        setError("Failed to generate notes. Please try again.");
       }
-    } catch {
+    },
+    []
+  );
+
+  async function generateClientSide(
+    subStrandId: string,
+    selection: CascadeSelection
+  ) {
+    if (currentSubStrandRef.current !== subStrandId) return;
+
+    setNoteState("generating");
+
+    // Use the existing /api/notes/generate endpoint (known to work)
+    const aiRes = await fetch("/api/notes/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        gradeId: selection.gradeId,
+        learningAreaId: selection.learningAreaId,
+        strandId: selection.strandId,
+        subStrandId,
+        noteType: "lecture",
+      }),
+    });
+
+    if (!aiRes.ok) {
+      const errData = await aiRes.json().catch(() => ({}));
       setNoteState("error");
-      setError("Network error. Please check your connection and try again.");
+      setError(
+        (errData as { error?: string }).error ||
+          "Failed to generate notes. Please try again."
+      );
+      return;
     }
-  }, []);
+
+    const { notes: content } = await aiRes.json();
+
+    if (currentSubStrandRef.current !== subStrandId) return;
+
+    // Cache the generated content
+    const cacheRes = await fetch("/api/curriculum-notes/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ subStrandId, content }),
+    });
+
+    if (cacheRes.ok) {
+      const data = await cacheRes.json();
+      setNote(data);
+      setNoteState("ready");
+    } else {
+      // Still show the content even if caching failed
+      setNote({
+        id: "temp",
+        title: "",
+        content,
+        status: "ready",
+        grade: { name: "" },
+        learningArea: { name: "" },
+        strand: { name: "" },
+        subStrand: { name: "" },
+      });
+      setNoteState("ready");
+    }
+  }
 
   const handleSelectionChange = useCallback(
     (selection: CascadeSelection) => {
@@ -197,7 +271,8 @@ export function NotesExplorer() {
         return;
       }
 
-      fetchOrGenerate(selection.subStrandId);
+      lastSelectionRef.current = selection;
+      fetchOrGenerate(selection.subStrandId, selection);
     },
     [fetchOrGenerate]
   );
@@ -353,8 +428,11 @@ export function NotesExplorer() {
             </p>
             <Button
               onClick={() => {
-                if (currentSubStrandRef.current) {
-                  fetchOrGenerate(currentSubStrandRef.current);
+                if (currentSubStrandRef.current && lastSelectionRef.current) {
+                  fetchOrGenerate(
+                    currentSubStrandRef.current,
+                    lastSelectionRef.current
+                  );
                 }
               }}
             >
