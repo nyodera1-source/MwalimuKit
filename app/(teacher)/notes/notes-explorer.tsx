@@ -150,50 +150,16 @@ export function NotesExplorer() {
             setNoteState("ready");
             return;
           }
-          if (data.status === "generating") {
-            setNoteState("generating");
-            startPolling(subStrandId);
-            return;
-          }
         }
 
-        // Not cached — try server-side generation first
-        setNoteState("generating");
-        const genRes = await fetch("/api/curriculum-notes/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subStrandId }),
-        });
-
-        if (genRes.ok) {
-          const data = await genRes.json();
-          if (data.status === "generating") {
-            startPolling(subStrandId);
-          } else if (data.id) {
-            setNote(data);
-            setNoteState("ready");
-          }
-          return;
-        }
-
-        if (genRes.status === 202) {
-          startPolling(subStrandId);
-          return;
-        }
-
-        // Server-side generation failed (likely timeout) —
-        // fall back to client-side generation using existing working endpoint
+        // Not cached — generate via existing /api/notes/generate endpoint
+        // (which already works on Vercel) then cache the result
         await generateClientSide(subStrandId, selection);
       } catch {
-        // Network error on primary — try client-side fallback
-        try {
-          await generateClientSide(subStrandId, selection);
-        } catch {
-          setNoteState("error");
-          setError(
-            "Network error. Please check your connection and try again."
-          );
-        }
+        setNoteState("error");
+        setError(
+          "Network error. Please check your connection and try again."
+        );
       }
     },
     []
