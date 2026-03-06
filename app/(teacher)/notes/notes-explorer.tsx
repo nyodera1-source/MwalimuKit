@@ -40,10 +40,10 @@ type NoteState = "idle" | "loading" | "generating" | "ready" | "error";
 
 const VISIBLE_SECTIONS = [
   { key: "introduction", label: "Introduction / Overview" },
-  { key: "keyConcepts", label: "Key Concepts & Definitions" },
 ];
 
 const BLURRED_SECTIONS = [
+  { key: "keyConcepts", label: "Key Concepts & Definitions" },
   { key: "detailedExplanations", label: "Detailed Explanations" },
   { key: "examples", label: "Examples & Illustrations" },
   { key: "studentActivities", label: "Student Activities" },
@@ -61,8 +61,23 @@ const SECTION_ICONS: Record<string, typeof BookOpen> = {
   teacherTips: StickyNote,
 };
 
+function cleanDisplayText(text: string): string {
+  return text
+    .replace(/^```(?:json)?\s*/gi, "")
+    .replace(/```\s*$/g, "")
+    .replace(/[{}"\\]/g, (ch) => {
+      // Strip JSON structural characters that shouldn't appear in prose
+      if (ch === "{" || ch === "}" || ch === "\\") return "";
+      // Keep quotes only if they look like natural speech quotes
+      return ch;
+    })
+    .replace(/^\s*"?\w+"?\s*:\s*/gm, "") // Remove "key": patterns
+    .trim();
+}
+
 function ContentSection({ label, value, sectionKey }: { label: string; value: string; sectionKey: string }) {
-  const paragraphs = value.split(/\n\n+/).filter((p) => p.trim());
+  const cleaned = cleanDisplayText(value);
+  const paragraphs = cleaned.split(/\n\n+/).filter((p) => p.trim());
   const Icon = SECTION_ICONS[sectionKey] || FileText;
   return (
     <Card>
@@ -600,7 +615,7 @@ export function NotesExplorer() {
                     Download to view full teaching notes
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    5 more sections: explanations, examples, activities & more
+                    6 more sections: key concepts, explanations, examples & more
                   </p>
                 </div>
               </div>

@@ -128,12 +128,19 @@ Please generate comprehensive teaching notes covering all the SLOs above.`;
   const text =
     response.content[0].type === "text" ? response.content[0].text : "";
 
-  // Parse JSON — handle markdown code fences
+  // Parse JSON — handle markdown code fences and surrounding text
   let jsonStr = text.trim();
 
   // Remove markdown code fences (handles ```json, ```, or incomplete fences)
-  jsonStr = jsonStr.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
+  jsonStr = jsonStr.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "");
   jsonStr = jsonStr.trim();
+
+  // If the response has text before/after the JSON object, extract just the JSON
+  const firstBrace = jsonStr.indexOf("{");
+  const lastBrace = jsonStr.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
+  }
 
   // Debug logging
   console.log("=== AI Response Debug ===");
@@ -142,16 +149,26 @@ Please generate comprehensive teaching notes covering all the SLOs above.`;
   console.log("After fence removal:", jsonStr.substring(0, 200));
   console.log("========================");
 
+  // Clean any stray markdown/JSON artifacts from a section value
+  function cleanSection(val: unknown): string {
+    if (typeof val !== "string") return "";
+    return val
+      .replace(/^```(?:json)?\s*/gi, "")
+      .replace(/```\s*$/g, "")
+      .replace(/\\n/g, "\n")
+      .trim();
+  }
+
   try {
     const parsed = JSON.parse(jsonStr) as GeneratedNotes;
     return {
-      introduction: parsed.introduction || "",
-      keyConcepts: parsed.keyConcepts || "",
-      detailedExplanations: parsed.detailedExplanations || "",
-      examples: parsed.examples || "",
-      studentActivities: parsed.studentActivities || "",
-      assessmentQuestions: parsed.assessmentQuestions || "",
-      teacherTips: parsed.teacherTips || "",
+      introduction: cleanSection(parsed.introduction),
+      keyConcepts: cleanSection(parsed.keyConcepts),
+      detailedExplanations: cleanSection(parsed.detailedExplanations),
+      examples: cleanSection(parsed.examples),
+      studentActivities: cleanSection(parsed.studentActivities),
+      assessmentQuestions: cleanSection(parsed.assessmentQuestions),
+      teacherTips: cleanSection(parsed.teacherTips),
     };
   } catch (parseError) {
     console.error("JSON parse error:", parseError);
@@ -205,9 +222,10 @@ Please generate comprehensive teaching notes covering all the SLOs above.`;
       }
     }
 
-    // Return raw text as introduction if all parsing fails
+    // All parsing failed — return a clean error message, never raw JSON
     return {
-      introduction: text,
+      introduction:
+        "Teaching notes could not be generated properly. Please try again.",
       keyConcepts: "",
       detailedExplanations: "",
       examples: "",
