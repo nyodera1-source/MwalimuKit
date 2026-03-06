@@ -258,63 +258,78 @@ export default async function ActivityFormsPage() {
                 ))}
               </TabsList>
 
-              {scienceLevels.map((level) => (
-                <TabsContent key={level} value={level.toString()}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {scienceGrades[level].experiments.map((exp) => {
-                      const config = subjectConfig[exp.subject] || {
-                        icon: Beaker,
-                        color: "bg-gray-100 text-gray-700",
-                        gradient: "from-gray-500 to-gray-600",
-                      };
-                      const SubjectIcon = config.icon;
+              {scienceLevels.map((level) => {
+                // Group experiments by subject
+                const bySubject = scienceGrades[level].experiments.reduce(
+                  (acc, exp) => {
+                    if (!acc[exp.subject]) acc[exp.subject] = [];
+                    acc[exp.subject].push(exp);
+                    return acc;
+                  },
+                  {} as Record<string, typeof experiments>
+                );
+                const subjects = Object.keys(bySubject).sort();
 
-                      return (
-                        <Link
-                          key={exp.id}
-                          href={`/activity-forms/experiment/${exp.id}`}
-                        >
-                          <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
-                            {/* Colored top bar */}
-                            <div
-                              className={`h-1 bg-gradient-to-r ${config.gradient}`}
-                            />
-                            <CardHeader className="pb-2">
-                              <div className="flex items-start justify-between gap-2">
-                                <CardTitle className="text-base leading-tight group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                                  {exp.name}
-                                </CardTitle>
-                                <Badge
-                                  className={`shrink-0 ${config.color} border-0`}
+                return (
+                  <TabsContent key={level} value={level.toString()}>
+                    <div className="space-y-8">
+                      {subjects.map((subject) => {
+                        const config = subjectConfig[subject] || {
+                          icon: Beaker,
+                          color: "bg-gray-100 text-gray-700",
+                          gradient: "from-gray-500 to-gray-600",
+                        };
+                        const SubjectIcon = config.icon;
+
+                        return (
+                          <div key={subject}>
+                            {/* Subject section header */}
+                            <div className="flex items-center gap-3 mb-4">
+                              <div className={`p-1.5 rounded-lg ${config.color}`}>
+                                <SubjectIcon className="h-4 w-4" />
+                              </div>
+                              <h3 className="font-semibold text-sm">{subject}</h3>
+                              <span className="text-xs text-muted-foreground">
+                                {bySubject[subject].length} {bySubject[subject].length === 1 ? "experiment" : "experiments"}
+                              </span>
+                              <div className="flex-1 border-t border-border" />
+                            </div>
+
+                            {/* Cards grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {bySubject[subject].map((exp) => (
+                                <Link
+                                  key={exp.id}
+                                  href={`/activity-forms/experiment/${exp.id}`}
                                 >
-                                  <SubjectIcon className="h-3 w-3 mr-1" />
-                                  {exp.subject}
-                                </Badge>
-                              </div>
-                            </CardHeader>
-                            <CardContent className="space-y-3 pt-0">
-                              <p className="text-sm text-muted-foreground line-clamp-2">
-                                {exp.aim}
-                              </p>
-                              <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t">
-                                <span className="flex items-center gap-1">
-                                  <BookOpen className="h-3 w-3" />
-                                  {exp.learningArea.name}
-                                </span>
-                                {exp.strand && (
-                                  <span className="text-pink-600 dark:text-pink-400 font-medium truncate max-w-[140px]">
-                                    {exp.strand.name}
-                                  </span>
-                                )}
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </TabsContent>
-              ))}
+                                  <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
+                                    <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
+                                    <CardHeader className="pb-2">
+                                      <CardTitle className="text-base leading-tight group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                                        {exp.name}
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-3 pt-0">
+                                      <p className="text-sm text-muted-foreground line-clamp-2">
+                                        {exp.aim}
+                                      </p>
+                                      {exp.strand && (
+                                        <div className="text-xs text-pink-600 dark:text-pink-400 font-medium pt-3 border-t truncate">
+                                          {exp.strand.name}
+                                        </div>
+                                      )}
+                                    </CardContent>
+                                  </Card>
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </TabsContent>
+                );
+              })}
             </Tabs>
           )}
         </TabsContent>
@@ -353,64 +368,79 @@ export default async function ActivityFormsPage() {
                 ))}
               </TabsList>
 
-              {ssLevels.map((level) => (
-                <TabsContent key={level} value={level.toString()}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {ssGrades[level].activities.map((act) => {
-                      const config = activityTypeConfig[act.activityType] || {
-                        icon: BookOpen,
-                        label: act.activityType,
-                        color: "bg-gray-100 text-gray-700",
-                        gradient: "from-gray-500 to-gray-600",
-                      };
-                      const TypeIcon = config.icon;
+              {ssLevels.map((level) => {
+                // Group activities by type
+                const byType = ssGrades[level].activities.reduce(
+                  (acc, act) => {
+                    if (!acc[act.activityType]) acc[act.activityType] = [];
+                    acc[act.activityType].push(act);
+                    return acc;
+                  },
+                  {} as Record<string, typeof socialStudies>
+                );
+                const types = Object.keys(byType).sort();
 
-                      return (
-                        <Link
-                          key={act.id}
-                          href={`/activity-forms/social-studies/${act.id}`}
-                        >
-                          <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
-                            {/* Colored top bar */}
-                            <div
-                              className={`h-1 bg-gradient-to-r ${config.gradient}`}
-                            />
-                            <CardHeader className="pb-2">
-                              <div className="flex items-start justify-between gap-2">
-                                <CardTitle className="text-base leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                  {act.name}
-                                </CardTitle>
-                                <Badge
-                                  className={`shrink-0 ${config.color} border-0`}
+                return (
+                  <TabsContent key={level} value={level.toString()}>
+                    <div className="space-y-8">
+                      {types.map((type) => {
+                        const config = activityTypeConfig[type] || {
+                          icon: BookOpen,
+                          label: type,
+                          color: "bg-gray-100 text-gray-700",
+                          gradient: "from-gray-500 to-gray-600",
+                        };
+                        const TypeIcon = config.icon;
+
+                        return (
+                          <div key={type}>
+                            {/* Activity type section header */}
+                            <div className="flex items-center gap-3 mb-4">
+                              <div className={`p-1.5 rounded-lg ${config.color}`}>
+                                <TypeIcon className="h-4 w-4" />
+                              </div>
+                              <h3 className="font-semibold text-sm">{config.label}</h3>
+                              <span className="text-xs text-muted-foreground">
+                                {byType[type].length} {byType[type].length === 1 ? "activity" : "activities"}
+                              </span>
+                              <div className="flex-1 border-t border-border" />
+                            </div>
+
+                            {/* Cards grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {byType[type].map((act) => (
+                                <Link
+                                  key={act.id}
+                                  href={`/activity-forms/social-studies/${act.id}`}
                                 >
-                                  <TypeIcon className="h-3 w-3 mr-1" />
-                                  {config.label}
-                                </Badge>
-                              </div>
-                            </CardHeader>
-                            <CardContent className="space-y-3 pt-0">
-                              <p className="text-sm text-muted-foreground line-clamp-2">
-                                {act.aim}
-                              </p>
-                              <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t">
-                                <span className="flex items-center gap-1">
-                                  <BookOpen className="h-3 w-3" />
-                                  {act.learningArea.name}
-                                </span>
-                                {act.strand && (
-                                  <span className="text-indigo-600 dark:text-indigo-400 font-medium truncate max-w-[140px]">
-                                    {act.strand.name}
-                                  </span>
-                                )}
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </TabsContent>
-              ))}
+                                  <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
+                                    <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
+                                    <CardHeader className="pb-2">
+                                      <CardTitle className="text-base leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                        {act.name}
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-3 pt-0">
+                                      <p className="text-sm text-muted-foreground line-clamp-2">
+                                        {act.aim}
+                                      </p>
+                                      {act.strand && (
+                                        <div className="text-xs text-indigo-600 dark:text-indigo-400 font-medium pt-3 border-t truncate">
+                                          {act.strand.name}
+                                        </div>
+                                      )}
+                                    </CardContent>
+                                  </Card>
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </TabsContent>
+                );
+              })}
             </Tabs>
           )}
         </TabsContent>
