@@ -119,7 +119,7 @@ Please generate comprehensive teaching notes covering all the SLOs above.`;
     model: input.fast
       ? "claude-haiku-4-5-20251001"
       : "claude-sonnet-4-5-20250929",
-    max_tokens: input.fast ? 4096 : 8192,
+    max_tokens: 8192,
     system: systemPrompt,
     messages: [{ role: "user", content: userPrompt }],
   });
