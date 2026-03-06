@@ -17,6 +17,12 @@ import {
   Loader2,
   RefreshCw,
   BookOpen,
+  GraduationCap,
+  Layers,
+  FileText,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
 } from "lucide-react";
 
 interface CurriculumNoteData {
@@ -45,12 +51,26 @@ const BLURRED_SECTIONS = [
   { key: "teacherTips", label: "Teacher's Tips / Common Misconceptions" },
 ];
 
-function ContentSection({ label, value }: { label: string; value: string }) {
+const SECTION_ICONS: Record<string, typeof BookOpen> = {
+  introduction: BookOpen,
+  keyConcepts: Layers,
+  detailedExplanations: FileText,
+  examples: Sparkles,
+  studentActivities: GraduationCap,
+  assessmentQuestions: CheckCircle2,
+  teacherTips: StickyNote,
+};
+
+function ContentSection({ label, value, sectionKey }: { label: string; value: string; sectionKey: string }) {
   const paragraphs = value.split(/\n\n+/).filter((p) => p.trim());
+  const Icon = SECTION_ICONS[sectionKey] || FileText;
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">{label}</CardTitle>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg flex items-center gap-2">
+          <Icon className="h-4 w-4 text-purple-500" />
+          {label}
+        </CardTitle>
       </CardHeader>
       <CardContent className="prose prose-sm max-w-none">
         {paragraphs.map((para, idx) => (
@@ -92,45 +112,6 @@ export function NotesExplorer() {
     }
   }
 
-  function startPolling(subStrandId: string) {
-    stopPolling();
-    const startTime = Date.now();
-    pollingRef.current = setInterval(async () => {
-      // Stop if user changed selection
-      if (currentSubStrandRef.current !== subStrandId) {
-        stopPolling();
-        return;
-      }
-      // Timeout after 90 seconds
-      if (Date.now() - startTime > 90_000) {
-        stopPolling();
-        setNoteState("error");
-        setError("Generation is taking too long. Please try again.");
-        return;
-      }
-      try {
-        const res = await fetch(
-          `/api/curriculum-notes?subStrandId=${subStrandId}`
-        );
-        if (res.ok) {
-          const data = await res.json();
-          if (data.status === "ready") {
-            stopPolling();
-            setNote(data);
-            setNoteState("ready");
-          }
-        } else if (res.status === 404) {
-          // Note was cleaned up (failed/stale) — stop polling, allow retry
-          stopPolling();
-          setNoteState("error");
-          setError("Generation failed. Please try again.");
-        }
-      } catch {
-        // Keep polling on network errors
-      }
-    }, 3000);
-  }
-
   const fetchOrGenerate = useCallback(
     async (subStrandId: string, selection: CascadeSelection) => {
       currentSubStrandRef.current = subStrandId;
@@ -139,7 +120,6 @@ export function NotesExplorer() {
       setError(null);
 
       try {
-        // Try cached first
         const res = await fetch(
           `/api/curriculum-notes?subStrandId=${subStrandId}`
         );
@@ -152,8 +132,6 @@ export function NotesExplorer() {
           }
         }
 
-        // Not cached — generate via existing /api/notes/generate endpoint
-        // (which already works on Vercel) then cache the result
         await generateClientSide(subStrandId, selection);
       } catch {
         setNoteState("error");
@@ -173,7 +151,6 @@ export function NotesExplorer() {
 
     setNoteState("generating");
 
-    // Use the existing /api/notes/generate endpoint with fast mode (Haiku)
     const aiRes = await fetch("/api/notes/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -201,7 +178,6 @@ export function NotesExplorer() {
 
     if (currentSubStrandRef.current !== subStrandId) return;
 
-    // Cache the generated content
     const cacheRes = await fetch("/api/curriculum-notes/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -213,7 +189,6 @@ export function NotesExplorer() {
       setNote(data);
       setNoteState("ready");
     } else {
-      // Still show the content even if caching failed
       setNote({
         id: "temp",
         title: "",
@@ -282,12 +257,17 @@ export function NotesExplorer() {
   return (
     <div className="space-y-6">
       {/* Curriculum Selector */}
-      <Card>
+      <Card className="border-purple-200 dark:border-purple-900/40 bg-gradient-to-br from-purple-50/50 via-background to-background dark:from-purple-950/20">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
+            <div className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-900/30">
+              <BookOpen className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            </div>
             Select Topic
           </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Choose your curriculum path to view or generate teaching notes
+          </p>
         </CardHeader>
         <CardContent>
           <CascadeDropdown
@@ -297,28 +277,110 @@ export function NotesExplorer() {
         </CardContent>
       </Card>
 
-      {/* Idle State */}
+      {/* Idle State — Visual guide */}
       {noteState === "idle" && (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <StickyNote className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">
-              Select a topic to browse notes
-            </h3>
-            <p className="text-muted-foreground max-w-md">
-              Choose your grade, learning area, strand, and sub-strand above to
-              view CBC-aligned teaching notes.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="space-y-6">
+          {/* How it works steps */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              {
+                step: "1",
+                icon: GraduationCap,
+                title: "Select Topic",
+                desc: "Choose your grade, subject, strand, and sub-strand from the dropdowns above",
+                color: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
+              },
+              {
+                step: "2",
+                icon: Sparkles,
+                title: "Preview Notes",
+                desc: "AI-generated lecture notes appear instantly with a brief preview of key content",
+                color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+              },
+              {
+                step: "3",
+                icon: Download,
+                title: "Download PDF",
+                desc: "Add your school details and download the complete notes as a formatted PDF",
+                color: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
+              },
+            ].map((item) => (
+              <Card
+                key={item.step}
+                className="relative overflow-hidden group hover:shadow-md transition-shadow"
+              >
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2 rounded-lg ${item.color} shrink-0`}>
+                      <item.icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">{item.title}</p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+                {item.step !== "3" && (
+                  <div className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30">
+                    <ArrowRight className="h-5 w-5" />
+                  </div>
+                )}
+              </Card>
+            ))}
+          </div>
+
+          {/* What's included card */}
+          <Card className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 border-dashed">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30 shrink-0">
+                  <FileText className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">
+                    Each set of notes includes 7 comprehensive sections
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
+                    {[
+                      "Introduction / Overview",
+                      "Key Concepts & Definitions",
+                      "Detailed Explanations",
+                      "Examples & Illustrations",
+                      "Student Activities",
+                      "Assessment Questions",
+                      "Teacher's Tips",
+                    ].map((section, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 text-sm text-muted-foreground"
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5 text-purple-500 shrink-0" />
+                        {section}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Loading State */}
       {noteState === "loading" && (
-        <Card>
+        <Card className="border-purple-200 dark:border-purple-900/40">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <Loader2 className="h-10 w-10 text-purple-500 animate-spin mb-4" />
-            <p className="text-muted-foreground">Loading notes...</p>
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full bg-purple-200/50 dark:bg-purple-800/20 animate-ping" />
+              <div className="relative p-4 rounded-full bg-purple-100 dark:bg-purple-900/30">
+                <Loader2 className="h-8 w-8 text-purple-600 dark:text-purple-400 animate-spin" />
+              </div>
+            </div>
+            <p className="text-muted-foreground mt-6 font-medium">
+              Checking for cached notes...
+            </p>
           </CardContent>
         </Card>
       )}
@@ -326,20 +388,43 @@ export function NotesExplorer() {
       {/* Generating State */}
       {noteState === "generating" && (
         <div className="space-y-4">
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <Loader2 className="h-12 w-12 text-purple-500 animate-spin mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
+          <Card className="border-purple-200 dark:border-purple-900/40 overflow-hidden">
+            {/* Progress bar animation */}
+            <div className="h-1 bg-purple-100 dark:bg-purple-900/30">
+              <div className="h-full bg-purple-500 animate-[progress_2s_ease-in-out_infinite] rounded-r-full"
+                   style={{ width: '60%', animation: 'progress 2s ease-in-out infinite' }} />
+            </div>
+            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="relative mb-4">
+                <div className="p-4 rounded-full bg-purple-100 dark:bg-purple-900/30">
+                  <Sparkles className="h-8 w-8 text-purple-600 dark:text-purple-400 animate-pulse" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold mb-1">
                 Generating Teaching Notes
               </h3>
-              <p className="text-muted-foreground max-w-md">
-                Creating comprehensive lecture notes for this topic. This may
-                take 15-30 seconds...
+              <p className="text-sm text-muted-foreground max-w-sm">
+                AI is creating comprehensive lecture notes aligned to CBC.
+                This usually takes 10-20 seconds...
               </p>
+              <div className="flex items-center gap-6 mt-6 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                  Curriculum aligned
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                  7 sections
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Writing...
+                </div>
+              </div>
             </CardContent>
           </Card>
           {/* Skeleton preview */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 opacity-50">
             <div className="lg:col-span-2 space-y-4">
               <Card>
                 <CardHeader>
@@ -350,8 +435,9 @@ export function NotesExplorer() {
                     <Skeleton className="h-5 w-20" />
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-4 w-full mb-2" />
+                <CardContent className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
                   <Skeleton className="h-4 w-2/3" />
                 </CardContent>
               </Card>
@@ -386,11 +472,13 @@ export function NotesExplorer() {
 
       {/* Error State */}
       {noteState === "error" && (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <RefreshCw className="h-12 w-12 text-destructive mb-4" />
+        <Card className="border-destructive/30">
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="p-3 rounded-full bg-destructive/10 mb-4">
+              <RefreshCw className="h-8 w-8 text-destructive" />
+            </div>
             <h3 className="text-lg font-semibold mb-2">Generation Failed</h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-sm text-muted-foreground mb-6 max-w-sm">
               {error || "Something went wrong. Please try again."}
             </p>
             <Button
@@ -402,8 +490,10 @@ export function NotesExplorer() {
                   );
                 }
               }}
+              variant="outline"
+              className="gap-2"
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
+              <RefreshCw className="h-4 w-4" />
               Try Again
             </Button>
           </CardContent>
@@ -416,30 +506,42 @@ export function NotesExplorer() {
           {/* Main Content - Left side */}
           <div className="lg:col-span-2 space-y-4">
             {/* Header Card */}
-            <Card>
+            <Card className="border-purple-200 dark:border-purple-900/40 overflow-hidden">
+              <div className="h-1.5 bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500" />
               <CardHeader>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <CardTitle className="text-xl">
                     {note.title || "Teaching Notes"}
                   </CardTitle>
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline">{note.grade.name}</Badge>
-                    <Badge variant="secondary">{note.learningArea.name}</Badge>
-                    <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-0">
+                    <Badge variant="outline" className="gap-1">
+                      <GraduationCap className="h-3 w-3" />
+                      {note.grade.name}
+                    </Badge>
+                    <Badge variant="secondary" className="gap-1">
+                      <BookOpen className="h-3 w-3" />
+                      {note.learningArea.name}
+                    </Badge>
+                    <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-0 gap-1">
+                      <FileText className="h-3 w-3" />
                       Lecture Notes
                     </Badge>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="text-sm">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 p-3 rounded-lg bg-muted/50">
                   <div>
-                    <span className="text-muted-foreground">Strand</span>
-                    <p className="font-medium">{note.strand.name}</p>
+                    <span className="text-xs text-muted-foreground uppercase tracking-wider">
+                      Strand
+                    </span>
+                    <p className="font-medium mt-0.5">{note.strand.name}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Sub-Strand</span>
-                    <p className="font-medium">{note.subStrand.name}</p>
+                    <span className="text-xs text-muted-foreground uppercase tracking-wider">
+                      Sub-Strand
+                    </span>
+                    <p className="font-medium mt-0.5">{note.subStrand.name}</p>
                   </div>
                 </div>
               </CardContent>
@@ -449,7 +551,7 @@ export function NotesExplorer() {
             {VISIBLE_SECTIONS.map(({ key, label }) => {
               const value = content[key];
               if (!value) return null;
-              return <ContentSection key={key} label={label} value={value} />;
+              return <ContentSection key={key} sectionKey={key} label={label} value={value} />;
             })}
 
             {/* Blurred Sections */}
@@ -458,13 +560,17 @@ export function NotesExplorer() {
                 {BLURRED_SECTIONS.map(({ key, label }) => {
                   const value = content[key];
                   if (!value) return null;
+                  const Icon = SECTION_ICONS[key] || FileText;
                   const paragraphs = value
                     .split(/\n\n+/)
                     .filter((p) => p.trim());
                   return (
                     <Card key={key}>
                       <CardHeader className="pb-3">
-                        <CardTitle className="text-lg">{label}</CardTitle>
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <Icon className="h-4 w-4 text-purple-500" />
+                          {label}
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="blur-[6px]">
                         {paragraphs.slice(0, 3).map((para, idx) => (
@@ -486,13 +592,15 @@ export function NotesExplorer() {
 
               {/* Unlock message overlay */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="bg-background/80 backdrop-blur-sm border rounded-xl px-6 py-4 text-center shadow-lg">
-                  <StickyNote className="h-8 w-8 text-purple-500 mx-auto mb-2" />
-                  <p className="text-sm font-medium">
+                <div className="bg-background/90 backdrop-blur-sm border-2 border-purple-200 dark:border-purple-800 rounded-xl px-8 py-5 text-center shadow-xl">
+                  <div className="p-2 rounded-full bg-purple-100 dark:bg-purple-900/30 w-fit mx-auto mb-3">
+                    <Download className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <p className="font-semibold text-sm">
                     Download to view full teaching notes
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Detailed explanations, activities, assessment & more
+                    5 more sections: explanations, examples, activities & more
                   </p>
                 </div>
               </div>
@@ -502,19 +610,22 @@ export function NotesExplorer() {
           {/* Download Card - Right side (sticky) */}
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-4">
-              <Card className="border-2 border-purple-200 dark:border-purple-900/50 shadow-lg">
+              <Card className="border-2 border-purple-200 dark:border-purple-900/50 shadow-lg overflow-hidden">
+                <div className="h-1 bg-gradient-to-r from-purple-500 to-blue-500" />
                 <CardHeader className="pb-4">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Download className="h-5 w-5 text-purple-500" />
+                    <div className="p-1.5 rounded-md bg-purple-100 dark:bg-purple-900/30">
+                      <Download className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                    </div>
                     Download Notes
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
                     <div>
-                      <Label htmlFor="schoolName" className="text-xs">
+                      <Label htmlFor="schoolName" className="text-xs font-medium">
                         School Name{" "}
-                        <span className="text-muted-foreground">
+                        <span className="text-muted-foreground font-normal">
                           (optional)
                         </span>
                       </Label>
@@ -527,9 +638,9 @@ export function NotesExplorer() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="classGroup" className="text-xs">
+                      <Label htmlFor="classGroup" className="text-xs font-medium">
                         Class / Group{" "}
-                        <span className="text-muted-foreground">
+                        <span className="text-muted-foreground font-normal">
                           (optional)
                         </span>
                       </Label>
@@ -543,22 +654,21 @@ export function NotesExplorer() {
                     </div>
                   </div>
 
-                  <div className="pt-2">
-                    <Button
-                      onClick={handleDownload}
-                      disabled={downloading}
-                      className="w-full"
-                    >
-                      {downloading ? (
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      ) : (
-                        <StickyNote className="h-4 w-4 mr-2" />
-                      )}
-                      Download Teaching Notes PDF
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={handleDownload}
+                    disabled={downloading}
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                    size="lg"
+                  >
+                    {downloading ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4 mr-2" />
+                    )}
+                    Download Teaching Notes PDF
+                  </Button>
 
-                  <p className="text-xs text-muted-foreground text-center pt-1">
+                  <p className="text-xs text-muted-foreground text-center">
                     Includes all 7 sections with formatted content
                   </p>
                 </CardContent>
