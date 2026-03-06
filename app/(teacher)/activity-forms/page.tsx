@@ -248,9 +248,12 @@ export default async function ActivityFormsPage() {
                   <TabsTrigger
                     key={level}
                     value={level.toString()}
-                    className="rounded-full border border-border px-4 py-2 data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=active]:border-pink-600 data-[state=active]:shadow-md data-[state=active]:shadow-pink-500/20 transition-all"
+                    className="gap-2 rounded-full border border-border px-4 py-2 data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=active]:border-pink-600 data-[state=active]:shadow-md data-[state=active]:shadow-pink-500/20 transition-all"
                   >
                     {scienceGrades[level].name}
+                    <Badge variant="secondary" className="ml-0.5 text-xs">
+                      {scienceGrades[level].experiments.length}
+                    </Badge>
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -340,9 +343,12 @@ export default async function ActivityFormsPage() {
                   <TabsTrigger
                     key={level}
                     value={level.toString()}
-                    className="rounded-full border border-border px-4 py-2 data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:border-indigo-600 data-[state=active]:shadow-md data-[state=active]:shadow-indigo-500/20 transition-all"
+                    className="gap-2 rounded-full border border-border px-4 py-2 data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:border-indigo-600 data-[state=active]:shadow-md data-[state=active]:shadow-indigo-500/20 transition-all"
                   >
                     {ssGrades[level].name}
+                    <Badge variant="secondary" className="ml-0.5 text-xs">
+                      {ssGrades[level].activities.length}
+                    </Badge>
                   </TabsTrigger>
                 ))}
               </TabsList>
