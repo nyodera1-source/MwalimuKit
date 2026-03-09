@@ -48,6 +48,7 @@ model Grade {
   labExperiments          LabExperiment[]
   activityForms           ActivityForm[]
   socialStudiesActivities SocialStudiesActivity[]
+  creativeArtsActivities  CreativeArtsActivity[]
   curriculumNotes         CurriculumNote[]
 
   @@map("grades")
@@ -69,6 +70,7 @@ model LearningArea {
   labExperiments          LabExperiment[]
   activityForms           ActivityForm[]
   socialStudiesActivities SocialStudiesActivity[]
+  creativeArtsActivities  CreativeArtsActivity[]
   curriculumNotes         CurriculumNote[]
 
   @@unique([gradeId, name])
@@ -88,6 +90,7 @@ model Strand {
   teachingNotes  TeachingNotes[]
   labExperiments          LabExperiment[]
   socialStudiesActivities SocialStudiesActivity[]
+  creativeArtsActivities  CreativeArtsActivity[]
   curriculumNotes         CurriculumNote[]
 
   @@unique([learningAreaId, name])
@@ -384,6 +387,35 @@ model SocialStudiesActivity {
   strand       Strand?      @relation(fields: [strandId], references: [id])
 
   @@map("social_studies_activities")
+}
+
+// ─── CREATIVE ARTS ACTIVITIES ───
+
+model CreativeArtsActivity {
+  id                  String   @id @default(cuid())
+  name                String
+  activityType        String   @map("activity_type") // "visual_art", "music", "drama", "dance"
+  gradeId             String   @map("grade_id")
+  learningAreaId      String   @map("learning_area_id")
+  strandId            String?  @map("strand_id")
+  aim                 String
+  materials           Json                              // Array of materials/tools needed
+  instructions        Json                              // Array of activity steps
+  backgroundInfo      String   @map("background_info") // Cultural/historical context
+  expectedOutcome     String   @map("expected_outcome") // What students should produce/perform
+  performanceCriteria Json     @map("performance_criteria") // Array of assessment rubric points
+  artMedium           String?  @map("art_medium")       // e.g. "watercolour", "recorder", "body movement"
+  inspirationNotes    String?  @map("inspiration_notes") // Creative inspiration/reference info
+  relatedConcepts     Json     @map("related_concepts")
+  sloIds              String[] @map("slo_ids")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  grade        Grade        @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+  strand       Strand?      @relation(fields: [strandId], references: [id])
+
+  @@map("creative_arts_activities")
 }
 
 // ─── CURRICULUM NOTES (Cached, shared across teachers) ───
