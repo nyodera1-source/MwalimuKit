@@ -258,7 +258,7 @@ export default async function ActivityFormsPage() {
       {/* Top-level subject area tabs */}
       <Tabs defaultValue="science" className="w-full">
         <TabsList className="mb-6 h-11">
-          <TabsTrigger value="science" className="gap-2 px-5">
+          <TabsTrigger value="science" className="gap-2 px-5 text-foreground/70 font-medium data-[state=active]:text-foreground data-[state=active]:font-semibold">
             <FlaskConical className="h-4 w-4" />
             Science Practicals
             <Badge
@@ -268,7 +268,7 @@ export default async function ActivityFormsPage() {
               {experiments.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="social-studies" className="gap-2 px-5">
+          <TabsTrigger value="social-studies" className="gap-2 px-5 text-foreground/70 font-medium data-[state=active]:text-foreground data-[state=active]:font-semibold">
             <BookOpen className="h-4 w-4" />
             Social Studies
             <Badge
@@ -278,7 +278,7 @@ export default async function ActivityFormsPage() {
               {socialStudies.length}
             </Badge>
           </TabsTrigger>
-          <TabsTrigger value="creative-arts" className="gap-2 px-5">
+          <TabsTrigger value="creative-arts" className="gap-2 px-5 text-foreground/70 font-medium data-[state=active]:text-foreground data-[state=active]:font-semibold">
             <Palette className="h-4 w-4" />
             Creative Arts
             <Badge
@@ -314,7 +314,7 @@ export default async function ActivityFormsPage() {
                   <TabsTrigger
                     key={level}
                     value={level.toString()}
-                    className="gap-2 rounded-full border border-border px-4 py-2 data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=active]:border-pink-600 data-[state=active]:shadow-md data-[state=active]:shadow-pink-500/20 transition-all"
+                    className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=active]:border-pink-600 data-[state=active]:shadow-md data-[state=active]:shadow-pink-500/20 transition-all"
                   >
                     {scienceGrades[level].name}
                     <Badge variant="secondary" className="ml-0.5 text-xs">
@@ -424,7 +424,7 @@ export default async function ActivityFormsPage() {
                   <TabsTrigger
                     key={level}
                     value={level.toString()}
-                    className="gap-2 rounded-full border border-border px-4 py-2 data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:border-indigo-600 data-[state=active]:shadow-md data-[state=active]:shadow-indigo-500/20 transition-all"
+                    className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:border-indigo-600 data-[state=active]:shadow-md data-[state=active]:shadow-indigo-500/20 transition-all"
                   >
                     {ssGrades[level].name}
                     <Badge variant="secondary" className="ml-0.5 text-xs">
@@ -535,7 +535,7 @@ export default async function ActivityFormsPage() {
                   <TabsTrigger
                     key={level}
                     value={level.toString()}
-                    className="gap-2 rounded-full border border-border px-4 py-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:shadow-md data-[state=active]:shadow-purple-500/20 transition-all"
+                    className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:shadow-md data-[state=active]:shadow-purple-500/20 transition-all"
                   >
                     {artsGrades[level].name}
                     <Badge variant="secondary" className="ml-0.5 text-xs">
