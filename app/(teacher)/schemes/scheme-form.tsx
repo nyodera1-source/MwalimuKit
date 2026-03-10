@@ -255,33 +255,57 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
   // ─── Helpers for auto-filling T/L Activities & AIDS ───
 
+  // Counter to rotate intro styles across calls so consecutive lessons
+  // covering the same sub-strand get different phrasing.
+  let activityStyleCounter = 0;
+
   function makeTlActivities(subTopicNames: string, objectives: string): string {
     const subtopics = subTopicNames.split("\n").filter(Boolean);
     const parts: string[] = [];
     const obj = objectives.toLowerCase();
 
-    // Vary the intro phrase for each sub-strand
+    // Rotate through varied intro phrases across calls
     const introStyles = [
       (s: string) => `Discussion on ${s}.`,
       (s: string) => `Teacher exposition on ${s}.`,
       (s: string) => `Learner-centered exploration of ${s}.`,
       (s: string) => `Group work on ${s}.`,
       (s: string) => `Guided discovery on ${s}.`,
+      (s: string) => `Think-pair-share on ${s}.`,
+      (s: string) => `Interactive lesson on ${s}.`,
+      (s: string) => `Demonstration and explanation of ${s}.`,
     ];
     for (let i = 0; i < subtopics.length; i++) {
-      const style = introStyles[i % introStyles.length];
-      parts.push(style(subtopics[i].trim()));
+      const idx = (activityStyleCounter + i) % introStyles.length;
+      parts.push(introStyles[idx](subtopics[i].trim()));
     }
+    activityStyleCounter += subtopics.length;
 
-    // Add objective-specific activities (more varied phrasing)
+    // Objective-specific activities — use alternating phrasings
+    const explainAlts = [
+      "Teacher-led exposition with real-life examples.",
+      "Guided explanation using illustrations and examples.",
+      "Oral presentation by teacher with learner note-taking.",
+    ];
+    const identifyAlts = [
+      "Brainstorming session and classification exercise.",
+      "Sorting and grouping activity in small groups.",
+      "Learners identify and list key items individually, then share.",
+    ];
+    const calculateAlts = [
+      "Worked examples and practice problems.",
+      "Step-by-step problem solving on the board, then individual practice.",
+      "Guided calculation exercises with peer checking.",
+    ];
+
     if (obj.includes("explain") || obj.includes("describe")) {
-      parts.push("Teacher-led exposition with real-life examples.");
+      parts.push(explainAlts[activityStyleCounter % explainAlts.length]);
     }
     if (obj.includes("identify") || obj.includes("classify") || obj.includes("list")) {
-      parts.push("Brainstorming session and classification exercise.");
+      parts.push(identifyAlts[activityStyleCounter % identifyAlts.length]);
     }
     if (obj.includes("calculate") || obj.includes("determine") || obj.includes("measure")) {
-      parts.push("Worked examples and practice problems.");
+      parts.push(calculateAlts[activityStyleCounter % calculateAlts.length]);
     }
     if (obj.includes("solve")) {
       parts.push("Problem-solving exercises in pairs.");
@@ -305,8 +329,9 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
       parts.push("Derivation and formulation exercises.");
     }
 
-    // Always close with Q&A
-    parts.push("Q&A session.");
+    // Vary the closing activity
+    const closings = ["Q&A session.", "Recap and Q&A.", "Oral questions and summary.", "Review and learner feedback."];
+    parts.push(closings[activityStyleCounter % closings.length]);
     return parts.join(" ");
   }
 
@@ -389,57 +414,83 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     }
 
     // ── Distribute sub-strands across ALL remaining teaching weeks ──
-    // Proportional mapping ensures every week gets content, even when
-    // there are more weeks than sub-strands (some subs span 2+ weeks)
-    // or more subs than weeks (some weeks get multiple subs).
+    // Flatten all SLOs with their sub-strand/strand context so we can
+    // assign distinct objectives to each lesson row, avoiding repetition.
     const remainingWeeks = teachingWeeks.slice(weekIdx);
-    const totalSubs = orderedSubStrands.length;
-    const totalWeeks = remainingWeeks.length;
 
-    for (let wIdx = 0; wIdx < totalWeeks; wIdx++) {
-      const tw = remainingWeeks[wIdx];
+    interface SloItem {
+      strandName: string;
+      subStrandName: string;
+      sloDescription: string;
+    }
 
-      // Proportionally map this week to sub-strand range
-      const startSub = Math.floor(wIdx * totalSubs / totalWeeks);
-      const endSub = Math.floor((wIdx + 1) * totalSubs / totalWeeks);
+    const allSloItems: SloItem[] = orderedSubStrands.flatMap(
+      ({ strandName, subStrand }) =>
+        subStrand.slos.map((slo) => ({
+          strandName,
+          subStrandName: subStrand.name,
+          sloDescription: slo.description,
+        }))
+    );
 
-      const weekSubs: typeof orderedSubStrands = [];
-      if (startSub === endSub) {
-        // Fewer subs than weeks — this week shares a sub-strand
-        weekSubs.push(orderedSubStrands[startSub]);
-      } else {
-        for (let s = startSub; s < endSub && s < totalSubs; s++) {
-          weekSubs.push(orderedSubStrands[s]);
+    // Calculate total available lesson slots
+    const totalLessonSlots = remainingWeeks.reduce(
+      (sum, tw) => sum + (tw.endLesson - tw.startLesson + 1),
+      0
+    );
+    const totalSloCount = allSloItems.length;
+
+    if (totalSloCount === 0 || totalLessonSlots === 0) {
+      setEntries(newEntries);
+      return;
+    }
+
+    // Distribute SLOs across individual lessons, grouping into
+    // per-lesson batches so each lesson gets unique objectives.
+    let sloIdx = 0;
+    for (const tw of remainingWeeks) {
+      const lessonsInWeek = tw.endLesson - tw.startLesson + 1;
+
+      for (let l = 0; l < lessonsInWeek; l++) {
+        const lessonNum = tw.startLesson + l;
+
+        // Proportionally assign SLOs to this lesson
+        const globalLessonIdx = newEntries.length - (carryoverEnabled && carryoverTopic ? 1 : 0);
+        const sloStart = Math.floor(globalLessonIdx * totalSloCount / totalLessonSlots);
+        const sloEnd = Math.floor((globalLessonIdx + 1) * totalSloCount / totalLessonSlots);
+
+        // Gather the SLOs for this specific lesson
+        const lessonSlos: SloItem[] = [];
+        if (sloStart === sloEnd && sloStart < totalSloCount) {
+          lessonSlos.push(allSloItems[sloStart]);
+        } else {
+          for (let s = sloStart; s < sloEnd && s < totalSloCount; s++) {
+            lessonSlos.push(allSloItems[s]);
+          }
         }
+
+        if (lessonSlos.length === 0) continue;
+
+        const topicName = lessonSlos[0].strandName;
+        const subTopicNames = [
+          ...new Set(lessonSlos.map((s) => s.subStrandName)),
+        ].join("\n");
+        const objectives =
+          "By the end of the lesson, the learner should be able to:\n" +
+          lessonSlos.map((s) => `${s.sloDescription}.`).join(" ");
+
+        newEntries.push({
+          week: tw.week,
+          lesson: String(lessonNum),
+          topic: topicName,
+          subTopic: subTopicNames,
+          objectives,
+          tlActivities: makeTlActivities(subTopicNames, objectives),
+          tlAids: makeTlAids(actualReferenceBook, objectives),
+          reference: actualReferenceBook || "",
+          remarks: "",
+        });
       }
-
-      if (weekSubs.length === 0) continue;
-
-      const lessonRange = tw.startLesson === tw.endLesson
-        ? String(tw.startLesson)
-        : `${tw.startLesson}-${tw.endLesson}`;
-
-      const allSlos = weekSubs.flatMap(({ subStrand }) =>
-        subStrand.slos.map((s) => s.description)
-      );
-
-      const topicName = weekSubs[0].strandName;
-      const subTopicNames = weekSubs.map(({ subStrand }) => subStrand.name).join("\n");
-      const objectives = allSlos.length > 0
-        ? "By the end of the lesson, the learner should be able to:\n" + allSlos.map((t) => `${t}.`).join(" ")
-        : "";
-
-      newEntries.push({
-        week: tw.week,
-        lesson: lessonRange,
-        topic: topicName,
-        subTopic: subTopicNames,
-        objectives,
-        tlActivities: makeTlActivities(subTopicNames, objectives),
-        tlAids: makeTlAids(actualReferenceBook, objectives),
-        reference: actualReferenceBook || "",
-        remarks: "",
-      });
     }
 
     setEntries(newEntries);
