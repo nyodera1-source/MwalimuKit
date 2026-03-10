@@ -24,6 +24,10 @@ import {
   Music,
   Theater,
   PersonStanding,
+  FileCheck,
+  Calendar,
+  Music2,
+  FolderOpen,
 } from "lucide-react";
 
 // Science subject styling
@@ -116,36 +120,76 @@ const creativeArtsTypeConfig: Record<
   },
 };
 
+// Creative Arts form type styling
+const formTypeConfig: Record<
+  string,
+  { icon: typeof FileCheck; label: string; color: string; gradient: string }
+> = {
+  adjudication: {
+    icon: FileCheck,
+    label: "Adjudication Form",
+    color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    gradient: "from-blue-500 to-cyan-500",
+  },
+  rehearsal_plan: {
+    icon: Calendar,
+    label: "Rehearsal Plan",
+    color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    gradient: "from-green-500 to-emerald-500",
+  },
+  performance_program: {
+    icon: Music2,
+    label: "Performance Program",
+    color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+    gradient: "from-amber-500 to-orange-500",
+  },
+  portfolio_assessment: {
+    icon: FolderOpen,
+    label: "Portfolio Assessment",
+    color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+    gradient: "from-purple-500 to-violet-500",
+  },
+};
+
 export default async function ActivityFormsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const [experiments, socialStudies, creativeArts] = await Promise.all([
-    prisma.labExperiment.findMany({
-      include: {
-        grade: { select: { name: true, level: true } },
-        learningArea: { select: { name: true } },
-        strand: { select: { name: true } },
-      },
-      orderBy: [{ gradeId: "asc" }, { subject: "asc" }],
-    }),
-    prisma.socialStudiesActivity.findMany({
-      include: {
-        grade: { select: { name: true, level: true } },
-        learningArea: { select: { name: true } },
-        strand: { select: { name: true } },
-      },
-      orderBy: [{ gradeId: "asc" }, { activityType: "asc" }],
-    }),
-    prisma.creativeArtsActivity.findMany({
-      include: {
-        grade: { select: { name: true, level: true } },
-        learningArea: { select: { name: true } },
-        strand: { select: { name: true } },
-      },
-      orderBy: [{ gradeId: "asc" }, { activityType: "asc" }],
-    }),
-  ]);
+  const [experiments, socialStudies, creativeArts, creativeArtsForms] =
+    await Promise.all([
+      prisma.labExperiment.findMany({
+        include: {
+          grade: { select: { name: true, level: true } },
+          learningArea: { select: { name: true } },
+          strand: { select: { name: true } },
+        },
+        orderBy: [{ gradeId: "asc" }, { subject: "asc" }],
+      }),
+      prisma.socialStudiesActivity.findMany({
+        include: {
+          grade: { select: { name: true, level: true } },
+          learningArea: { select: { name: true } },
+          strand: { select: { name: true } },
+        },
+        orderBy: [{ gradeId: "asc" }, { activityType: "asc" }],
+      }),
+      prisma.creativeArtsActivity.findMany({
+        include: {
+          grade: { select: { name: true, level: true } },
+          learningArea: { select: { name: true } },
+          strand: { select: { name: true } },
+        },
+        orderBy: [{ gradeId: "asc" }, { activityType: "asc" }],
+      }),
+      prisma.creativeArtsForm.findMany({
+        include: {
+          grade: { select: { name: true, level: true } },
+          learningArea: { select: { name: true } },
+          strand: { select: { name: true } },
+        },
+        orderBy: [{ gradeId: "asc" }, { formType: "asc" }],
+      }),
+    ]);
 
   // Group experiments by grade level
   const scienceGrades = experiments.reduce(
@@ -180,12 +224,29 @@ export default async function ActivityFormsPage() {
     {} as Record<number, { name: string; activities: typeof creativeArts }>
   );
 
+  // Group forms by formType, then by grade
+  const formsByType = creativeArtsForms.reduce(
+    (acc, form) => {
+      if (!acc[form.formType]) acc[form.formType] = {};
+      const level = form.grade.level;
+      if (!acc[form.formType][level])
+        acc[form.formType][level] = { name: form.grade.name, forms: [] };
+      acc[form.formType][level].forms.push(form);
+      return acc;
+    },
+    {} as Record<
+      string,
+      Record<number, { name: string; forms: typeof creativeArtsForms }>
+    >
+  );
+
   const scienceLevels = Object.keys(scienceGrades).map(Number).sort();
   const ssLevels = Object.keys(ssGrades).map(Number).sort();
   const artsLevels = Object.keys(artsGrades).map(Number).sort();
   const defaultScienceTab = scienceLevels[0]?.toString() || "7";
   const defaultSSTab = ssLevels[0]?.toString() || "7";
   const defaultArtsTab = artsLevels[0]?.toString() || "7";
+  const totalArtsCount = creativeArts.length + creativeArtsForms.length;
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -285,7 +346,7 @@ export default async function ActivityFormsPage() {
               variant="secondary"
               className="ml-1 text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
             >
-              {creativeArts.length}
+              {totalArtsCount}
             </Badge>
           </TabsTrigger>
         </TabsList>
@@ -513,113 +574,202 @@ export default async function ActivityFormsPage() {
 
         {/* ═══ Creative Arts Tab ═══ */}
         <TabsContent value="creative-arts">
-          {creativeArts.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="p-4 rounded-2xl bg-purple-100 dark:bg-purple-900/20 mb-4">
-                  <Palette className="h-12 w-12 text-purple-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  No arts activities available yet
-                </h3>
-                <p className="text-muted-foreground text-sm max-w-sm">
-                  Creative Arts activities are being prepared and will appear
-                  here soon.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <Tabs defaultValue={defaultArtsTab} className="w-full">
-              <TabsList className="mb-5 bg-transparent gap-2 p-0">
-                {artsLevels.map((level) => (
-                  <TabsTrigger
-                    key={level}
-                    value={level.toString()}
-                    className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:shadow-md data-[state=active]:shadow-purple-500/20 transition-all"
-                  >
-                    {artsGrades[level].name}
-                    <Badge variant="secondary" className="ml-0.5 text-xs">
-                      {artsGrades[level].activities.length}
-                    </Badge>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-
-              {artsLevels.map((level) => {
-                // Group activities by type
-                const byType = artsGrades[level].activities.reduce(
-                  (acc, act) => {
-                    if (!acc[act.activityType]) acc[act.activityType] = [];
-                    acc[act.activityType].push(act);
-                    return acc;
-                  },
-                  {} as Record<string, typeof creativeArts>
-                );
-                const types = Object.keys(byType).sort();
-
+          <Tabs defaultValue="activities" className="w-full">
+            {/* Sub-category tabs */}
+            <TabsList className="mb-5 h-auto flex-wrap justify-start gap-1.5 bg-transparent p-0">
+              <TabsTrigger value="activities" className="gap-1.5 px-3 py-1.5 text-foreground/70 text-sm font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 transition-all">
+                <Palette className="h-3.5 w-3.5" />
+                Activities
+                <Badge variant="secondary" className="ml-0.5 text-xs">{creativeArts.length}</Badge>
+              </TabsTrigger>
+              {(["adjudication", "rehearsal_plan", "performance_program", "portfolio_assessment"] as const).map((ft) => {
+                const ftConfig = formTypeConfig[ft];
+                const FtIcon = ftConfig.icon;
+                const count = creativeArtsForms.filter((f) => f.formType === ft).length;
                 return (
-                  <TabsContent key={level} value={level.toString()}>
-                    <div className="space-y-8">
-                      {types.map((type) => {
-                        const config = creativeArtsTypeConfig[type] || {
-                          icon: Palette,
-                          label: type,
-                          color: "bg-gray-100 text-gray-700",
-                          gradient: "from-gray-500 to-gray-600",
-                        };
-                        const TypeIcon = config.icon;
+                  <TabsTrigger key={ft} value={ft} className="gap-1.5 px-3 py-1.5 text-foreground/70 text-sm font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 transition-all">
+                    <FtIcon className="h-3.5 w-3.5" />
+                    {ftConfig.label.replace(" Form", "").replace(" Plan", "")}
+                    <Badge variant="secondary" className="ml-0.5 text-xs">{count}</Badge>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
 
-                        return (
-                          <div key={type}>
-                            {/* Activity type section header */}
-                            <div className="flex items-center gap-3 mb-4">
-                              <div className={`p-1.5 rounded-lg ${config.color}`}>
-                                <TypeIcon className="h-4 w-4" />
+            {/* ── Activities sub-tab (existing) ── */}
+            <TabsContent value="activities">
+              {creativeArts.length === 0 ? (
+                <Card className="border-dashed">
+                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="p-4 rounded-2xl bg-purple-100 dark:bg-purple-900/20 mb-4">
+                      <Palette className="h-12 w-12 text-purple-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">No activities yet</h3>
+                    <p className="text-muted-foreground text-sm max-w-sm">
+                      Creative Arts activities are being prepared.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Tabs defaultValue={defaultArtsTab} className="w-full">
+                  <TabsList className="mb-5 bg-transparent gap-2 p-0">
+                    {artsLevels.map((level) => (
+                      <TabsTrigger
+                        key={level}
+                        value={level.toString()}
+                        className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:shadow-md data-[state=active]:shadow-purple-500/20 transition-all"
+                      >
+                        {artsGrades[level].name}
+                        <Badge variant="secondary" className="ml-0.5 text-xs">
+                          {artsGrades[level].activities.length}
+                        </Badge>
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+
+                  {artsLevels.map((level) => {
+                    const byType = artsGrades[level].activities.reduce(
+                      (acc, act) => {
+                        if (!acc[act.activityType]) acc[act.activityType] = [];
+                        acc[act.activityType].push(act);
+                        return acc;
+                      },
+                      {} as Record<string, typeof creativeArts>
+                    );
+                    const types = Object.keys(byType).sort();
+
+                    return (
+                      <TabsContent key={level} value={level.toString()}>
+                        <div className="space-y-8">
+                          {types.map((type) => {
+                            const config = creativeArtsTypeConfig[type] || {
+                              icon: Palette, label: type, color: "bg-gray-100 text-gray-700", gradient: "from-gray-500 to-gray-600",
+                            };
+                            const TypeIcon = config.icon;
+                            return (
+                              <div key={type}>
+                                <div className="flex items-center gap-3 mb-4">
+                                  <div className={`p-1.5 rounded-lg ${config.color}`}>
+                                    <TypeIcon className="h-4 w-4" />
+                                  </div>
+                                  <h3 className="font-semibold text-sm">{config.label}</h3>
+                                  <span className="text-xs text-muted-foreground">
+                                    {byType[type].length} {byType[type].length === 1 ? "activity" : "activities"}
+                                  </span>
+                                  <div className="flex-1 border-t border-border" />
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                  {byType[type].map((act) => (
+                                    <Link key={act.id} href={`/activity-forms/creative-arts/${act.id}`}>
+                                      <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
+                                        <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
+                                        <CardHeader className="pb-2">
+                                          <CardTitle className="text-base leading-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                                            {act.name}
+                                          </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-3 pt-0">
+                                          <p className="text-sm text-muted-foreground line-clamp-2">{act.aim}</p>
+                                          {act.strand && (
+                                            <div className="text-xs text-purple-600 dark:text-purple-400 font-medium pt-3 border-t truncate">
+                                              {act.strand.name}
+                                            </div>
+                                          )}
+                                        </CardContent>
+                                      </Card>
+                                    </Link>
+                                  ))}
+                                </div>
                               </div>
-                              <h3 className="font-semibold text-sm">{config.label}</h3>
-                              <span className="text-xs text-muted-foreground">
-                                {byType[type].length} {byType[type].length === 1 ? "activity" : "activities"}
-                              </span>
-                              <div className="flex-1 border-t border-border" />
-                            </div>
+                            );
+                          })}
+                        </div>
+                      </TabsContent>
+                    );
+                  })}
+                </Tabs>
+              )}
+            </TabsContent>
 
-                            {/* Cards grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                              {byType[type].map((act) => (
-                                <Link
-                                  key={act.id}
-                                  href={`/activity-forms/creative-arts/${act.id}`}
-                                >
+            {/* ── Form type sub-tabs (new) ── */}
+            {(["adjudication", "rehearsal_plan", "performance_program", "portfolio_assessment"] as const).map((ft) => {
+              const ftGrades = formsByType[ft] || {};
+              const ftLevels = Object.keys(ftGrades).map(Number).sort();
+              const ftConfig = formTypeConfig[ft];
+              const FtIcon = ftConfig.icon;
+              const defaultFtTab = ftLevels[0]?.toString() || "7";
+
+              return (
+                <TabsContent key={ft} value={ft}>
+                  {ftLevels.length === 0 ? (
+                    <Card className="border-dashed">
+                      <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                        <div className={`p-4 rounded-2xl ${ftConfig.color} mb-4`}>
+                          <FtIcon className="h-12 w-12" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">No {ftConfig.label.toLowerCase()}s yet</h3>
+                        <p className="text-muted-foreground text-sm max-w-sm">
+                          Forms are being prepared and will appear here soon.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <Tabs defaultValue={defaultFtTab} className="w-full">
+                      <TabsList className="mb-5 bg-transparent gap-2 p-0">
+                        {ftLevels.map((level) => (
+                          <TabsTrigger
+                            key={level}
+                            value={level.toString()}
+                            className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:shadow-md data-[state=active]:shadow-purple-500/20 transition-all"
+                          >
+                            {ftGrades[level].name}
+                            <Badge variant="secondary" className="ml-0.5 text-xs">
+                              {ftGrades[level].forms.length}
+                            </Badge>
+                          </TabsTrigger>
+                        ))}
+                      </TabsList>
+
+                      {ftLevels.map((level) => (
+                        <TabsContent key={level} value={level.toString()}>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {ftGrades[level].forms.map((form) => {
+                              const disciplineLabel =
+                                form.artDiscipline === "visual_art" ? "Visual Art" :
+                                form.artDiscipline === "mixed" ? "Mixed Arts" :
+                                form.artDiscipline.charAt(0).toUpperCase() + form.artDiscipline.slice(1);
+                              return (
+                                <Link key={form.id} href={`/activity-forms/creative-arts-forms/${form.id}`}>
                                   <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
-                                    <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
+                                    <div className={`h-1 bg-gradient-to-r ${ftConfig.gradient}`} />
                                     <CardHeader className="pb-2">
                                       <CardTitle className="text-base leading-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                                        {act.name}
+                                        {form.name}
                                       </CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-3 pt-0">
                                       <p className="text-sm text-muted-foreground line-clamp-2">
-                                        {act.aim}
+                                        {form.description}
                                       </p>
-                                      {act.strand && (
-                                        <div className="text-xs text-purple-600 dark:text-purple-400 font-medium pt-3 border-t truncate">
-                                          {act.strand.name}
-                                        </div>
-                                      )}
+                                      <div className="flex items-center gap-2 pt-3 border-t">
+                                        <Badge variant="outline" className="text-xs">
+                                          {disciplineLabel}
+                                        </Badge>
+                                      </div>
                                     </CardContent>
                                   </Card>
                                 </Link>
-                              ))}
-                            </div>
+                              );
+                            })}
                           </div>
-                        );
-                      })}
-                    </div>
-                  </TabsContent>
-                );
-              })}
-            </Tabs>
-          )}
+                        </TabsContent>
+                      ))}
+                    </Tabs>
+                  )}
+                </TabsContent>
+              );
+            })}
+          </Tabs>
         </TabsContent>
       </Tabs>
     </div>

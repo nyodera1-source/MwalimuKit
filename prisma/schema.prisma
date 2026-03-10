@@ -49,6 +49,7 @@ model Grade {
   activityForms           ActivityForm[]
   socialStudiesActivities SocialStudiesActivity[]
   creativeArtsActivities  CreativeArtsActivity[]
+  creativeArtsForms       CreativeArtsForm[]
   curriculumNotes         CurriculumNote[]
 
   @@map("grades")
@@ -71,6 +72,7 @@ model LearningArea {
   activityForms           ActivityForm[]
   socialStudiesActivities SocialStudiesActivity[]
   creativeArtsActivities  CreativeArtsActivity[]
+  creativeArtsForms       CreativeArtsForm[]
   curriculumNotes         CurriculumNote[]
 
   @@unique([gradeId, name])
@@ -91,6 +93,7 @@ model Strand {
   labExperiments          LabExperiment[]
   socialStudiesActivities SocialStudiesActivity[]
   creativeArtsActivities  CreativeArtsActivity[]
+  creativeArtsForms       CreativeArtsForm[]
   curriculumNotes         CurriculumNote[]
 
   @@unique([learningAreaId, name])
@@ -416,6 +419,28 @@ model CreativeArtsActivity {
   strand       Strand?      @relation(fields: [strandId], references: [id])
 
   @@map("creative_arts_activities")
+}
+
+// ─── CREATIVE ARTS FORMS (Adjudication, Rehearsal, Programs, Portfolio) ───
+
+model CreativeArtsForm {
+  id             String   @id @default(cuid())
+  name           String
+  formType       String   @map("form_type") // "adjudication", "rehearsal_plan", "performance_program", "portfolio_assessment"
+  gradeId        String   @map("grade_id")
+  learningAreaId String   @map("learning_area_id")
+  strandId       String?  @map("strand_id")
+  artDiscipline  String   @map("art_discipline") // "choir", "dance", "drama", "visual_art", "instrumental", "ensemble", "mixed"
+  description    String
+  formData       Json     @map("form_data") // Type-specific structured content
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  grade        Grade        @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+  strand       Strand?      @relation(fields: [strandId], references: [id])
+
+  @@map("creative_arts_forms")
 }
 
 // ─── CURRICULUM NOTES (Cached, shared across teachers) ───
