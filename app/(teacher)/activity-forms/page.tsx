@@ -28,127 +28,75 @@ import {
   Calendar,
   Music2,
   FolderOpen,
+  Layers,
 } from "lucide-react";
 
-// Science subject styling
-const subjectConfig: Record<
+// Sub-type styling configs (for section headers within a learning area)
+const subTypeConfig: Record<
   string,
-  { icon: typeof Beaker; color: string; gradient: string }
+  { icon: typeof Beaker; label: string; color: string; gradient: string }
 > = {
-  Biology: {
-    icon: Leaf,
-    color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    gradient: "from-green-500 to-emerald-500",
-  },
-  Chemistry: {
-    icon: Beaker,
-    color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-    gradient: "from-blue-500 to-cyan-500",
-  },
-  Physics: {
-    icon: Zap,
-    color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-    gradient: "from-amber-500 to-orange-500",
-  },
+  // Science subjects
+  Biology: { icon: Leaf, label: "Biology", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", gradient: "from-green-500 to-emerald-500" },
+  Chemistry: { icon: Beaker, label: "Chemistry", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", gradient: "from-blue-500 to-cyan-500" },
+  Physics: { icon: Zap, label: "Physics", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400", gradient: "from-amber-500 to-orange-500" },
+  // Social Studies activity types
+  map_work: { icon: Map, label: "Map Work", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", gradient: "from-blue-500 to-indigo-500" },
+  research: { icon: Search, label: "Research", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400", gradient: "from-purple-500 to-violet-500" },
+  debate: { icon: MessageSquare, label: "Debate", color: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400", gradient: "from-orange-500 to-red-500" },
+  field_study: { icon: Compass, label: "Field Study", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", gradient: "from-green-500 to-teal-500" },
+  case_study: { icon: FileText, label: "Case Study", color: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400", gradient: "from-teal-500 to-cyan-500" },
+  // Creative Arts activity types
+  visual_art: { icon: Palette, label: "Visual Art", color: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400", gradient: "from-rose-500 to-pink-500" },
+  music: { icon: Music, label: "Music", color: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400", gradient: "from-violet-500 to-purple-500" },
+  drama: { icon: Theater, label: "Drama & Theatre", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400", gradient: "from-amber-500 to-yellow-500" },
+  dance: { icon: PersonStanding, label: "Dance", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400", gradient: "from-emerald-500 to-teal-500" },
+  // Creative Arts form types
+  adjudication: { icon: FileCheck, label: "Adjudication Form", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", gradient: "from-blue-500 to-cyan-500" },
+  rehearsal_plan: { icon: Calendar, label: "Rehearsal Plan", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", gradient: "from-green-500 to-emerald-500" },
+  performance_program: { icon: Music2, label: "Performance Program", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400", gradient: "from-amber-500 to-orange-500" },
+  portfolio_assessment: { icon: FolderOpen, label: "Portfolio Assessment", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400", gradient: "from-purple-500 to-violet-500" },
 };
 
-// Social Studies activity type styling
-const activityTypeConfig: Record<
-  string,
-  { icon: typeof BookOpen; label: string; color: string; gradient: string }
-> = {
-  map_work: {
-    icon: Map,
-    label: "Map Work",
-    color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-    gradient: "from-blue-500 to-indigo-500",
-  },
-  research: {
-    icon: Search,
-    label: "Research",
-    color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-    gradient: "from-purple-500 to-violet-500",
-  },
-  debate: {
-    icon: MessageSquare,
-    label: "Debate",
-    color: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
-    gradient: "from-orange-500 to-red-500",
-  },
-  field_study: {
-    icon: Compass,
-    label: "Field Study",
-    color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    gradient: "from-green-500 to-teal-500",
-  },
-  case_study: {
-    icon: FileText,
-    label: "Case Study",
-    color: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
-    gradient: "from-teal-500 to-cyan-500",
-  },
+// Learning area icons
+const learningAreaIcons: Record<string, typeof FlaskConical> = {
+  "Biology": Leaf,
+  "Chemistry": Beaker,
+  "Physics": Zap,
+  "Integrated Science": FlaskConical,
+  "Science": FlaskConical,
+  "Social Studies": BookOpen,
+  "History and Government": BookOpen,
+  "Geography": Compass,
+  "Creative Arts": Palette,
+  "Creative Arts and Sports": Palette,
+  "Art and Design": Palette,
+  "Music": Music,
 };
 
-// Creative Arts activity type styling
-const creativeArtsTypeConfig: Record<
-  string,
-  { icon: typeof Palette; label: string; color: string; gradient: string }
-> = {
-  visual_art: {
-    icon: Palette,
-    label: "Visual Art",
-    color: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400",
-    gradient: "from-rose-500 to-pink-500",
-  },
-  music: {
-    icon: Music,
-    label: "Music",
-    color: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
-    gradient: "from-violet-500 to-purple-500",
-  },
-  drama: {
-    icon: Theater,
-    label: "Drama & Theatre",
-    color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-    gradient: "from-amber-500 to-yellow-500",
-  },
-  dance: {
-    icon: PersonStanding,
-    label: "Dance",
-    color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-    gradient: "from-emerald-500 to-teal-500",
-  },
-};
+// Learning area accent colors for section headers
+const learningAreaAccents = [
+  { headerBg: "bg-pink-50 dark:bg-pink-950/30", headerBorder: "border-pink-200 dark:border-pink-800", headerText: "text-pink-700 dark:text-pink-400", hoverText: "group-hover:text-pink-600 dark:group-hover:text-pink-400", strandText: "text-pink-600 dark:text-pink-400" },
+  { headerBg: "bg-indigo-50 dark:bg-indigo-950/30", headerBorder: "border-indigo-200 dark:border-indigo-800", headerText: "text-indigo-700 dark:text-indigo-400", hoverText: "group-hover:text-indigo-600 dark:group-hover:text-indigo-400", strandText: "text-indigo-600 dark:text-indigo-400" },
+  { headerBg: "bg-purple-50 dark:bg-purple-950/30", headerBorder: "border-purple-200 dark:border-purple-800", headerText: "text-purple-700 dark:text-purple-400", hoverText: "group-hover:text-purple-600 dark:group-hover:text-purple-400", strandText: "text-purple-600 dark:text-purple-400" },
+  { headerBg: "bg-emerald-50 dark:bg-emerald-950/30", headerBorder: "border-emerald-200 dark:border-emerald-800", headerText: "text-emerald-700 dark:text-emerald-400", hoverText: "group-hover:text-emerald-600 dark:group-hover:text-emerald-400", strandText: "text-emerald-600 dark:text-emerald-400" },
+  { headerBg: "bg-amber-50 dark:bg-amber-950/30", headerBorder: "border-amber-200 dark:border-amber-800", headerText: "text-amber-700 dark:text-amber-400", hoverText: "group-hover:text-amber-600 dark:group-hover:text-amber-400", strandText: "text-amber-600 dark:text-amber-400" },
+  { headerBg: "bg-cyan-50 dark:bg-cyan-950/30", headerBorder: "border-cyan-200 dark:border-cyan-800", headerText: "text-cyan-700 dark:text-cyan-400", hoverText: "group-hover:text-cyan-600 dark:group-hover:text-cyan-400", strandText: "text-cyan-600 dark:text-cyan-400" },
+  { headerBg: "bg-rose-50 dark:bg-rose-950/30", headerBorder: "border-rose-200 dark:border-rose-800", headerText: "text-rose-700 dark:text-rose-400", hoverText: "group-hover:text-rose-600 dark:group-hover:text-rose-400", strandText: "text-rose-600 dark:text-rose-400" },
+];
 
-// Creative Arts form type styling
-const formTypeConfig: Record<
-  string,
-  { icon: typeof FileCheck; label: string; color: string; gradient: string }
-> = {
-  adjudication: {
-    icon: FileCheck,
-    label: "Adjudication Form",
-    color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-    gradient: "from-blue-500 to-cyan-500",
-  },
-  rehearsal_plan: {
-    icon: Calendar,
-    label: "Rehearsal Plan",
-    color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    gradient: "from-green-500 to-emerald-500",
-  },
-  performance_program: {
-    icon: Music2,
-    label: "Performance Program",
-    color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-    gradient: "from-amber-500 to-orange-500",
-  },
-  portfolio_assessment: {
-    icon: FolderOpen,
-    label: "Portfolio Assessment",
-    color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-    gradient: "from-purple-500 to-violet-500",
-  },
+type UnifiedItem = {
+  id: string;
+  name: string;
+  description: string;
+  gradeName: string;
+  gradeLevel: number;
+  learningArea: string;
+  strandName: string | null;
+  href: string;
+  kind: "experiment" | "social-studies" | "creative-arts" | "creative-arts-form";
+  subType?: string;
+  artDiscipline?: string;
 };
 
 export default async function ActivityFormsPage() {
@@ -191,62 +139,79 @@ export default async function ActivityFormsPage() {
       }),
     ]);
 
-  // Group experiments by grade level
-  const scienceGrades = experiments.reduce(
-    (acc, exp) => {
-      const level = exp.grade.level;
-      if (!acc[level]) acc[level] = { name: exp.grade.name, experiments: [] };
-      acc[level].experiments.push(exp);
-      return acc;
-    },
-    {} as Record<number, { name: string; experiments: typeof experiments }>
-  );
+  // Unify all items
+  const allItems: UnifiedItem[] = [
+    ...experiments.map((exp) => ({
+      id: exp.id,
+      name: exp.name,
+      description: exp.aim,
+      gradeName: exp.grade.name,
+      gradeLevel: exp.grade.level,
+      learningArea: exp.learningArea.name,
+      strandName: exp.strand?.name ?? null,
+      href: `/activity-forms/experiment/${exp.id}`,
+      kind: "experiment" as const,
+      subType: exp.subject,
+    })),
+    ...socialStudies.map((act) => ({
+      id: act.id,
+      name: act.name,
+      description: act.aim,
+      gradeName: act.grade.name,
+      gradeLevel: act.grade.level,
+      learningArea: act.learningArea.name,
+      strandName: act.strand?.name ?? null,
+      href: `/activity-forms/social-studies/${act.id}`,
+      kind: "social-studies" as const,
+      subType: act.activityType,
+    })),
+    ...creativeArts.map((act) => ({
+      id: act.id,
+      name: act.name,
+      description: act.aim,
+      gradeName: act.grade.name,
+      gradeLevel: act.grade.level,
+      learningArea: act.learningArea.name,
+      strandName: act.strand?.name ?? null,
+      href: `/activity-forms/creative-arts/${act.id}`,
+      kind: "creative-arts" as const,
+      subType: act.activityType,
+    })),
+    ...creativeArtsForms.map((form) => ({
+      id: form.id,
+      name: form.name,
+      description: form.description,
+      gradeName: form.grade.name,
+      gradeLevel: form.grade.level,
+      learningArea: form.learningArea.name,
+      strandName: form.strand?.name ?? null,
+      href: `/activity-forms/creative-arts-forms/${form.id}`,
+      kind: "creative-arts-form" as const,
+      subType: form.formType,
+      artDiscipline: form.artDiscipline,
+    })),
+  ];
 
-  // Group social studies by grade level
-  const ssGrades = socialStudies.reduce(
-    (acc, act) => {
-      const level = act.grade.level;
-      if (!acc[level]) acc[level] = { name: act.grade.name, activities: [] };
-      acc[level].activities.push(act);
-      return acc;
-    },
-    {} as Record<number, { name: string; activities: typeof socialStudies }>
-  );
+  // Group: grade level → learning area → items
+  const byGrade: Record<
+    number,
+    { gradeName: string; learningAreas: Record<string, UnifiedItem[]> }
+  > = {};
 
-  // Group creative arts by grade level
-  const artsGrades = creativeArts.reduce(
-    (acc, act) => {
-      const level = act.grade.level;
-      if (!acc[level]) acc[level] = { name: act.grade.name, activities: [] };
-      acc[level].activities.push(act);
-      return acc;
-    },
-    {} as Record<number, { name: string; activities: typeof creativeArts }>
-  );
+  for (const item of allItems) {
+    if (!byGrade[item.gradeLevel]) {
+      byGrade[item.gradeLevel] = { gradeName: item.gradeName, learningAreas: {} };
+    }
+    const grade = byGrade[item.gradeLevel];
+    if (!grade.learningAreas[item.learningArea]) {
+      grade.learningAreas[item.learningArea] = [];
+    }
+    grade.learningAreas[item.learningArea].push(item);
+  }
 
-  // Group forms by formType, then by grade
-  const formsByType = creativeArtsForms.reduce(
-    (acc, form) => {
-      if (!acc[form.formType]) acc[form.formType] = {};
-      const level = form.grade.level;
-      if (!acc[form.formType][level])
-        acc[form.formType][level] = { name: form.grade.name, forms: [] };
-      acc[form.formType][level].forms.push(form);
-      return acc;
-    },
-    {} as Record<
-      string,
-      Record<number, { name: string; forms: typeof creativeArtsForms }>
-    >
-  );
-
-  const scienceLevels = Object.keys(scienceGrades).map(Number).sort();
-  const ssLevels = Object.keys(ssGrades).map(Number).sort();
-  const artsLevels = Object.keys(artsGrades).map(Number).sort();
-  const defaultScienceTab = scienceLevels[0]?.toString() || "7";
-  const defaultSSTab = ssLevels[0]?.toString() || "7";
-  const defaultArtsTab = artsLevels[0]?.toString() || "7";
-  const totalArtsCount = creativeArts.length + creativeArtsForms.length;
+  const gradeLevels = Object.keys(byGrade).map(Number).sort();
+  const totalCount = allItems.length;
+  const defaultGrade = gradeLevels[0]?.toString() || "7";
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -259,7 +224,7 @@ export default async function ActivityFormsPage() {
           <div>
             <h1 className="text-3xl font-bold">Activity Forms</h1>
             <p className="text-muted-foreground text-sm mt-0.5">
-              Ready-made CBC-aligned practicals and worksheets for your students
+              Ready-made CBC-aligned practicals and worksheets — pick a grade to start
             </p>
           </div>
         </div>
@@ -271,15 +236,15 @@ export default async function ActivityFormsPage() {
           {
             step: "1",
             icon: GraduationCap,
-            title: "Browse Activities",
-            desc: "Select a grade and browse available experiments or activities",
+            title: "Pick a Grade",
+            desc: "Select your grade to see all available activities",
             color: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400",
           },
           {
             step: "2",
             icon: Eye,
-            title: "Preview Details",
-            desc: "View the aim, materials, and a brief preview of each activity",
+            title: "Browse & Preview",
+            desc: "Activities are grouped by learning area for easy browsing",
             color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
           },
           {
@@ -316,363 +281,136 @@ export default async function ActivityFormsPage() {
         ))}
       </div>
 
-      {/* Top-level subject area tabs */}
-      <Tabs defaultValue="science" className="w-full">
-        <TabsList className="mb-6 h-11">
-          <TabsTrigger value="science" className="gap-2 px-5 text-foreground/70 font-medium data-[state=active]:text-foreground data-[state=active]:font-semibold">
-            <FlaskConical className="h-4 w-4" />
-            Science Practicals
-            <Badge
-              variant="secondary"
-              className="ml-1 text-xs bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400"
-            >
-              {experiments.length}
-            </Badge>
-          </TabsTrigger>
-          <TabsTrigger value="social-studies" className="gap-2 px-5 text-foreground/70 font-medium data-[state=active]:text-foreground data-[state=active]:font-semibold">
-            <BookOpen className="h-4 w-4" />
-            Social Studies
-            <Badge
-              variant="secondary"
-              className="ml-1 text-xs bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
-            >
-              {socialStudies.length}
-            </Badge>
-          </TabsTrigger>
-          <TabsTrigger value="creative-arts" className="gap-2 px-5 text-foreground/70 font-medium data-[state=active]:text-foreground data-[state=active]:font-semibold">
-            <Palette className="h-4 w-4" />
-            Creative Arts
-            <Badge
-              variant="secondary"
-              className="ml-1 text-xs bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
-            >
-              {totalArtsCount}
-            </Badge>
-          </TabsTrigger>
-        </TabsList>
+      {totalCount === 0 ? (
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="p-4 rounded-2xl bg-pink-100 dark:bg-pink-900/20 mb-4">
+              <Layers className="h-12 w-12 text-pink-400" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">
+              No activities available yet
+            </h3>
+            <p className="text-muted-foreground text-sm max-w-sm">
+              Activities and practicals are being prepared and will appear here soon.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        /* ═══ Grade Tabs (single level of tabs) ═══ */
+        <Tabs defaultValue={defaultGrade} className="w-full">
+          <TabsList className="mb-6 bg-transparent gap-2 p-0">
+            {gradeLevels.map((level) => {
+              const itemCount = Object.values(byGrade[level].learningAreas).reduce(
+                (sum, items) => sum + items.length,
+                0
+              );
+              return (
+                <TabsTrigger
+                  key={level}
+                  value={level.toString()}
+                  className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-5 py-2.5 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=active]:border-pink-600 data-[state=active]:shadow-md data-[state=active]:shadow-pink-500/20 transition-all"
+                >
+                  {byGrade[level].gradeName}
+                  <Badge variant="secondary" className="ml-0.5 text-xs">
+                    {itemCount}
+                  </Badge>
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
 
-        {/* ═══ Science Practicals Tab ═══ */}
-        <TabsContent value="science">
-          {experiments.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="p-4 rounded-2xl bg-pink-100 dark:bg-pink-900/20 mb-4">
-                  <FlaskConical className="h-12 w-12 text-pink-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  No experiments available yet
-                </h3>
-                <p className="text-muted-foreground text-sm max-w-sm">
-                  Science practicals are being prepared and will appear here
-                  soon.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <Tabs defaultValue={defaultScienceTab} className="w-full">
-              <TabsList className="mb-5 bg-transparent gap-2 p-0">
-                {scienceLevels.map((level) => (
-                  <TabsTrigger
-                    key={level}
-                    value={level.toString()}
-                    className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=active]:border-pink-600 data-[state=active]:shadow-md data-[state=active]:shadow-pink-500/20 transition-all"
-                  >
-                    {scienceGrades[level].name}
-                    <Badge variant="secondary" className="ml-0.5 text-xs">
-                      {scienceGrades[level].experiments.length}
-                    </Badge>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+          {gradeLevels.map((level) => {
+            const { learningAreas } = byGrade[level];
+            const laNames = Object.keys(learningAreas).sort();
 
-              {scienceLevels.map((level) => {
-                // Group experiments by subject
-                const bySubject = scienceGrades[level].experiments.reduce(
-                  (acc, exp) => {
-                    if (!acc[exp.subject]) acc[exp.subject] = [];
-                    acc[exp.subject].push(exp);
-                    return acc;
-                  },
-                  {} as Record<string, typeof experiments>
-                );
-                const subjects = Object.keys(bySubject).sort();
+            return (
+              <TabsContent key={level} value={level.toString()}>
+                <div className="space-y-8">
+                  {laNames.map((la, laIdx) => {
+                    const items = learningAreas[la];
+                    const accent = learningAreaAccents[laIdx % learningAreaAccents.length];
+                    const LaIcon = learningAreaIcons[la] || Layers;
 
-                return (
-                  <TabsContent key={level} value={level.toString()}>
-                    <div className="space-y-8">
-                      {subjects.map((subject) => {
-                        const config = subjectConfig[subject] || {
-                          icon: Beaker,
-                          color: "bg-gray-100 text-gray-700",
-                          gradient: "from-gray-500 to-gray-600",
-                        };
-                        const SubjectIcon = config.icon;
-
-                        return (
-                          <div key={subject}>
-                            {/* Subject section header */}
-                            <div className="flex items-center gap-3 mb-4">
-                              <div className={`p-1.5 rounded-lg ${config.color}`}>
-                                <SubjectIcon className="h-4 w-4" />
-                              </div>
-                              <h3 className="font-semibold text-sm">{subject}</h3>
-                              <span className="text-xs text-muted-foreground">
-                                {bySubject[subject].length} {bySubject[subject].length === 1 ? "experiment" : "experiments"}
-                              </span>
-                              <div className="flex-1 border-t border-border" />
-                            </div>
-
-                            {/* Cards grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                              {bySubject[subject].map((exp) => (
-                                <Link
-                                  key={exp.id}
-                                  href={`/activity-forms/experiment/${exp.id}`}
-                                >
-                                  <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
-                                    <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
-                                    <CardHeader className="pb-2">
-                                      <CardTitle className="text-base leading-tight group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                                        {exp.name}
-                                      </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-3 pt-0">
-                                      <p className="text-sm text-muted-foreground line-clamp-2">
-                                        {exp.aim}
-                                      </p>
-                                      {exp.strand && (
-                                        <div className="text-xs text-pink-600 dark:text-pink-400 font-medium pt-3 border-t truncate">
-                                          {exp.strand.name}
-                                        </div>
-                                      )}
-                                    </CardContent>
-                                  </Card>
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </TabsContent>
-                );
-              })}
-            </Tabs>
-          )}
-        </TabsContent>
-
-        {/* ═══ Social Studies Tab ═══ */}
-        <TabsContent value="social-studies">
-          {socialStudies.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="p-4 rounded-2xl bg-indigo-100 dark:bg-indigo-900/20 mb-4">
-                  <BookOpen className="h-12 w-12 text-indigo-400" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  No activities available yet
-                </h3>
-                <p className="text-muted-foreground text-sm max-w-sm">
-                  Social Studies activities are being prepared and will appear
-                  here soon.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <Tabs defaultValue={defaultSSTab} className="w-full">
-              <TabsList className="mb-5 bg-transparent gap-2 p-0">
-                {ssLevels.map((level) => (
-                  <TabsTrigger
-                    key={level}
-                    value={level.toString()}
-                    className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:border-indigo-600 data-[state=active]:shadow-md data-[state=active]:shadow-indigo-500/20 transition-all"
-                  >
-                    {ssGrades[level].name}
-                    <Badge variant="secondary" className="ml-0.5 text-xs">
-                      {ssGrades[level].activities.length}
-                    </Badge>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-
-              {ssLevels.map((level) => {
-                // Group activities by type
-                const byType = ssGrades[level].activities.reduce(
-                  (acc, act) => {
-                    if (!acc[act.activityType]) acc[act.activityType] = [];
-                    acc[act.activityType].push(act);
-                    return acc;
-                  },
-                  {} as Record<string, typeof socialStudies>
-                );
-                const types = Object.keys(byType).sort();
-
-                return (
-                  <TabsContent key={level} value={level.toString()}>
-                    <div className="space-y-8">
-                      {types.map((type) => {
-                        const config = activityTypeConfig[type] || {
-                          icon: BookOpen,
-                          label: type,
-                          color: "bg-gray-100 text-gray-700",
-                          gradient: "from-gray-500 to-gray-600",
-                        };
-                        const TypeIcon = config.icon;
-
-                        return (
-                          <div key={type}>
-                            {/* Activity type section header */}
-                            <div className="flex items-center gap-3 mb-4">
-                              <div className={`p-1.5 rounded-lg ${config.color}`}>
-                                <TypeIcon className="h-4 w-4" />
-                              </div>
-                              <h3 className="font-semibold text-sm">{config.label}</h3>
-                              <span className="text-xs text-muted-foreground">
-                                {byType[type].length} {byType[type].length === 1 ? "activity" : "activities"}
-                              </span>
-                              <div className="flex-1 border-t border-border" />
-                            </div>
-
-                            {/* Cards grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                              {byType[type].map((act) => (
-                                <Link
-                                  key={act.id}
-                                  href={`/activity-forms/social-studies/${act.id}`}
-                                >
-                                  <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
-                                    <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
-                                    <CardHeader className="pb-2">
-                                      <CardTitle className="text-base leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                        {act.name}
-                                      </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-3 pt-0">
-                                      <p className="text-sm text-muted-foreground line-clamp-2">
-                                        {act.aim}
-                                      </p>
-                                      {act.strand && (
-                                        <div className="text-xs text-indigo-600 dark:text-indigo-400 font-medium pt-3 border-t truncate">
-                                          {act.strand.name}
-                                        </div>
-                                      )}
-                                    </CardContent>
-                                  </Card>
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </TabsContent>
-                );
-              })}
-            </Tabs>
-          )}
-        </TabsContent>
-
-        {/* ═══ Creative Arts Tab ═══ */}
-        <TabsContent value="creative-arts">
-          <Tabs defaultValue="activities" className="w-full">
-            {/* Sub-category tabs */}
-            <TabsList className="mb-5 h-auto flex-wrap justify-start gap-1.5 bg-transparent p-0">
-              <TabsTrigger value="activities" className="gap-1.5 px-3 py-1.5 text-foreground/70 text-sm font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 transition-all">
-                <Palette className="h-3.5 w-3.5" />
-                Activities
-                <Badge variant="secondary" className="ml-0.5 text-xs">{creativeArts.length}</Badge>
-              </TabsTrigger>
-              {(["adjudication", "rehearsal_plan", "performance_program", "portfolio_assessment"] as const).map((ft) => {
-                const ftConfig = formTypeConfig[ft];
-                const FtIcon = ftConfig.icon;
-                const count = creativeArtsForms.filter((f) => f.formType === ft).length;
-                return (
-                  <TabsTrigger key={ft} value={ft} className="gap-1.5 px-3 py-1.5 text-foreground/70 text-sm font-medium rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 transition-all">
-                    <FtIcon className="h-3.5 w-3.5" />
-                    {ftConfig.label.replace(" Form", "").replace(" Plan", "")}
-                    <Badge variant="secondary" className="ml-0.5 text-xs">{count}</Badge>
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-
-            {/* ── Activities sub-tab (existing) ── */}
-            <TabsContent value="activities">
-              {creativeArts.length === 0 ? (
-                <Card className="border-dashed">
-                  <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                    <div className="p-4 rounded-2xl bg-purple-100 dark:bg-purple-900/20 mb-4">
-                      <Palette className="h-12 w-12 text-purple-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">No activities yet</h3>
-                    <p className="text-muted-foreground text-sm max-w-sm">
-                      Creative Arts activities are being prepared.
-                    </p>
-                  </CardContent>
-                </Card>
-              ) : (
-                <Tabs defaultValue={defaultArtsTab} className="w-full">
-                  <TabsList className="mb-5 bg-transparent gap-2 p-0">
-                    {artsLevels.map((level) => (
-                      <TabsTrigger
-                        key={level}
-                        value={level.toString()}
-                        className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:shadow-md data-[state=active]:shadow-purple-500/20 transition-all"
-                      >
-                        {artsGrades[level].name}
-                        <Badge variant="secondary" className="ml-0.5 text-xs">
-                          {artsGrades[level].activities.length}
-                        </Badge>
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-
-                  {artsLevels.map((level) => {
-                    const byType = artsGrades[level].activities.reduce(
-                      (acc, act) => {
-                        if (!acc[act.activityType]) acc[act.activityType] = [];
-                        acc[act.activityType].push(act);
-                        return acc;
-                      },
-                      {} as Record<string, typeof creativeArts>
-                    );
-                    const types = Object.keys(byType).sort();
+                    // Group items by sub-type within this learning area
+                    const bySubType: Record<string, UnifiedItem[]> = {};
+                    for (const item of items) {
+                      const key = item.subType || "other";
+                      if (!bySubType[key]) bySubType[key] = [];
+                      bySubType[key].push(item);
+                    }
+                    const subTypes = Object.keys(bySubType).sort();
 
                     return (
-                      <TabsContent key={level} value={level.toString()}>
-                        <div className="space-y-8">
-                          {types.map((type) => {
-                            const config = creativeArtsTypeConfig[type] || {
-                              icon: Palette, label: type, color: "bg-gray-100 text-gray-700", gradient: "from-gray-500 to-gray-600",
+                      <div key={la}>
+                        {/* Learning area header */}
+                        <div className={`flex items-center gap-3 mb-5 px-4 py-3 rounded-xl border ${accent.headerBg} ${accent.headerBorder}`}>
+                          <LaIcon className={`h-5 w-5 ${accent.headerText}`} />
+                          <h2 className={`font-semibold ${accent.headerText}`}>{la}</h2>
+                          <Badge variant="secondary" className="text-xs">
+                            {items.length} {items.length === 1 ? "activity" : "activities"}
+                          </Badge>
+                        </div>
+
+                        {/* Sub-type sections within this learning area */}
+                        <div className="space-y-6 pl-2">
+                          {subTypes.map((st) => {
+                            const config = subTypeConfig[st] || {
+                              icon: FileText,
+                              label: st,
+                              color: "bg-gray-100 text-gray-700",
+                              gradient: "from-gray-500 to-gray-600",
                             };
-                            const TypeIcon = config.icon;
+                            const SubIcon = config.icon;
+                            const stItems = bySubType[st];
+
+                            // If there's only one sub-type, skip the sub-header
+                            const showSubHeader = subTypes.length > 1;
+
                             return (
-                              <div key={type}>
-                                <div className="flex items-center gap-3 mb-4">
-                                  <div className={`p-1.5 rounded-lg ${config.color}`}>
-                                    <TypeIcon className="h-4 w-4" />
+                              <div key={st}>
+                                {showSubHeader && (
+                                  <div className="flex items-center gap-3 mb-3">
+                                    <div className={`p-1.5 rounded-lg ${config.color}`}>
+                                      <SubIcon className="h-3.5 w-3.5" />
+                                    </div>
+                                    <h3 className="font-medium text-sm text-muted-foreground">{config.label}</h3>
+                                    <span className="text-xs text-muted-foreground/70">
+                                      {stItems.length}
+                                    </span>
+                                    <div className="flex-1 border-t border-border/50" />
                                   </div>
-                                  <h3 className="font-semibold text-sm">{config.label}</h3>
-                                  <span className="text-xs text-muted-foreground">
-                                    {byType[type].length} {byType[type].length === 1 ? "activity" : "activities"}
-                                  </span>
-                                  <div className="flex-1 border-t border-border" />
-                                </div>
+                                )}
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                  {byType[type].map((act) => (
-                                    <Link key={act.id} href={`/activity-forms/creative-arts/${act.id}`}>
+                                  {stItems.map((item) => (
+                                    <Link key={item.id} href={item.href}>
                                       <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
                                         <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
                                         <CardHeader className="pb-2">
-                                          <CardTitle className="text-base leading-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                                            {act.name}
+                                          <CardTitle className={`text-base leading-tight ${accent.hoverText} transition-colors`}>
+                                            {item.name}
                                           </CardTitle>
                                         </CardHeader>
                                         <CardContent className="space-y-3 pt-0">
-                                          <p className="text-sm text-muted-foreground line-clamp-2">{act.aim}</p>
-                                          {act.strand && (
-                                            <div className="text-xs text-purple-600 dark:text-purple-400 font-medium pt-3 border-t truncate">
-                                              {act.strand.name}
+                                          <p className="text-sm text-muted-foreground line-clamp-2">
+                                            {item.description}
+                                          </p>
+                                          {(item.strandName || item.artDiscipline) && (
+                                            <div className="flex items-center gap-2 pt-3 border-t">
+                                              {item.strandName && (
+                                                <span className={`text-xs ${accent.strandText} font-medium truncate`}>
+                                                  {item.strandName}
+                                                </span>
+                                              )}
+                                              {item.artDiscipline && (
+                                                <Badge variant="outline" className="text-xs">
+                                                  {item.artDiscipline === "visual_art"
+                                                    ? "Visual Art"
+                                                    : item.artDiscipline === "mixed"
+                                                      ? "Mixed Arts"
+                                                      : item.artDiscipline.charAt(0).toUpperCase() + item.artDiscipline.slice(1)}
+                                                </Badge>
+                                              )}
                                             </div>
                                           )}
                                         </CardContent>
@@ -684,94 +422,15 @@ export default async function ActivityFormsPage() {
                             );
                           })}
                         </div>
-                      </TabsContent>
+                      </div>
                     );
                   })}
-                </Tabs>
-              )}
-            </TabsContent>
-
-            {/* ── Form type sub-tabs (new) ── */}
-            {(["adjudication", "rehearsal_plan", "performance_program", "portfolio_assessment"] as const).map((ft) => {
-              const ftGrades = formsByType[ft] || {};
-              const ftLevels = Object.keys(ftGrades).map(Number).sort();
-              const ftConfig = formTypeConfig[ft];
-              const FtIcon = ftConfig.icon;
-              const defaultFtTab = ftLevels[0]?.toString() || "7";
-
-              return (
-                <TabsContent key={ft} value={ft}>
-                  {ftLevels.length === 0 ? (
-                    <Card className="border-dashed">
-                      <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                        <div className={`p-4 rounded-2xl ${ftConfig.color} mb-4`}>
-                          <FtIcon className="h-12 w-12" />
-                        </div>
-                        <h3 className="text-xl font-semibold mb-2">No {ftConfig.label.toLowerCase()}s yet</h3>
-                        <p className="text-muted-foreground text-sm max-w-sm">
-                          Forms are being prepared and will appear here soon.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <Tabs defaultValue={defaultFtTab} className="w-full">
-                      <TabsList className="mb-5 bg-transparent gap-2 p-0">
-                        {ftLevels.map((level) => (
-                          <TabsTrigger
-                            key={level}
-                            value={level.toString()}
-                            className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-4 py-2 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:border-purple-600 data-[state=active]:shadow-md data-[state=active]:shadow-purple-500/20 transition-all"
-                          >
-                            {ftGrades[level].name}
-                            <Badge variant="secondary" className="ml-0.5 text-xs">
-                              {ftGrades[level].forms.length}
-                            </Badge>
-                          </TabsTrigger>
-                        ))}
-                      </TabsList>
-
-                      {ftLevels.map((level) => (
-                        <TabsContent key={level} value={level.toString()}>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {ftGrades[level].forms.map((form) => {
-                              const disciplineLabel =
-                                form.artDiscipline === "visual_art" ? "Visual Art" :
-                                form.artDiscipline === "mixed" ? "Mixed Arts" :
-                                form.artDiscipline.charAt(0).toUpperCase() + form.artDiscipline.slice(1);
-                              return (
-                                <Link key={form.id} href={`/activity-forms/creative-arts-forms/${form.id}`}>
-                                  <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
-                                    <div className={`h-1 bg-gradient-to-r ${ftConfig.gradient}`} />
-                                    <CardHeader className="pb-2">
-                                      <CardTitle className="text-base leading-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                                        {form.name}
-                                      </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-3 pt-0">
-                                      <p className="text-sm text-muted-foreground line-clamp-2">
-                                        {form.description}
-                                      </p>
-                                      <div className="flex items-center gap-2 pt-3 border-t">
-                                        <Badge variant="outline" className="text-xs">
-                                          {disciplineLabel}
-                                        </Badge>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        </TabsContent>
-                      ))}
-                    </Tabs>
-                  )}
-                </TabsContent>
-              );
-            })}
-          </Tabs>
-        </TabsContent>
-      </Tabs>
+                </div>
+              </TabsContent>
+            );
+          })}
+        </Tabs>
+      )}
     </div>
   );
 }
