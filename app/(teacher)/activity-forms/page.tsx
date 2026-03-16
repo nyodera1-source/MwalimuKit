@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GradePicker } from "./grade-picker";
 import {
   FlaskConical,
   Beaker,
@@ -211,7 +211,7 @@ export default async function ActivityFormsPage() {
 
   const gradeLevels = Object.keys(byGrade).map(Number).sort();
   const totalCount = allItems.length;
-  const defaultGrade = gradeLevels[0]?.toString() || "7";
+  // defaultGrade removed — GradePicker starts with no selection
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -296,140 +296,126 @@ export default async function ActivityFormsPage() {
           </CardContent>
         </Card>
       ) : (
-        /* ═══ Grade Tabs (single level of tabs) ═══ */
-        <Tabs defaultValue={defaultGrade} className="w-full">
-          <TabsList className="mb-6 bg-transparent gap-2 p-0">
-            {gradeLevels.map((level) => {
-              const itemCount = Object.values(byGrade[level].learningAreas).reduce(
-                (sum, items) => sum + items.length,
-                0
-              );
-              return (
-                <TabsTrigger
-                  key={level}
-                  value={level.toString()}
-                  className="gap-2 rounded-full border border-gray-300 dark:border-gray-600 px-5 py-2.5 text-foreground/80 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=active]:border-pink-600 data-[state=active]:shadow-md data-[state=active]:shadow-pink-500/20 transition-all"
-                >
-                  {byGrade[level].gradeName}
-                  <Badge variant="secondary" className="ml-0.5 text-xs">
-                    {itemCount}
-                  </Badge>
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-
-          {gradeLevels.map((level) => {
-            const { learningAreas } = byGrade[level];
+        /* ═══ Grade Picker (no default selection) ═══ */
+        <GradePicker
+          grades={gradeLevels.map((level) => ({
+            level,
+            name: byGrade[level].gradeName,
+            count: Object.values(byGrade[level].learningAreas).reduce(
+              (sum, items) => sum + items.length,
+              0
+            ),
+          }))}
+        >
+          {gradeLevels.map((gradeLevel) => {
+            const { learningAreas } = byGrade[gradeLevel];
             const laNames = Object.keys(learningAreas).sort();
 
             return (
-              <TabsContent key={level} value={level.toString()}>
-                <div className="space-y-8">
-                  {laNames.map((la, laIdx) => {
-                    const items = learningAreas[la];
-                    const accent = learningAreaAccents[laIdx % learningAreaAccents.length];
-                    const LaIcon = learningAreaIcons[la] || Layers;
+              <div key={gradeLevel} className="space-y-8">
+                {laNames.map((la, laIdx) => {
+                  const items = learningAreas[la];
+                  const accent = learningAreaAccents[laIdx % learningAreaAccents.length];
+                  const LaIcon = learningAreaIcons[la] || Layers;
 
-                    // Group items by sub-type within this learning area
-                    const bySubType: Record<string, UnifiedItem[]> = {};
-                    for (const item of items) {
-                      const key = item.subType || "other";
-                      if (!bySubType[key]) bySubType[key] = [];
-                      bySubType[key].push(item);
-                    }
-                    const subTypes = Object.keys(bySubType).sort();
+                  // Group items by sub-type within this learning area
+                  const bySubType: Record<string, UnifiedItem[]> = {};
+                  for (const item of items) {
+                    const key = item.subType || "other";
+                    if (!bySubType[key]) bySubType[key] = [];
+                    bySubType[key].push(item);
+                  }
+                  const subTypes = Object.keys(bySubType).sort();
 
-                    return (
-                      <div key={la}>
-                        {/* Learning area header */}
-                        <div className={`flex items-center gap-3 mb-5 px-4 py-3 rounded-xl border ${accent.headerBg} ${accent.headerBorder}`}>
-                          <LaIcon className={`h-5 w-5 ${accent.headerText}`} />
-                          <h2 className={`font-semibold ${accent.headerText}`}>{la}</h2>
-                          <Badge variant="secondary" className="text-xs">
-                            {items.length} {items.length === 1 ? "activity" : "activities"}
-                          </Badge>
-                        </div>
-
-                        {/* Sub-type sections within this learning area */}
-                        <div className="space-y-6 pl-2">
-                          {subTypes.map((st) => {
-                            const config = subTypeConfig[st] || {
-                              icon: FileText,
-                              label: st,
-                              color: "bg-gray-100 text-gray-700",
-                              gradient: "from-gray-500 to-gray-600",
-                            };
-                            const SubIcon = config.icon;
-                            const stItems = bySubType[st];
-
-                            // If there's only one sub-type, skip the sub-header
-                            const showSubHeader = subTypes.length > 1;
-
-                            return (
-                              <div key={st}>
-                                {showSubHeader && (
-                                  <div className="flex items-center gap-3 mb-3">
-                                    <div className={`p-1.5 rounded-lg ${config.color}`}>
-                                      <SubIcon className="h-3.5 w-3.5" />
-                                    </div>
-                                    <h3 className="font-medium text-sm text-muted-foreground">{config.label}</h3>
-                                    <span className="text-xs text-muted-foreground/70">
-                                      {stItems.length}
-                                    </span>
-                                    <div className="flex-1 border-t border-border/50" />
-                                  </div>
-                                )}
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                  {stItems.map((item) => (
-                                    <Link key={item.id} href={item.href}>
-                                      <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
-                                        <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
-                                        <CardHeader className="pb-2">
-                                          <CardTitle className={`text-base leading-tight ${accent.hoverText} transition-colors`}>
-                                            {item.name}
-                                          </CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="space-y-3 pt-0">
-                                          <p className="text-sm text-muted-foreground line-clamp-2">
-                                            {item.description}
-                                          </p>
-                                          {(item.strandName || item.artDiscipline) && (
-                                            <div className="flex items-center gap-2 pt-3 border-t">
-                                              {item.strandName && (
-                                                <span className={`text-xs ${accent.strandText} font-medium truncate`}>
-                                                  {item.strandName}
-                                                </span>
-                                              )}
-                                              {item.artDiscipline && (
-                                                <Badge variant="outline" className="text-xs">
-                                                  {item.artDiscipline === "visual_art"
-                                                    ? "Visual Art"
-                                                    : item.artDiscipline === "mixed"
-                                                      ? "Mixed Arts"
-                                                      : item.artDiscipline.charAt(0).toUpperCase() + item.artDiscipline.slice(1)}
-                                                </Badge>
-                                              )}
-                                            </div>
-                                          )}
-                                        </CardContent>
-                                      </Card>
-                                    </Link>
-                                  ))}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
+                  return (
+                    <div key={la}>
+                      {/* Learning area header */}
+                      <div className={`flex items-center gap-3 mb-5 px-4 py-3 rounded-xl border ${accent.headerBg} ${accent.headerBorder}`}>
+                        <LaIcon className={`h-5 w-5 ${accent.headerText}`} />
+                        <h2 className={`font-semibold ${accent.headerText}`}>{la}</h2>
+                        <Badge variant="secondary" className="text-xs">
+                          {items.length} {items.length === 1 ? "activity" : "activities"}
+                        </Badge>
                       </div>
-                    );
-                  })}
-                </div>
-              </TabsContent>
+
+                      {/* Sub-type sections within this learning area */}
+                      <div className="space-y-6 pl-2">
+                        {subTypes.map((st) => {
+                          const config = subTypeConfig[st] || {
+                            icon: FileText,
+                            label: st,
+                            color: "bg-gray-100 text-gray-700",
+                            gradient: "from-gray-500 to-gray-600",
+                          };
+                          const SubIcon = config.icon;
+                          const stItems = bySubType[st];
+
+                          // If there's only one sub-type, skip the sub-header
+                          const showSubHeader = subTypes.length > 1;
+
+                          return (
+                            <div key={st}>
+                              {showSubHeader && (
+                                <div className="flex items-center gap-3 mb-3">
+                                  <div className={`p-1.5 rounded-lg ${config.color}`}>
+                                    <SubIcon className="h-3.5 w-3.5" />
+                                  </div>
+                                  <h3 className="font-medium text-sm text-muted-foreground">{config.label}</h3>
+                                  <span className="text-xs text-muted-foreground/70">
+                                    {stItems.length}
+                                  </span>
+                                  <div className="flex-1 border-t border-border/50" />
+                                </div>
+                              )}
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {stItems.map((item) => (
+                                  <Link key={item.id} href={item.href}>
+                                    <Card className="hover:shadow-lg transition-all hover:-translate-y-0.5 cursor-pointer h-full overflow-hidden group">
+                                      <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
+                                      <CardHeader className="pb-2">
+                                        <CardTitle className={`text-base leading-tight ${accent.hoverText} transition-colors`}>
+                                          {item.name}
+                                        </CardTitle>
+                                      </CardHeader>
+                                      <CardContent className="space-y-3 pt-0">
+                                        <p className="text-sm text-muted-foreground line-clamp-2">
+                                          {item.description}
+                                        </p>
+                                        {(item.strandName || item.artDiscipline) && (
+                                          <div className="flex items-center gap-2 pt-3 border-t">
+                                            {item.strandName && (
+                                              <span className={`text-xs ${accent.strandText} font-medium truncate`}>
+                                                {item.strandName}
+                                              </span>
+                                            )}
+                                            {item.artDiscipline && (
+                                              <Badge variant="outline" className="text-xs">
+                                                {item.artDiscipline === "visual_art"
+                                                  ? "Visual Art"
+                                                  : item.artDiscipline === "mixed"
+                                                    ? "Mixed Arts"
+                                                    : item.artDiscipline.charAt(0).toUpperCase() + item.artDiscipline.slice(1)}
+                                              </Badge>
+                                            )}
+                                          </div>
+                                        )}
+                                      </CardContent>
+                                    </Card>
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             );
           })}
-        </Tabs>
+        </GradePicker>
       )}
     </div>
   );
