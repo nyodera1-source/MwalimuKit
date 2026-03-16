@@ -2,6 +2,21 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateStudentCopyPdf, generateTeacherCopyPdf } from "@/lib/export/activity-form-pdf";
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs/promises";
+import path from "path";
+
+async function loadDiagramBase64(diagramUrl: string | null): Promise<string | null> {
+  if (!diagramUrl) return null;
+  try {
+    const filePath = path.join(process.cwd(), "public", diagramUrl);
+    const buffer = await fs.readFile(filePath);
+    const ext = path.extname(diagramUrl).replace(".", "").toUpperCase();
+    const mime = ext === "JPG" || ext === "JPEG" ? "image/jpeg" : "image/png";
+    return `data:${mime};base64,${buffer.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(
   request: NextRequest,
@@ -32,6 +47,8 @@ export async function GET(
     return NextResponse.json({ error: "Experiment not found" }, { status: 404 });
   }
 
+  const diagramBase64 = await loadDiagramBase64(experiment.diagramUrl);
+
   const pdfData = {
     experimentName: experiment.name,
     subject: experiment.subject,
@@ -48,6 +65,7 @@ export async function GET(
     observations: null,
     results: null,
     teacherNotes: null,
+    diagramBase64,
     expectedResults: experiment.expectedResults,
   };
 
