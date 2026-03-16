@@ -327,6 +327,7 @@ model LabExperiment {
   safetyNotes    Json     @map("safety_notes")  // Array of safety precautions
   expectedResults String  @map("expected_results")
   relatedConcepts Json    @map("related_concepts") // Array of concepts/theories
+  diagramUrl     String?  @map("diagram_url")    // Path to setup diagram image
   sloIds         String[] @map("slo_ids")        // References to related SLOs
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")

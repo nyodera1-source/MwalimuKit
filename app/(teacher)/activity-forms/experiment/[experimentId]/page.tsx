@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Beaker, Leaf, Zap, ShieldAlert, FlaskConical } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, Beaker, Leaf, Zap, ShieldAlert, FlaskConical, ImageIcon } from "lucide-react";
 import { ExperimentDownloadCard } from "./download-card";
 
 const subjectIcons: Record<string, typeof Beaker> = {
@@ -112,6 +113,30 @@ export default async function ExperimentPreviewPage({
               </div>
             </CardContent>
           </Card>
+
+          {/* Experiment Setup Diagram */}
+          {experiment.diagramUrl && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <ImageIcon className="h-4 w-4" />
+                  Experiment Setup
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative w-full rounded-lg overflow-hidden border bg-white">
+                  <Image
+                    src={experiment.diagramUrl}
+                    alt={`Setup diagram for ${experiment.name}`}
+                    width={800}
+                    height={500}
+                    className="w-full h-auto object-contain"
+                    priority
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Blurred Section - Procedure, Safety, Expected Results */}
           <div className="relative">

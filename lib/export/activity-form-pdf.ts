@@ -16,6 +16,7 @@ export interface ActivityFormExportData {
   observations: string | null;
   results: string | null;
   teacherNotes: string | null;
+  diagramBase64?: string | null; // base64-encoded diagram image (data URI)
   // Teacher copy only
   expectedResults?: string;
   teacherCopy?: {
@@ -143,6 +144,20 @@ export function generateStudentCopyPdf(data: ActivityFormExportData): Buffer {
   // ─── Materials ───
   drawSectionHeader("MATERIALS");
   drawList(data.materials, false);
+
+  // ─── Setup Diagram ───
+  if (data.diagramBase64) {
+    drawSectionHeader("EXPERIMENT SETUP");
+    const imgWidth = contentWidth - 10;
+    const imgHeight = imgWidth * 0.625; // 5:8 aspect ratio
+    checkPageBreak(imgHeight + 10);
+    try {
+      doc.addImage(data.diagramBase64, "PNG", margin + 5, y, imgWidth, imgHeight);
+      y += imgHeight + 6;
+    } catch {
+      // If image fails, skip silently
+    }
+  }
 
   // ─── Procedure ───
   drawSectionHeader("PROCEDURE");
@@ -330,6 +345,20 @@ export function generateTeacherCopyPdf(data: ActivityFormExportData): Buffer {
   // ─── Materials ───
   drawSectionHeader("MATERIALS");
   drawList(data.materials, false);
+
+  // ─── Setup Diagram ───
+  if (data.diagramBase64) {
+    drawSectionHeader("EXPERIMENT SETUP");
+    const imgWidth = contentWidth - 10;
+    const imgHeight = imgWidth * 0.625;
+    checkPageBreak(imgHeight + 10);
+    try {
+      doc.addImage(data.diagramBase64, "PNG", margin + 5, y, imgWidth, imgHeight);
+      y += imgHeight + 6;
+    } catch {
+      // If image fails, skip silently
+    }
+  }
 
   // ─── Procedure ───
   drawSectionHeader("PROCEDURE");

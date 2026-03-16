@@ -3,6 +3,21 @@ import { prisma } from "@/lib/prisma";
 import { generateStudentCopyPdf, generateTeacherCopyPdf } from "@/lib/export/activity-form-pdf";
 import { generateActivityDiscussion } from "@/lib/ai/generate-activity-discussion";
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs/promises";
+import path from "path";
+
+async function loadDiagramBase64(diagramUrl: string | null): Promise<string | null> {
+  if (!diagramUrl) return null;
+  try {
+    const filePath = path.join(process.cwd(), "public", diagramUrl);
+    const buffer = await fs.readFile(filePath);
+    const ext = path.extname(diagramUrl).replace(".", "").toUpperCase();
+    const mime = ext === "JPG" || ext === "JPEG" ? "image/jpeg" : "image/png";
+    return `data:${mime};base64,${buffer.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(
   request: NextRequest,
@@ -71,6 +86,9 @@ export async function GET(
     }
   }
 
+  // ─── Load diagram if available ───
+  const diagramBase64 = await loadDiagramBase64(exp.diagramUrl);
+
   // ─── Generate PDF ───
   const pdfData = {
     experimentName: exp.name,
@@ -87,6 +105,7 @@ export async function GET(
     observations: form.observations,
     results: form.results,
     teacherNotes: form.teacherNotes,
+    diagramBase64,
     expectedResults: exp.expectedResults,
     teacherCopy: teacherCopy || undefined,
   };
