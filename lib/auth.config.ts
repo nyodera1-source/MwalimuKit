@@ -5,6 +5,8 @@ import type { NextAuthConfig } from "next-auth";
  * Does NOT include Credentials provider or Prisma — those are in auth.ts.
  */
 export const authConfig = {
+  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",

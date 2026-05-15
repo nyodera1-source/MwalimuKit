@@ -49,6 +49,8 @@
 
 :root {
   --radius: 0.75rem;
+  --font-geist-sans: Arial, Helvetica, sans-serif;
+  --font-geist-mono: "Courier New", Consolas, monospace;
   /* Vibrant education-friendly palette */
   --background: oklch(0.965 0.006 250);      /* Soft blue-gray #f0f4f8 */
   --foreground: oklch(0.20 0.03 270);         /* Dark navy text */
@@ -144,5 +146,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans);
   }
 }
