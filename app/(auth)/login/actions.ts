@@ -5,11 +5,21 @@ import { loginSchema } from "@/lib/validations";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 
+function getSafeCallbackUrl(value: FormDataEntryValue | null) {
+  if (typeof value !== "string") return "/dashboard";
+  if (!value.startsWith("/") || value.startsWith("//")) return "/dashboard";
+  if (value.startsWith("/login") || value.startsWith("/signup")) {
+    return "/dashboard";
+  }
+  return value;
+}
+
 export async function login(prevState: unknown, formData: FormData) {
   const raw = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
+  const callbackUrl = getSafeCallbackUrl(formData.get("callbackUrl"));
 
   const parsed = loginSchema.safeParse(raw);
   if (!parsed.success) {
@@ -33,5 +43,5 @@ export async function login(prevState: unknown, formData: FormData) {
     };
   }
 
-  redirect("/dashboard");
+  redirect(callbackUrl);
 }

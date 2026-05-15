@@ -16,7 +16,12 @@ export default auth((req) => {
   }
 
   if (!isLoggedIn && !isAuthPage) {
-    return Response.redirect(new URL("/login", req.nextUrl));
+    const loginUrl = new URL("/login", req.nextUrl);
+    loginUrl.searchParams.set(
+      "callbackUrl",
+      `${req.nextUrl.pathname}${req.nextUrl.search}`
+    );
+    return Response.redirect(loginUrl);
   }
 });
 
