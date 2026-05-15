@@ -26,7 +26,11 @@ export async function login(prevState: unknown, formData: FormData) {
     if (error instanceof AuthError) {
       return { error: "Invalid email or password." };
     }
-    throw error;
+    console.error("Login failed", error);
+    return {
+      error:
+        "We could not sign you in right now. Please try again in a few minutes.",
+    };
   }
 
   redirect("/dashboard");

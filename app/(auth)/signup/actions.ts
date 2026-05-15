@@ -21,21 +21,29 @@ export async function signup(prevState: unknown, formData: FormData) {
 
   const { fullName, email, password, county } = parsed.data;
 
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) {
-    return { error: "An account with this email already exists." };
+  try {
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      return { error: "An account with this email already exists." };
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    await prisma.user.create({
+      data: { email, passwordHash, fullName, county },
+    });
+
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+  } catch (error) {
+    console.error("Signup failed", error);
+    return {
+      error:
+        "We could not create your account right now. Please try again in a few minutes.",
+    };
   }
-
-  const passwordHash = await bcrypt.hash(password, 12);
-  await prisma.user.create({
-    data: { email, passwordHash, fullName, county },
-  });
-
-  await signIn("credentials", {
-    email,
-    password,
-    redirect: false,
-  });
 
   redirect("/dashboard");
 }
