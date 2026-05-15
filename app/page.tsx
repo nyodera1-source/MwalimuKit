@@ -1,5 +1,3 @@
-import { auth } from "@/lib/session";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -13,13 +11,7 @@ import {
   Mail,
 } from "lucide-react";
 
-export default async function HomePage() {
-  const session = await auth();
-
-  if (session?.user) {
-    redirect("/dashboard");
-  }
-
+export default function HomePage() {
   const features = [
     {
       icon: FileText,
