@@ -1,6 +1,5 @@
 "use server";
 
-import { signIn } from "@/lib/auth";
 import { loginSchema } from "@/lib/validations";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
@@ -27,6 +26,7 @@ export async function login(prevState: unknown, formData: FormData) {
   }
 
   try {
+    const { signIn } = await import("@/lib/auth");
     await signIn("credentials", {
       email: parsed.data.email,
       password: parsed.data.password,
