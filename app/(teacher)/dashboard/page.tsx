@@ -1,8 +1,10 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { ModuleTile } from "@/components/dashboard/module-tile";
 import { RecentDocuments } from "@/components/dashboard/recent-documents";
+import { Button } from "@/components/ui/button";
 import { FileText, BookOpen, StickyNote, Sparkles } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -12,7 +14,11 @@ export default async function DashboardPage() {
   const userId = session.user.id;
 
   // Parallel queries for counts + last edited
-  const [lessonPlanStats, schemeStats, notesStats] = await Promise.all([
+  const [profile, lessonPlanStats, schemeStats, notesStats] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { primaryGradeId: true, primaryAreas: true },
+    }),
     prisma.lessonPlan.aggregate({
       where: { userId },
       _count: true,
@@ -108,6 +114,22 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {(!profile?.primaryGradeId || profile.primaryAreas.length === 0) && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-amber-900">
+              Complete your teaching profile
+            </p>
+            <p className="text-xs text-amber-800 mt-0.5">
+              Set your main grade and learning areas so MwalimuKit can prefill your document tools.
+            </p>
+          </div>
+          <Button asChild size="sm" className="mt-3 sm:mt-0">
+            <Link href="/profile">Update Profile</Link>
+          </Button>
+        </div>
+      )}
 
       {/* Module tiles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

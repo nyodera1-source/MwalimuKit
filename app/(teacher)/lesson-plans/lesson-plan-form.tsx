@@ -83,7 +83,7 @@ export function LessonPlanForm({
   const [state, formAction, pending] = useActionState(action, null);
 
   // Cascade selection state (bridged to hidden inputs)
-  const [gradeId, setGradeId] = useState(defaults?.gradeId || "");
+  const [gradeId, setGradeId] = useState(defaults?.gradeId || defaultGradeId || "");
   const [learningAreaId, setLearningAreaId] = useState(defaults?.learningAreaId || "");
   const [strandId, setStrandId] = useState(defaults?.strandId || "");
   const [subStrandId, setSubStrandId] = useState(defaults?.subStrandId || "");
@@ -345,6 +345,9 @@ export function LessonPlanForm({
           <CascadeDropdown
             defaultGradeId={defaults?.gradeId || defaultGradeId}
             defaultLearningAreaId={defaults?.learningAreaId}
+            defaultStrandId={defaults?.strandId}
+            defaultSubStrandId={defaults?.subStrandId}
+            defaultSloIds={defaults?.sloIds}
             onChange={(sel) => {
               setGradeId(sel.gradeId || "");
               setLearningAreaId(sel.learningAreaId || "");

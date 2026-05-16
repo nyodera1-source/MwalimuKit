@@ -82,7 +82,7 @@ export function NotesForm({ defaultGradeId, defaults, isEdit }: NotesFormProps) 
   const [saving, startTransition] = useTransition();
 
   // Curriculum selection
-  const [gradeId, setGradeId] = useState(defaults?.gradeId || "");
+  const [gradeId, setGradeId] = useState(defaults?.gradeId || defaultGradeId || "");
   const [learningAreaId, setLearningAreaId] = useState(defaults?.learningAreaId || "");
   const [strandId, setStrandId] = useState(defaults?.strandId || "");
   const [subStrandId, setSubStrandId] = useState(defaults?.subStrandId || "");
@@ -240,6 +240,8 @@ export function NotesForm({ defaultGradeId, defaults, isEdit }: NotesFormProps) 
             <CascadeDropdown
               defaultGradeId={defaults?.gradeId || defaultGradeId}
               defaultLearningAreaId={defaults?.learningAreaId}
+              defaultStrandId={defaults?.strandId}
+              defaultSubStrandId={defaults?.subStrandId}
               onChange={(sel: CascadeSelection) => {
                 setGradeId(sel.gradeId || "");
                 setLearningAreaId(sel.learningAreaId || "");

@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "MwalimuKit — CBE Teacher Toolkit",
   description:
-    "Create CBE-aligned lesson plans, schemes of work, exams, and teaching notes for Kenyan teachers (Grade 1-10).",
+    "Create CBE-aligned lesson plans, schemes of work, and teaching notes for Kenyan teachers (Grade 1-10).",
 };
 
 export default function RootLayout({

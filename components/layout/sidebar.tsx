@@ -9,18 +9,14 @@ import {
   BookOpen,
   StickyNote,
   User,
-  Database,
   Sparkles,
-  FlaskConical,
 } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, color: "bg-blue-500/20 text-blue-400" },
   { href: "/lesson-plans", label: "Lesson Plans", icon: FileText, color: "bg-sky-500/20 text-sky-400" },
   { href: "/schemes", label: "Schemes of Work", icon: BookOpen, color: "bg-emerald-500/20 text-emerald-400" },
-  { href: "/question-bank", label: "Question Bank", icon: Database, color: "bg-amber-500/20 text-amber-400" },
   { href: "/notes", label: "Teaching Notes", icon: StickyNote, color: "bg-purple-500/20 text-purple-400" },
-  { href: "/activity-forms", label: "Activity Forms", icon: FlaskConical, color: "bg-pink-500/20 text-pink-400" },
   { href: "/profile", label: "Profile", icon: User, color: "bg-gray-500/20 text-gray-400" },
 ];
 

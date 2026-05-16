@@ -1,7 +1,7 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { Menu, LogOut, Search, Sparkles } from "lucide-react";
+import { Menu, LogOut, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MobileNav } from "./sidebar";
@@ -42,17 +42,7 @@ export function Header({ userName }: HeaderProps) {
         </SheetContent>
       </Sheet>
 
-      {/* Search bar */}
-      <div className="flex-1 max-w-md mx-auto hidden sm:flex">
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search lesson plans, schemes, notes..."
-            className="w-full rounded-full border border-gray-200 bg-gray-50 pl-10 pr-4 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
-          />
-        </div>
-      </div>
+      <div className="flex-1" />
 
       <div className="flex items-center gap-3 ml-auto">
         {/* User avatar */}

@@ -39,7 +39,7 @@ export function RecentDocuments({ documents }: RecentDocumentsProps) {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            No documents yet. Create your first lesson plan, scheme, exam, or teaching notes to get started!
+            No documents yet. Create your first lesson plan, scheme, or teaching notes to get started.
           </p>
         </CardContent>
       </Card>

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   FileText,
   BookOpen,
-  ClipboardList,
   StickyNote,
   GraduationCap,
   Phone,
@@ -26,12 +25,6 @@ export default function HomePage() {
       color: "bg-emerald-100 text-emerald-600",
     },
     {
-      icon: ClipboardList,
-      title: "Exams & Questions",
-      desc: "Question bank with 400+ questions and auto marking schemes",
-      color: "bg-amber-100 text-amber-600",
-    },
-    {
       icon: StickyNote,
       title: "Teaching Notes",
       desc: "AI-enhanced notes for every topic across all subjects",
@@ -47,7 +40,7 @@ export default function HomePage() {
     },
     {
       title: "Choose Your Tool",
-      desc: "Pick from lesson plans, schemes, exams, or teaching notes",
+      desc: "Pick from lesson plans, schemes, or teaching notes",
       color: "bg-emerald-500",
     },
     {
@@ -105,7 +98,7 @@ export default function HomePage() {
               Teaching Toolkit
             </h2>
             <p className="mt-5 text-lg lg:text-xl text-blue-100 max-w-xl">
-              Create lesson plans, schemes of work, exams, and teaching notes — all
+              Create lesson plans, schemes of work, and teaching notes — all
               aligned to the KICD curriculum. Free to get started.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -232,7 +225,7 @@ export default function HomePage() {
             <span className="font-semibold text-white"><em>MwalimuKit</em></span>
           </div>
           <p className="text-sm">
-            Built for Kenyan CBE Teachers &middot; Grades 1-12
+            Built for Kenyan CBE Teachers &middot; Grades 1-10
           </p>
         </div>
       </footer>

@@ -111,7 +111,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
   const [step, setStep] = useState(1);
 
   // Step 1: Learning Area & School Details
-  const [gradeId, setGradeId] = useState(defaults?.gradeId || "");
+  const [gradeId, setGradeId] = useState(defaults?.gradeId || defaultGradeId || "");
   const [learningAreaId, setLearningAreaId] = useState(defaults?.learningAreaId || "");
   const [title, setTitle] = useState(defaults?.title || "");
   const [autoTitle, setAutoTitle] = useState(!defaults?.title);
