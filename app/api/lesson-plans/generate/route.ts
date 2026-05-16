@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateLessonPlan } from "@/lib/ai/generate-lesson-plan";
+import { AIProviderError } from "@/lib/ai/openai-client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -92,6 +93,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ plan });
   } catch (err) {
     console.error("Lesson plan generation error:", err);
+    if (err instanceof AIProviderError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.status || 500 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Failed to generate lesson plan. Please try again." },
       { status: 500 }

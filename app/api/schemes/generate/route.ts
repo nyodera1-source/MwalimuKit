@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { enhanceSchemeContent } from "@/lib/ai/generate-scheme-content";
+import { AIProviderError } from "@/lib/ai/openai-client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -46,9 +47,23 @@ export async function POST(request: NextRequest) {
       referenceBook: referenceBook || "",
     });
 
+    if (enhanced.length === 0) {
+      return NextResponse.json(
+        { error: "AI returned content we could not parse. Please try again." },
+        { status: 502 }
+      );
+    }
+
     return NextResponse.json({ enhanced });
   } catch (err) {
     console.error("Scheme enhancement error:", err);
+    if (err instanceof AIProviderError) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: err.status || 500 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Failed to enhance scheme content. Please try again." },
       { status: 500 }

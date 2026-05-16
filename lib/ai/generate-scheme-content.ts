@@ -163,7 +163,6 @@ Return a JSON array with comprehensive, reference-rich content for each week ent
       }
     }
 
-    // Return empty if all parsing fails
-    return [];
+    throw new Error("Failed to parse AI response for scheme content.");
   }
 }
