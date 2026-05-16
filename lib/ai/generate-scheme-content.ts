@@ -121,9 +121,13 @@ Return a JSON array with comprehensive, reference-rich content for each week ent
 
   // Parse JSON — handle markdown code fences
   let jsonStr = text.trim();
-  const fenceMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (fenceMatch) {
-    jsonStr = fenceMatch[1].trim();
+  jsonStr = jsonStr.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "");
+  jsonStr = jsonStr.trim();
+
+  const firstBracket = jsonStr.indexOf("[");
+  const lastBracket = jsonStr.lastIndexOf("]");
+  if (firstBracket >= 0 && lastBracket > firstBracket) {
+    jsonStr = jsonStr.slice(firstBracket, lastBracket + 1);
   }
 
   function normalizeEntries(
@@ -138,13 +142,27 @@ Return a JSON array with comprehensive, reference-rich content for each week ent
   }
 
   try {
-    return normalizeEntries(JSON.parse(jsonStr));
+    const parsed = JSON.parse(jsonStr);
+    if (Array.isArray(parsed)) {
+      return normalizeEntries(parsed);
+    }
+    if (
+      parsed &&
+      typeof parsed === "object" &&
+      Array.isArray((parsed as { entries?: unknown }).entries)
+    ) {
+      return normalizeEntries(
+        (parsed as { entries: Record<string, unknown>[] }).entries
+      );
+    }
+    throw new Error("AI response did not contain a scheme entry array.");
   } catch {
     // Try to salvage truncated JSON array
     const lastBracket = jsonStr.lastIndexOf("]");
     if (lastBracket > 0) {
       try {
-        return normalizeEntries(JSON.parse(jsonStr.slice(0, lastBracket + 1)));
+        const parsed = JSON.parse(jsonStr.slice(0, lastBracket + 1));
+        if (Array.isArray(parsed)) return normalizeEntries(parsed);
       } catch {
         // Try finding last complete object
         const lastBrace = jsonStr.lastIndexOf("}");
@@ -154,7 +172,8 @@ Return a JSON array with comprehensive, reference-rich content for each week ent
             // Ensure it starts with [
             const start = salvaged.indexOf("[");
             if (start >= 0) {
-              return normalizeEntries(JSON.parse(salvaged.slice(start)));
+              const parsed = JSON.parse(salvaged.slice(start));
+              if (Array.isArray(parsed)) return normalizeEntries(parsed);
             }
           } catch {
             // Fall through

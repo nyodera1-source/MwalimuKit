@@ -64,6 +64,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (err instanceof Error) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Failed to enhance scheme content. Please try again." },
       { status: 500 }
