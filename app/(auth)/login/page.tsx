@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { login } from "./actions";
@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function LoginPage() {
+function LoginForm() {
   const [state, action, pending] = useActionState(login, null);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
@@ -67,5 +67,29 @@ export default function LoginPage() {
         </p>
       </CardFooter>
     </Card>
+  );
+}
+
+function LoginFallback() {
+  return (
+    <Card>
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+        <CardDescription>
+          Log in to access your CBE teaching toolkit
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="h-40 animate-pulse rounded-md bg-muted" />
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginForm />
+    </Suspense>
   );
 }

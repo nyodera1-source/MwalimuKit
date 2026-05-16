@@ -1,4 +1,4 @@
-import { anthropic } from "./anthropic-client";
+import { generateAIText } from "./openai-client";
 
 // ─── Types ───
 
@@ -118,16 +118,11 @@ Ensure your assessment measures competency demonstration, not just knowledge rec
 
 Generate a complete, competency-focused, ready-to-teach lesson plan.`;
 
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 4096,
-    system: systemPrompt,
-    messages: [{ role: "user", content: userPrompt }],
+  const text = await generateAIText({
+    systemPrompt,
+    userPrompt,
+    maxOutputTokens: 4096,
   });
-
-  // Extract text content
-  const text =
-    response.content[0].type === "text" ? response.content[0].text : "";
 
   // Parse JSON — handle markdown code fences
   let jsonStr = text.trim();

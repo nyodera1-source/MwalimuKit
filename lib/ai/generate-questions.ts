@@ -1,4 +1,4 @@
-import { anthropic } from "./anthropic-client";
+import { generateAIText } from "./openai-client";
 
 // ─── Types ───
 
@@ -126,21 +126,14 @@ Return a JSON array of questions. Each question object must have:
 
 Return ONLY the JSON array, no other text. Keep answers concise (key points with marks, not essays).`;
 
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 8192,
-    system: systemPrompt,
-    messages: [{ role: "user", content: userPrompt }],
+  const text = await generateAIText({
+    systemPrompt,
+    userPrompt,
+    maxOutputTokens: 8192,
   });
 
-  // Extract text from response
-  const textBlock = response.content.find((b) => b.type === "text");
-  if (!textBlock || textBlock.type !== "text") {
-    throw new Error("No text response from Claude");
-  }
-
   // Parse JSON from response (handle markdown code fences)
-  let jsonStr = textBlock.text.trim();
+  let jsonStr = text.trim();
   if (jsonStr.startsWith("```")) {
     jsonStr = jsonStr.replace(/^```(?:json)?\s*/, "").replace(/\s*```$/, "");
   }

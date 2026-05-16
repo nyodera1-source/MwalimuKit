@@ -1,4 +1,4 @@
-import { anthropic } from "./anthropic-client";
+import { generateAIText } from "./openai-client";
 
 // ─── Types ───
 
@@ -115,18 +115,11 @@ ${sloList}
 
 Please generate comprehensive teaching notes covering all the SLOs above.`;
 
-  const response = await anthropic.messages.create({
-    model: input.fast
-      ? "claude-haiku-4-5-20251001"
-      : "claude-sonnet-4-5-20250929",
-    max_tokens: 8192,
-    system: systemPrompt,
-    messages: [{ role: "user", content: userPrompt }],
+  const text = await generateAIText({
+    systemPrompt,
+    userPrompt,
+    maxOutputTokens: input.fast ? 4096 : 8192,
   });
-
-  // Extract text content
-  const text =
-    response.content[0].type === "text" ? response.content[0].text : "";
 
   // Parse JSON — handle markdown code fences and surrounding text
   let jsonStr = text.trim();

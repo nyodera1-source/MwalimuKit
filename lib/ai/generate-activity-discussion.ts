@@ -1,4 +1,4 @@
-import { anthropic } from "./anthropic-client";
+import { generateAIText } from "./openai-client";
 
 export interface GenerateDiscussionInput {
   experimentName: string;
@@ -102,16 +102,11 @@ ${studentResults}
       : ""
   }Please create the discussion guide and assessment notes.`;
 
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 4096,
-    system: systemPrompt,
-    messages: [{ role: "user", content: userPrompt }],
+  const text = await generateAIText({
+    systemPrompt,
+    userPrompt,
+    maxOutputTokens: 4096,
   });
-
-  // Extract text
-  const text =
-    response.content[0].type === "text" ? response.content[0].text : "";
 
   // Parse JSON
   let jsonStr = text.trim();

@@ -1,4 +1,4 @@
-import { anthropic } from "./anthropic-client";
+import { generateAIText } from "./openai-client";
 
 // ─── Types ───
 
@@ -113,16 +113,11 @@ IMPORTANT:
 
 Return a JSON array with comprehensive, reference-rich content for each week entry.`;
 
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 8192,
-    system: systemPrompt,
-    messages: [{ role: "user", content: userPrompt }],
+  const text = await generateAIText({
+    systemPrompt,
+    userPrompt,
+    maxOutputTokens: 8192,
   });
-
-  // Extract text content
-  const text =
-    response.content[0].type === "text" ? response.content[0].text : "";
 
   // Parse JSON — handle markdown code fences
   let jsonStr = text.trim();
