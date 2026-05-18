@@ -204,7 +204,7 @@ export default async function PreviewActivityFormPage({
                 <h4 className="font-semibold mb-1">Ready to Print</h4>
                 <p className="text-sm text-muted-foreground mb-3">
                   Download the Student Copy to distribute to learners, and the Teacher Copy
-                  with AI-generated discussion answers for your reference.
+                  with teacher discussion answers for your reference.
                 </p>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" asChild>

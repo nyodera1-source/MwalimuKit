@@ -26,6 +26,7 @@ model User {
   lessonPlans   LessonPlan[]
   schemesOfWork SchemeOfWork[]
   exams         Exam[]
+  assignments   Assignment[]
   teachingNotes TeachingNotes[]
   activityForms ActivityForm[]
 
@@ -44,6 +45,7 @@ model Grade {
   lessonPlans    LessonPlan[]
   schemesOfWork  SchemeOfWork[]
   exams          Exam[]
+  assignments    Assignment[]
   teachingNotes  TeachingNotes[]
   labExperiments          LabExperiment[]
   activityForms           ActivityForm[]
@@ -67,6 +69,7 @@ model LearningArea {
   lessonPlans    LessonPlan[]
   schemesOfWork  SchemeOfWork[]
   exams          Exam[]
+  assignments    Assignment[]
   teachingNotes  TeachingNotes[]
   labExperiments          LabExperiment[]
   activityForms           ActivityForm[]
@@ -246,6 +249,35 @@ model ExamQuestion {
   exam Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
 
   @@map("exam_questions")
+}
+
+model Assignment {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  gradeId        String   @map("grade_id")
+  learningAreaId String   @map("learning_area_id")
+  assignmentType String   @map("assignment_type") // "weekly", "mid_term", "end_term"
+  term           Int
+  year           Int
+  weekNumber     Int?     @map("week_number")
+  title          String?
+  totalMarks     Int?     @map("total_marks")
+  timeMinutes    Int?     @map("time_minutes")
+  instructions   String?
+  strandIds      String[] @map("strand_ids")
+  subStrandIds   String[] @map("sub_strand_ids")
+  sloIds         String[] @map("slo_ids")
+  competencyIds  String[] @map("competency_ids")
+  questions      Json?
+  status         String   @default("draft")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grade        Grade        @relation(fields: [gradeId], references: [id])
+  learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
+
+  @@map("assignments")
 }
 
 // ─── QUESTION BANK (8-4-4 + CBE past papers) ───

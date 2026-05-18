@@ -1,7 +1,8 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { Menu, LogOut, Sparkles } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
+import { LogoMark } from "@/components/brand/logo-mark";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MobileNav } from "./sidebar";
@@ -30,9 +31,7 @@ export function Header({ userName }: HeaderProps) {
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">
           <div className="px-5 pt-6 pb-4 flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-blue-500 flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-white" />
-            </div>
+            <LogoMark />
             <div>
               <h1 className="text-lg font-bold">MwalimuKit</h1>
               <p className="text-[11px] text-muted-foreground">CBE Teacher Toolkit</p>

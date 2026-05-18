@@ -20,7 +20,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  Sparkles,
   Check,
   X,
   Pencil,
@@ -32,6 +31,8 @@ import {
   Save,
   Upload,
   Type,
+  ClipboardPenLine,
+  Lightbulb,
 } from "lucide-react";
 import { createExam } from "../actions";
 
@@ -456,7 +457,7 @@ export function ExamForm({ defaultGradeId }: ExamFormProps) {
               <Label>How would you like to create questions?</Label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {([
-                  { value: "auto" as const, label: "Auto-generate", icon: Sparkles, desc: "AI generates text-only questions" },
+                  { value: "auto" as const, label: "Auto-generate", icon: ClipboardPenLine, desc: "Create curriculum-aligned text questions" },
                   { value: "upload" as const, label: "Upload File", icon: Upload, desc: "Import from PDF or Word" },
                   { value: "manual" as const, label: "Type Manually", icon: Type, desc: "Create questions from scratch" },
                 ]).map((opt) => (
@@ -632,7 +633,7 @@ export function ExamForm({ defaultGradeId }: ExamFormProps) {
                   {generating ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
-                    <Sparkles className="h-4 w-4 mr-2" />
+                    <ClipboardPenLine className="h-4 w-4 mr-2" />
                   )}
                   {questions.length > 0 ? "Generate More" : "Generate Questions"}
                 </Button>
@@ -672,9 +673,9 @@ export function ExamForm({ defaultGradeId }: ExamFormProps) {
                   {generating ? (
                     <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                   ) : (
-                    <Sparkles className="h-3 w-3 mr-1" />
+                    <ClipboardPenLine className="h-3 w-3 mr-1" />
                   )}
-                  AI Generate More
+                  Generate More
                 </Button>
               )}
 
@@ -909,10 +910,10 @@ export function ExamForm({ defaultGradeId }: ExamFormProps) {
               <div className="text-center py-12 border-2 border-dashed rounded-lg">
                 {questionSource === "auto" && (
                   <>
-                    <Sparkles className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
+                    <Lightbulb className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
                     <p className="text-sm font-medium">No questions yet</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Click &quot;Generate Questions&quot; to use AI
+                      Click &quot;Generate Questions&quot; to create a first draft
                     </p>
                   </>
                 )}

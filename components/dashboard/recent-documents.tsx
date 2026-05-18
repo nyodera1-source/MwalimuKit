@@ -10,13 +10,14 @@ interface RecentDocument {
   title: string | null;
   updatedAt: Date;
   status: string;
-  type: "lesson-plan" | "scheme" | "exam" | "notes";
+  type: "lesson-plan" | "scheme" | "exam" | "assignment" | "notes";
 }
 
 const typeConfig = {
   "lesson-plan": { label: "Lesson Plan", icon: FileText, href: "/lesson-plans", color: "bg-blue-100 text-blue-600" },
   scheme: { label: "Scheme", icon: BookOpen, href: "/schemes", color: "bg-emerald-100 text-emerald-600" },
   exam: { label: "Exam", icon: ClipboardList, href: "/exams", color: "bg-amber-100 text-amber-600" },
+  assignment: { label: "Assignment", icon: ClipboardList, href: "/assignments", color: "bg-amber-100 text-amber-600" },
   notes: { label: "Notes", icon: StickyNote, href: "/notes", color: "bg-purple-100 text-purple-600" },
 };
 
@@ -39,7 +40,7 @@ export function RecentDocuments({ documents }: RecentDocumentsProps) {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            No documents yet. Create your first lesson plan, scheme, or teaching notes to get started.
+            No documents yet. Create your first lesson plan, scheme, assignment, or teaching notes to get started.
           </p>
         </CardContent>
       </Card>

@@ -49,8 +49,7 @@ export function MyNotesList({ notes }: MyNotesListProps) {
           <StickyNote className="h-12 w-12 text-muted-foreground mb-4" />
           <h2 className="text-lg font-semibold mb-2">No custom notes yet</h2>
           <p className="text-muted-foreground mb-6 max-w-sm">
-            Create your own teaching notes with AI-powered content generation
-            aligned to the CBC curriculum.
+            Create your own teaching notes with curriculum-aligned drafting support.
           </p>
           <Button asChild>
             <Link href="/notes/new">

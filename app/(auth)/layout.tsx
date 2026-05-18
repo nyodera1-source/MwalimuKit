@@ -1,5 +1,5 @@
-import { Sparkles } from "lucide-react";
 import Link from "next/link";
+import { LogoMark } from "@/components/brand/logo-mark";
 
 export default function AuthLayout({
   children,
@@ -10,9 +10,7 @@ export default function AuthLayout({
     <div className="min-h-screen flex flex-col items-center justify-center gradient-hero px-4 py-12">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2.5 mb-8">
-        <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-          <Sparkles className="h-5 w-5 text-white" />
-        </div>
+        <LogoMark size="lg" />
         <span className="text-2xl font-bold text-white">MwalimuKit</span>
       </Link>
       {/* Auth card */}

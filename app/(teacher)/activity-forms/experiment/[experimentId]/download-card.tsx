@@ -136,7 +136,7 @@ export function ExperimentDownloadCard({
         </div>
 
         <p className="text-xs text-muted-foreground text-center pt-1">
-          Teacher Guide includes AI-generated discussion answers
+          Teacher Guide includes discussion answers
         </p>
       </CardContent>
     </Card>

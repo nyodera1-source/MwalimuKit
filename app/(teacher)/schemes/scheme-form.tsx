@@ -22,9 +22,8 @@ import { BREAK_TYPES, getPublicHolidayOptions } from "@/lib/data/scheme-breaks";
 import {
   ArrowRight,
   ArrowLeft,
-  Eye,
   Loader2,
-  Wand2,
+  ClipboardPenLine,
   Plus,
   Trash2,
   ChevronDown,
@@ -447,7 +446,6 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
     // Distribute SLOs across individual lessons, grouping into
     // per-lesson batches so each lesson gets unique objectives.
-    let sloIdx = 0;
     for (const tw of remainingWeeks) {
       const lessonsInWeek = tw.endLesson - tw.startLesson + 1;
 
@@ -1083,7 +1081,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
             <div className="border-t pt-4 space-y-3">
               <div className="flex flex-wrap items-center gap-3">
                 <Button type="button" variant="secondary" onClick={generateEntries}>
-                  <Wand2 className="h-4 w-4 mr-2" />
+                  <ClipboardPenLine className="h-4 w-4 mr-2" />
                   Generate Scheme
                 </Button>
                 {entries.length > 0 && (
@@ -1100,8 +1098,8 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                       </>
                     ) : (
                       <>
-                        <Wand2 className="h-4 w-4 mr-2" />
-                        Enhance with AI
+                        <ClipboardPenLine className="h-4 w-4 mr-2" />
+                        Improve Entries
                       </>
                     )}
                   </Button>

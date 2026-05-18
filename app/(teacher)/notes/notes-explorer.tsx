@@ -20,9 +20,9 @@ import {
   GraduationCap,
   Layers,
   FileText,
-  Sparkles,
   ArrowRight,
   CheckCircle2,
+  NotebookPen,
 } from "lucide-react";
 
 interface CurriculumNoteData {
@@ -55,7 +55,7 @@ const SECTION_ICONS: Record<string, typeof BookOpen> = {
   introduction: BookOpen,
   keyConcepts: Layers,
   detailedExplanations: FileText,
-  examples: Sparkles,
+  examples: NotebookPen,
   studentActivities: GraduationCap,
   assessmentQuestions: CheckCircle2,
   teacherTips: StickyNote,
@@ -307,9 +307,9 @@ export function NotesExplorer() {
               },
               {
                 step: "2",
-                icon: Sparkles,
+                icon: BookOpen,
                 title: "Preview Notes",
-                desc: "AI-generated lecture notes appear instantly with a brief preview of key content",
+                desc: "Lecture notes appear with a brief preview of key content",
                 color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
               },
               {
@@ -412,14 +412,14 @@ export function NotesExplorer() {
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
               <div className="relative mb-4">
                 <div className="p-4 rounded-full bg-purple-100 dark:bg-purple-900/30">
-                  <Sparkles className="h-8 w-8 text-purple-600 dark:text-purple-400 animate-pulse" />
+                  <NotebookPen className="h-8 w-8 text-purple-600 dark:text-purple-400 animate-pulse" />
                 </div>
               </div>
               <h3 className="text-lg font-semibold mb-1">
                 Generating Teaching Notes
               </h3>
               <p className="text-sm text-muted-foreground max-w-sm">
-                AI is creating comprehensive lecture notes aligned to CBC.
+                Creating comprehensive lecture notes aligned to CBC.
                 This usually takes 10-20 seconds...
               </p>
               <div className="flex items-center gap-6 mt-6 text-xs text-muted-foreground">

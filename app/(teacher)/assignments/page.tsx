@@ -2,8 +2,9 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -13,10 +14,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, FileText } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { ClipboardList, Plus } from "lucide-react";
 
-export default async function ExamsPage({
+export default async function AssignmentsPage({
   searchParams,
 }: {
   searchParams: Promise<{ tab?: string }>;
@@ -31,31 +31,29 @@ export default async function ExamsPage({
   if (tab === "drafts") where.status = "draft";
   if (tab === "published") where.status = "published";
 
-  const exams = await prisma.exam.findMany({
+  const assignments = await prisma.assignment.findMany({
     where,
     orderBy: { updatedAt: "desc" },
     include: {
-      grade: true,
-      learningArea: true,
+      grade: { select: { name: true } },
+      learningArea: { select: { name: true } },
     },
   });
 
-  const assessmentLabels: Record<string, string> = {
-    end_term: "End Term",
+  const typeLabels: Record<string, string> = {
+    weekly: "Weekly",
     mid_term: "Mid-Term",
-    cat: "CAT",
-    opener: "Opener",
-    formative: "Formative",
+    end_term: "End-Term",
   };
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Assessments</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Assignments</h1>
         <Button asChild>
-          <Link href="/exams/new">
-            <Plus className="h-4 w-4 mr-2" />
-            New Assessment
+          <Link href="/assignments/new">
+            <Plus className="mr-2 h-4 w-4" />
+            New Assignment
           </Link>
         </Button>
       </div>
@@ -63,40 +61,39 @@ export default async function ExamsPage({
       <Tabs defaultValue={tab}>
         <TabsList>
           <TabsTrigger value="all" asChild>
-            <Link href="/exams?tab=all">All</Link>
+            <Link href="/assignments?tab=all">All</Link>
           </TabsTrigger>
           <TabsTrigger value="drafts" asChild>
-            <Link href="/exams?tab=drafts">Drafts</Link>
+            <Link href="/assignments?tab=drafts">Drafts</Link>
           </TabsTrigger>
           <TabsTrigger value="published" asChild>
-            <Link href="/exams?tab=published">Published</Link>
+            <Link href="/assignments?tab=published">Published</Link>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value={tab} className="mt-4">
-          {exams.length === 0 ? (
+          {assignments.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-              <h2 className="text-lg font-semibold mb-2">No assessments yet</h2>
-              <p className="text-muted-foreground mb-6 max-w-sm">
-                Create assessments aligned to the CBC curriculum.
-                Select your SLOs and generate an editable first draft.
+              <ClipboardList className="mb-4 h-12 w-12 text-muted-foreground" />
+              <h2 className="mb-2 text-lg font-semibold">No assignments yet</h2>
+              <p className="mb-6 max-w-sm text-muted-foreground">
+                Create CBC-aligned weekly, mid-term, and end-term assignments that teachers can edit, preview, and print.
               </p>
               <Button asChild>
-                <Link href="/exams/new">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Assessment
+                <Link href="/assignments/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Your First Assignment
                 </Link>
               </Button>
             </div>
           ) : (
-            <div className="border rounded-md">
+            <div className="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Title</TableHead>
                     <TableHead className="hidden sm:table-cell">Grade</TableHead>
-                    <TableHead className="hidden sm:table-cell">Subject</TableHead>
+                    <TableHead className="hidden sm:table-cell">Learning Area</TableHead>
                     <TableHead className="hidden md:table-cell">Type</TableHead>
                     <TableHead className="hidden md:table-cell">Marks</TableHead>
                     <TableHead>Status</TableHead>
@@ -105,35 +102,33 @@ export default async function ExamsPage({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {exams.map((exam) => (
-                    <TableRow key={exam.id}>
+                  {assignments.map((assignment) => (
+                    <TableRow key={assignment.id}>
                       <TableCell className="font-medium">
-                        <Link href={`/exams/${exam.id}`} className="hover:underline">
-                          {exam.title || "Untitled"}
+                        <Link href={`/assignments/${assignment.id}/preview`} className="hover:underline">
+                          {assignment.title || "Untitled Assignment"}
                         </Link>
                         <p className="text-xs text-muted-foreground sm:hidden">
-                          {exam.grade.name} - {exam.learningArea.name}
+                          {assignment.grade.name} - {assignment.learningArea.name}
                         </p>
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell">{exam.grade.name}</TableCell>
-                      <TableCell className="hidden sm:table-cell">{exam.learningArea.name}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{assignment.grade.name}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{assignment.learningArea.name}</TableCell>
                       <TableCell className="hidden md:table-cell">
-                        {assessmentLabels[exam.assessmentType || ""] || exam.examType}
+                        {typeLabels[assignment.assignmentType] || assignment.assignmentType}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {exam.totalMarks || "—"}
-                      </TableCell>
+                      <TableCell className="hidden md:table-cell">{assignment.totalMarks || "-"}</TableCell>
                       <TableCell>
-                        <Badge variant={exam.status === "published" ? "default" : "secondary"}>
-                          {exam.status}
+                        <Badge variant={assignment.status === "published" ? "default" : "secondary"}>
+                          {assignment.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground hidden sm:table-cell">
-                        {formatDistanceToNow(new Date(exam.updatedAt), { addSuffix: true })}
+                      <TableCell className="hidden sm:table-cell text-muted-foreground">
+                        {formatDistanceToNow(assignment.updatedAt, { addSuffix: true })}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/exams/${exam.id}`}>View</Link>
+                          <Link href={`/assignments/${assignment.id}/preview`}>Preview</Link>
                         </Button>
                       </TableCell>
                     </TableRow>

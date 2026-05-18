@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { CascadeDropdown } from "@/components/cbe/cascade-dropdown";
 import { CompetencyCheckboxGroup } from "@/components/cbe/competency-checkbox-group";
 import { createLessonPlan, updateLessonPlan } from "./actions";
-import { Eye, Loader2, CheckCircle, Lightbulb, Wand2 } from "lucide-react";
+import { Eye, Loader2, CheckCircle, Lightbulb, ClipboardPenLine } from "lucide-react";
 
 interface LessonPlanContent {
   date?: string;
@@ -413,13 +413,13 @@ export function LessonPlanForm({
         <Card className="border-purple-200 bg-purple-50/50">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <Wand2 className="h-5 w-5 text-purple-600 mt-0.5 shrink-0" />
+              <ClipboardPenLine className="h-5 w-5 text-purple-600 mt-0.5 shrink-0" />
               <div className="flex-1 space-y-2">
                 <p className="text-sm font-medium text-purple-900">
-                  Generate complete lesson plan with AI
+                  Draft a complete lesson plan
                 </p>
                 <p className="text-xs text-purple-700">
-                  AI will fill in objectives, activities, resources, and assessment based on the selected curriculum and SLOs. You can edit everything after.
+                  Fill in objectives, activities, resources, and assessment based on the selected curriculum and SLOs. You can edit everything after.
                 </p>
                 {aiError && (
                   <p className="text-xs text-red-600">{aiError}</p>
@@ -438,8 +438,8 @@ export function LessonPlanForm({
                     </>
                   ) : (
                     <>
-                      <Wand2 className="h-4 w-4 mr-2" />
-                      Generate with AI
+                      <ClipboardPenLine className="h-4 w-4 mr-2" />
+                      Generate Draft
                     </>
                   )}
                 </Button>

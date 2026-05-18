@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { LogoMark } from "@/components/brand/logo-mark";
 import { Button } from "@/components/ui/button";
 import {
   FileText,
@@ -8,6 +9,7 @@ import {
   GraduationCap,
   Phone,
   Mail,
+  ClipboardList,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -15,7 +17,7 @@ export default function HomePage() {
     {
       icon: FileText,
       title: "Lesson Plans",
-      desc: "CBE-aligned lesson planning with guided forms and AI assistance",
+      desc: "CBE-aligned lesson planning with guided forms and smart drafting support",
       color: "bg-blue-100 text-blue-600",
     },
     {
@@ -25,9 +27,15 @@ export default function HomePage() {
       color: "bg-emerald-100 text-emerald-600",
     },
     {
+      icon: ClipboardList,
+      title: "Assignments",
+      desc: "Printable weekly, mid-term, and end-term assignments",
+      color: "bg-amber-100 text-amber-600",
+    },
+    {
       icon: StickyNote,
       title: "Teaching Notes",
-      desc: "AI-enhanced notes for every topic across all subjects",
+      desc: "Curriculum-ready notes for every topic across all subjects",
       color: "bg-purple-100 text-purple-600",
     },
   ];
@@ -56,9 +64,7 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100 px-4 lg:px-8 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-blue-500 flex items-center justify-center">
-              <GraduationCap className="h-4 w-4 text-white" />
-            </div>
+            <LogoMark />
             <h1 className="text-xl font-bold text-gray-900"><em>MwalimuKit</em></h1>
           </div>
           <div className="hidden md:flex items-center gap-4 text-xs text-gray-500">
@@ -219,9 +225,7 @@ export default function HomePage() {
       <footer className="bg-gray-900 text-gray-400 px-4 py-10">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-lg bg-blue-500 flex items-center justify-center">
-              <GraduationCap className="h-3.5 w-3.5 text-white" />
-            </div>
+            <LogoMark size="sm" />
             <span className="font-semibold text-white"><em>MwalimuKit</em></span>
           </div>
           <p className="text-sm">

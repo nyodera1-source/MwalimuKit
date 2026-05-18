@@ -73,6 +73,25 @@ export const examSchema = z.object({
   status: z.enum(["draft", "published"]).default("draft"),
 });
 
+export const assignmentSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  gradeId: z.string().min(1, "Grade is required"),
+  learningAreaId: z.string().min(1, "Learning area is required"),
+  assignmentType: z.enum(["weekly", "mid_term", "end_term"]),
+  term: z.coerce.number().min(1).max(3),
+  year: z.coerce.number().min(2020).max(2050),
+  weekNumber: z.coerce.number().min(1).max(14).optional().or(z.literal("")),
+  totalMarks: z.coerce.number().min(1).optional(),
+  timeMinutes: z.coerce.number().min(1).optional(),
+  instructions: z.string().default(""),
+  strandIds: z.string().default("[]"),
+  subStrandIds: z.string().default("[]"),
+  sloIds: z.string().default("[]"),
+  competencyIds: z.string().default("[]"),
+  questions: z.string(),
+  status: z.enum(["draft", "published"]).default("draft"),
+});
+
 export const teachingNotesSchema = z.object({
   title: z.string().min(1, "Title is required"),
   gradeId: z.string().min(1, "Grade is required"),
@@ -90,4 +109,5 @@ export type ProfileInput = z.infer<typeof profileSchema>;
 export type LessonPlanInput = z.infer<typeof lessonPlanSchema>;
 export type SchemeOfWorkInput = z.infer<typeof schemeOfWorkSchema>;
 export type ExamInput = z.infer<typeof examSchema>;
+export type AssignmentInput = z.infer<typeof assignmentSchema>;
 export type TeachingNotesInput = z.infer<typeof teachingNotesSchema>;

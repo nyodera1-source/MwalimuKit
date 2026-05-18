@@ -5,7 +5,8 @@ import Link from "next/link";
 import { ModuleTile } from "@/components/dashboard/module-tile";
 import { RecentDocuments } from "@/components/dashboard/recent-documents";
 import { Button } from "@/components/ui/button";
-import { FileText, BookOpen, StickyNote, Sparkles } from "lucide-react";
+import { LogoMark } from "@/components/brand/logo-mark";
+import { FileText, BookOpen, ClipboardList, StickyNote } from "lucide-react";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -14,7 +15,7 @@ export default async function DashboardPage() {
   const userId = session.user.id;
 
   // Parallel queries for counts + last edited
-  const [profile, lessonPlanStats, schemeStats, notesStats] = await Promise.all([
+  const [profile, lessonPlanStats, schemeStats, assignmentStats, notesStats] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { primaryGradeId: true, primaryAreas: true },
@@ -29,6 +30,11 @@ export default async function DashboardPage() {
       _count: true,
       _max: { updatedAt: true },
     }),
+    prisma.assignment.aggregate({
+      where: { userId },
+      _count: true,
+      _max: { updatedAt: true },
+    }),
     prisma.teachingNotes.aggregate({
       where: { userId },
       _count: true,
@@ -37,7 +43,7 @@ export default async function DashboardPage() {
   ]);
 
   // Recent documents: last 5 from each type, merge and sort
-  const [recentPlans, recentSchemes, recentNotes] = await Promise.all([
+  const [recentPlans, recentSchemes, recentAssignments, recentNotes] = await Promise.all([
     prisma.lessonPlan.findMany({
       where: { userId },
       orderBy: { updatedAt: "desc" },
@@ -45,6 +51,12 @@ export default async function DashboardPage() {
       select: { id: true, title: true, updatedAt: true, status: true },
     }),
     prisma.schemeOfWork.findMany({
+      where: { userId },
+      orderBy: { updatedAt: "desc" },
+      take: 5,
+      select: { id: true, title: true, updatedAt: true, status: true },
+    }),
+    prisma.assignment.findMany({
       where: { userId },
       orderBy: { updatedAt: "desc" },
       take: 5,
@@ -61,6 +73,7 @@ export default async function DashboardPage() {
   const recentDocs = [
     ...recentPlans.map((d) => ({ ...d, type: "lesson-plan" as const })),
     ...recentSchemes.map((d) => ({ ...d, type: "scheme" as const })),
+    ...recentAssignments.map((d) => ({ ...d, type: "assignment" as const })),
     ...recentNotes.map((d) => ({ ...d, type: "notes" as const })),
   ]
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
@@ -86,6 +99,15 @@ export default async function DashboardPage() {
       color: "emerald" as const,
     },
     {
+      title: "Assignments",
+      icon: ClipboardList,
+      count: assignmentStats._count,
+      lastEdited: assignmentStats._max.updatedAt,
+      href: "/assignments",
+      createHref: "/assignments/new",
+      color: "amber" as const,
+    },
+    {
       title: "Teaching Notes",
       icon: StickyNote,
       count: notesStats._count,
@@ -101,15 +123,13 @@ export default async function DashboardPage() {
       {/* Welcome banner */}
       <div className="gradient-hero rounded-xl p-6 lg:p-8 text-white">
         <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0 mt-0.5">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
+          <LogoMark size="lg" className="mt-0.5" />
           <div>
             <h1 className="text-2xl font-bold">
               Welcome back, {session.user.name}
             </h1>
             <p className="text-blue-100 text-sm mt-1">
-              Your CBE teaching toolkit — create lesson plans, schemes of work, and teaching notes.
+              Your CBE teaching toolkit — create lesson plans, schemes of work, assignments, and teaching notes.
             </p>
           </div>
         </div>
@@ -132,7 +152,7 @@ export default async function DashboardPage() {
       )}
 
       {/* Module tiles */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {modules.map((m) => (
           <ModuleTile key={m.title} {...m} />
         ))}

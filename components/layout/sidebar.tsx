@@ -2,20 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogoMark } from "@/components/brand/logo-mark";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   FileText,
   BookOpen,
+  ClipboardList,
   StickyNote,
   User,
-  Sparkles,
 } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, color: "bg-blue-500/20 text-blue-400" },
   { href: "/lesson-plans", label: "Lesson Plans", icon: FileText, color: "bg-sky-500/20 text-sky-400" },
   { href: "/schemes", label: "Schemes of Work", icon: BookOpen, color: "bg-emerald-500/20 text-emerald-400" },
+  { href: "/assignments", label: "Assignments", icon: ClipboardList, color: "bg-amber-500/20 text-amber-400" },
   { href: "/notes", label: "Teaching Notes", icon: StickyNote, color: "bg-purple-500/20 text-purple-400" },
   { href: "/profile", label: "Profile", icon: User, color: "bg-gray-500/20 text-gray-400" },
 ];
@@ -28,9 +30,7 @@ export function Sidebar() {
       {/* Logo */}
       <div className="px-5 pt-6 pb-6">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-blue-500 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-white" />
-          </div>
+          <LogoMark />
           <div>
             <h1 className="text-lg font-bold text-white">MwalimuKit</h1>
             <p className="text-[11px] text-blue-300/60">CBE Teacher Toolkit</p>

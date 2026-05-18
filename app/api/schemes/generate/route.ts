@@ -49,30 +49,36 @@ export async function POST(request: NextRequest) {
 
     if (enhanced.length === 0) {
       return NextResponse.json(
-        { error: "AI returned content we could not parse. Please try again." },
+        {
+          error: "AI returned content we could not parse. Please try again.",
+          routeVersion: "schemes-openai-v2",
+        },
         { status: 502 }
       );
     }
 
-    return NextResponse.json({ enhanced });
+    return NextResponse.json({ enhanced, routeVersion: "schemes-openai-v2" });
   } catch (err) {
     console.error("Scheme enhancement error:", err);
     if (err instanceof AIProviderError) {
       return NextResponse.json(
-        { error: err.message },
+        { error: err.message, routeVersion: "schemes-openai-v2" },
         { status: err.status || 500 }
       );
     }
 
     if (err instanceof Error) {
       return NextResponse.json(
-        { error: err.message },
+        { error: err.message, routeVersion: "schemes-openai-v2" },
         { status: 500 }
       );
     }
 
     return NextResponse.json(
-      { error: "Failed to enhance scheme content. Please try again." },
+      {
+        error: "Failed to enhance scheme content. Please try again.",
+        routeVersion: "schemes-openai-v2",
+      },
       { status: 500 }
     );
   }
