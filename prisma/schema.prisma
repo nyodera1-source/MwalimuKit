@@ -14,6 +14,11 @@ model User {
   email         String   @unique
   passwordHash  String?  @map("password_hash")
   fullName      String   @map("full_name")
+  phoneNumber   String?  @unique @map("phone_number")
+  phoneVerifiedAt DateTime? @map("phone_verified_at")
+  schoolName    String?  @map("school_name")
+  referralCode  String?  @map("referral_code")
+  acceptedTermsAt DateTime? @map("accepted_terms_at")
   county        String?
   tscNumber     String?  @map("tsc_number")
   primaryGradeId String? @map("primary_grade_id")

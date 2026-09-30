@@ -1,11 +1,29 @@
 import { z } from "zod";
 
-export const signupSchema = z.object({
-  fullName: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  county: z.string().min(1, "Please select your county"),
-});
+export const signupSchema = z
+  .object({
+    fullName: z.string().trim().min(2, "Name must be at least 2 characters"),
+    email: z.string().trim().email("Please enter a valid email address"),
+    phoneNumber: z
+      .string()
+      .trim()
+      .refine(
+        (value) =>
+          value === "" || /^(?:(?:\+?254)|0)?[17]\d{8}$/.test(value.replace(/[\s-]/g, "")),
+        "Please enter a valid Kenyan phone number"
+      ),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(1, "Please retype your password"),
+    schoolName: z.string().trim().max(160, "School name is too long"),
+    referralCode: z.string().trim().max(50, "Referral code is too long"),
+    acceptedTerms: z
+      .string()
+      .refine((value) => value === "on", "You must agree to the terms"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
