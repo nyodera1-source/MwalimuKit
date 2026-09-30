@@ -23,6 +23,11 @@ function getSafeCallbackUrl(value: string | string[] | undefined) {
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
   const callbackUrl = getSafeCallbackUrl(params?.callbackUrl);
+  const googleEnabled = Boolean(
+    process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET
+  );
 
-  return <LoginForm callbackUrl={callbackUrl} />;
+  return (
+    <LoginForm callbackUrl={callbackUrl} googleEnabled={googleEnabled} />
+  );
 }
