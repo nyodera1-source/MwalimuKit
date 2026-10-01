@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import Link from "next/link";
-import { Check, LockKeyhole, Mail, School, ShieldCheck, UserRound } from "lucide-react";
+import { Check, ShieldCheck } from "lucide-react";
 import { signup } from "./actions";
 import { loginWithGoogle } from "../actions";
 
@@ -52,14 +52,14 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
   return (
     <div className="fixed inset-0 z-[100] overflow-x-hidden overflow-y-auto bg-[#edf1f3] px-0 py-0 sm:px-4 sm:py-1">
       <main
-        className="mx-auto min-h-full w-full min-w-0 border-x border-[#d2d8dc] bg-white px-[30px] py-9 text-[#606060] shadow-sm"
-        style={{ maxWidth: "540px" }}
+        className="mx-auto min-h-full w-full min-w-0 border-x border-[#d2d8dc] bg-white px-[26px] py-8 text-[#606060] shadow-sm"
+        style={{ maxWidth: "500px" }}
       >
-        <h1 className="text-center text-[23px] font-normal leading-tight tracking-normal text-[#665f5a]">
-          Register a new membership
+        <h1 className="text-center text-[21px] font-normal leading-tight tracking-normal text-[#665f5a]">
+          Register as a new member
         </h1>
 
-        <p className="mt-9 text-[17px] leading-7 tracking-normal text-[#647080]">
+        <p className="mt-8 text-[16px] leading-6 tracking-normal text-[#647080]">
           <span className="text-[#d9272e]">*</span> Fields marked with a red asterisk are mandatory.
         </p>
 
@@ -69,9 +69,9 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
           </div>
         )}
 
-        <form action={action} className="mt-7 space-y-7">
+        <form action={action} className="mt-6 space-y-6">
           <div>
-            <label htmlFor="fullName" className="mb-2 block text-[17px] font-bold text-[#5e5e5e]">
+            <label htmlFor="fullName" className="mb-2 block text-[16px] font-bold text-[#5e5e5e]">
               Full name <span className="text-[#d9272e]">*</span>
             </label>
             <div className="relative">
@@ -82,14 +82,13 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
                 placeholder="Full name"
                 autoComplete="name"
                 required
-                className="h-[57px] w-full border border-[#6ca7ff] bg-white px-[18px] pr-14 text-[22px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
+                className="h-[52px] w-full border border-[#6ca7ff] bg-white px-4 text-[19px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
               />
-              <UserRound className="pointer-events-none absolute right-4 top-1/2 h-6 w-6 -translate-y-1/2 fill-[#777] text-[#777]" />
             </div>
           </div>
 
           <div>
-            <label htmlFor="email" className="mb-2 block text-[17px] font-bold text-[#5e5e5e]">
+            <label htmlFor="email" className="mb-2 block text-[16px] font-bold text-[#5e5e5e]">
               Email <span className="text-[#d9272e]">*</span>
             </label>
             <div className="relative">
@@ -100,14 +99,13 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
                 placeholder="Email"
                 autoComplete="email"
                 required
-                className="h-[57px] w-full border border-[#c8d0d8] bg-white px-[18px] pr-14 text-[22px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
+                className="h-[52px] w-full border border-[#c8d0d8] bg-white px-4 text-[19px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
               />
-              <Mail className="pointer-events-none absolute right-4 top-1/2 h-7 w-7 -translate-y-1/2 fill-[#777] text-white" />
             </div>
           </div>
 
-          <div className="border border-[#d7dde2] bg-[#f7f8f9] px-6 py-7">
-            <label htmlFor="phoneNumber" className="mb-3 block text-[17px] font-bold text-black">
+          <div className="border border-[#d7dde2] bg-[#f7f8f9] px-5 py-6">
+            <label htmlFor="phoneNumber" className="mb-3 block text-[16px] font-bold text-black">
               Phone number
             </label>
             <div className="flex min-w-0 flex-col min-[420px]:flex-row">
@@ -122,25 +120,25 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
                 }}
                 placeholder="Phone, e.g. 0725123456"
                 autoComplete="tel"
-                className="h-[57px] min-w-0 flex-1 border border-[#c8d0d8] bg-white px-[18px] text-[20px] tracking-normal text-[#596575] outline-none focus:border-[#21aa46] min-[420px]:border-r-0"
+                className="h-[52px] min-w-0 flex-1 border border-[#c8d0d8] bg-white px-4 text-[18px] tracking-normal text-[#596575] outline-none focus:border-[#1688fa] min-[420px]:border-r-0"
               />
               <button
                 type="button"
                 onClick={checkPhoneNumber}
-                className="h-[57px] shrink-0 border border-[#21aa46] bg-white px-4 text-[18px] font-normal text-[#12a332] transition hover:bg-[#f1fbf4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#21aa46] min-[420px]:w-auto"
+                className="h-[52px] shrink-0 border border-[#1688fa] bg-white px-4 text-[16px] font-normal text-[#1688fa] transition hover:bg-[#1688fa] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1688fa] min-[420px]:w-auto"
               >
                 Verify phone
               </button>
             </div>
             {phoneMessage && (
-              <p className={`mt-2 text-sm ${phoneMessage.startsWith("Number") ? "text-[#168a37]" : "text-red-600"}`}>
+              <p className={`mt-2 text-sm ${phoneMessage.startsWith("Number") ? "text-[#1688fa]" : "text-red-600"}`}>
                 {phoneMessage}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-2 block text-[17px] font-bold text-[#5e5e5e]">
+            <label htmlFor="password" className="mb-2 block text-[16px] font-bold text-[#5e5e5e]">
               Password <span className="text-[#d9272e]">*</span>
             </label>
             <div className="relative">
@@ -152,14 +150,13 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
                 autoComplete="new-password"
                 minLength={6}
                 required
-                className="h-[57px] w-full border border-[#c8d0d8] bg-white px-[18px] pr-14 text-[22px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
+                className="h-[52px] w-full border border-[#c8d0d8] bg-white px-4 text-[19px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
               />
-              <LockKeyhole className="pointer-events-none absolute right-4 top-1/2 h-7 w-7 -translate-y-1/2 fill-[#777] text-[#777]" />
             </div>
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="mb-2 block text-[17px] font-bold text-[#5e5e5e]">
+            <label htmlFor="confirmPassword" className="mb-2 block text-[16px] font-bold text-[#5e5e5e]">
               Retype password <span className="text-[#d9272e]">*</span>
             </label>
             <div className="relative">
@@ -171,14 +168,13 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
                 autoComplete="new-password"
                 minLength={6}
                 required
-                className="h-[57px] w-full border border-[#c8d0d8] bg-white px-[18px] pr-14 text-[22px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
+                className="h-[52px] w-full border border-[#c8d0d8] bg-white px-4 text-[19px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
               />
-              <LockKeyhole className="pointer-events-none absolute right-4 top-1/2 h-7 w-7 -translate-y-1/2 fill-[#777] text-[#777]" />
             </div>
           </div>
 
           <div>
-            <label htmlFor="schoolName" className="mb-2 block text-[17px] font-bold text-[#5e5e5e]">
+            <label htmlFor="schoolName" className="mb-2 block text-[16px] font-bold text-[#5e5e5e]">
               School name
             </label>
             <div className="relative">
@@ -188,14 +184,13 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
                 type="text"
                 placeholder="School Name"
                 autoComplete="organization"
-                className="h-[57px] w-full border border-[#c8d0d8] bg-white px-[18px] pr-14 text-[22px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
+                className="h-[52px] w-full border border-[#c8d0d8] bg-white px-4 text-[19px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
               />
-              <School className="pointer-events-none absolute right-4 top-1/2 h-7 w-7 -translate-y-1/2 fill-[#777] text-[#777]" />
             </div>
           </div>
 
           <div>
-            <label htmlFor="referralCode" className="mb-2 block text-[17px] font-bold text-[#5e5e5e]">
+            <label htmlFor="referralCode" className="mb-2 block text-[16px] font-bold text-[#5e5e5e]">
               Referral code
             </label>
             <input
@@ -204,17 +199,17 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
               type="text"
               placeholder="Referral Code"
               autoComplete="off"
-              className="h-[57px] w-full border border-[#c8d0d8] bg-white px-[18px] text-[22px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
+              className="h-[52px] w-full border border-[#c8d0d8] bg-white px-4 text-[19px] tracking-normal text-[#596575] outline-none transition focus:border-[#1688fa] focus:ring-1 focus:ring-[#1688fa]"
             />
           </div>
 
-          <div className="grid items-center gap-5 pt-5 min-[480px]:grid-cols-[1fr_180px]">
-            <label className="flex min-w-0 items-center gap-3 text-[18px] font-bold text-[#555]">
+          <div className="grid items-center gap-4 pt-4 min-[460px]:grid-cols-[1fr_160px]">
+            <label className="flex min-w-0 items-center gap-3 text-[16px] font-bold text-[#555]">
               <input
                 name="acceptedTerms"
                 type="checkbox"
                 required
-                className="h-8 w-8 shrink-0 accent-[#1688fa] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1688fa]"
+                className="h-7 w-7 shrink-0 accent-[#1688fa] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1688fa]"
               />
               <span>
                 I agree to the{" "}
@@ -231,27 +226,27 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
             <button
               type="submit"
               disabled={pending}
-              className="h-14 bg-[#23a942] px-7 text-[19px] font-normal text-white transition hover:bg-[#1d9438] disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-[52px] bg-[#1688fa] px-6 text-[17px] font-normal text-white transition hover:bg-[#0f6fcf] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {pending ? "Registering..." : "Register"}
             </button>
           </div>
 
-          <div className="flex min-h-24 items-center justify-between bg-[#2d2d2d] px-4 py-4 text-white">
+          <div className="flex min-h-20 items-center justify-between bg-[#2d2d2d] px-4 py-3 text-white">
             <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#2fbd71]">
-                <Check className="h-8 w-8 stroke-[3]" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1688fa]">
+                <Check className="h-7 w-7 stroke-[3]" />
               </span>
-              <span className="text-[18px]">Secure registration</span>
+              <span className="text-[16px]">Secure registration</span>
             </div>
             <div className="flex items-center gap-2 text-right">
-              <ShieldCheck className="h-8 w-8 text-[#f68b2c]" />
+              <ShieldCheck className="h-7 w-7 text-[#1688fa]" />
               <span className="text-xs font-bold uppercase tracking-[0.12em]">Protected</span>
             </div>
           </div>
         </form>
 
-        <div className="my-7 text-center text-[20px] text-[#666]">- OR -</div>
+        <div className="my-6 text-center text-[18px] text-[#666]">- OR -</div>
 
         <form action={loginWithGoogle} className="flex justify-center">
           <input type="hidden" name="callbackUrl" value="/dashboard" />
@@ -259,14 +254,14 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
             type="submit"
             disabled={!googleEnabled}
             title={googleEnabled ? "Sign in with Google" : "Google sign-in is not configured yet"}
-            className="flex h-[66px] w-full max-w-[276px] items-center justify-center gap-5 border border-[#e3e6e8] bg-white px-5 text-[19px] text-[#666] shadow-[0_2px_2px_rgba(0,0,0,0.18)] transition hover:bg-[#fafafa] disabled:cursor-not-allowed"
+            className="flex h-[58px] w-full max-w-[260px] items-center justify-center gap-4 border border-[#d8dde3] bg-white px-5 text-[17px] text-[#596575] shadow-[0_2px_2px_rgba(0,0,0,0.14)] transition-colors duration-200 hover:border-[#1688fa] hover:bg-[#1688fa] hover:text-white disabled:cursor-not-allowed"
           >
             <GoogleMark />
             Sign in with Google
           </button>
         </form>
 
-        <div className="mt-5 border-t border-[#dedede] pt-7 text-[20px] text-[#666]">
+        <div className="mt-5 border-t border-[#dedede] pt-6 text-[18px] text-[#666]">
           Already have a membership?{" "}
           <Link href="/login" className="font-bold text-[#0077ff] hover:underline">
             Login
@@ -298,7 +293,7 @@ export function SignupForm({ googleEnabled }: SignupFormProps) {
             <button
               type="button"
               onClick={() => setTermsOpen(false)}
-              className="mt-7 h-11 bg-[#23a942] px-7 text-white hover:bg-[#1d9438]"
+              className="mt-7 h-11 bg-[#1688fa] px-7 text-white hover:bg-[#0f6fcf]"
             >
               Close
             </button>
