@@ -14,8 +14,22 @@ interface RecentDocument {
 }
 
 const typeConfig = {
-  "lesson-plan": { label: "Lesson Plan", icon: FileText, href: "/lesson-plans", color: "bg-blue-100 text-blue-600" },
-  scheme: { label: "Scheme", icon: BookOpen, href: "/schemes", color: "bg-blue-100 text-blue-600" },
+  "lesson-plan": {
+    label: "Lesson Plan",
+    icon: FileText,
+    href: "/lesson-plans",
+    // Both /[id] routes are the *edit* screens. A teacher opening a recent
+    // document wants to read it, so link to the preview.
+    previewSuffix: "/preview",
+    color: "bg-blue-100 text-blue-600",
+  },
+  scheme: {
+    label: "Scheme",
+    icon: BookOpen,
+    href: "/schemes",
+    previewSuffix: "/preview",
+    color: "bg-blue-100 text-blue-600",
+  },
 };
 
 const statusColors: Record<string, string> = {
@@ -56,7 +70,7 @@ export function RecentDocuments({ documents }: RecentDocumentsProps) {
           return (
             <Link
               key={`${doc.type}-${doc.id}`}
-              href={`${config.href}/${doc.id}`}
+              href={`${config.href}/${doc.id}${config.previewSuffix}`}
               className="flex items-center gap-3 rounded-lg p-2.5 hover:bg-gray-50 transition-colors"
             >
               <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center shrink-0", config.color)}>

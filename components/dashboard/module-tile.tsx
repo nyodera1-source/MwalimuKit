@@ -5,26 +5,13 @@ import { Plus, type LucideIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 
+// One blue system for the whole product. The emerald/amber/purple variants
+// were removed with the paused modules — do not reintroduce them per tile.
 const colorMap = {
   blue: {
     border: "border-t-blue-500",
     iconBg: "bg-blue-100 text-blue-600",
     btn: "bg-blue-500 hover:bg-blue-600 text-white",
-  },
-  emerald: {
-    border: "border-t-emerald-500",
-    iconBg: "bg-emerald-100 text-emerald-600",
-    btn: "bg-emerald-500 hover:bg-emerald-600 text-white",
-  },
-  amber: {
-    border: "border-t-amber-500",
-    iconBg: "bg-amber-100 text-amber-600",
-    btn: "bg-amber-500 hover:bg-amber-600 text-white",
-  },
-  purple: {
-    border: "border-t-purple-500",
-    iconBg: "bg-purple-100 text-purple-600",
-    btn: "bg-purple-500 hover:bg-purple-600 text-white",
   },
 };
 

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ModuleTile } from "@/components/dashboard/module-tile";
 import { RecentDocuments } from "@/components/dashboard/recent-documents";
+import { GettingStarted } from "@/components/dashboard/getting-started";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/brand/logo-mark";
 import { FileText, BookOpen } from "lucide-react";
@@ -55,6 +56,10 @@ export default async function DashboardPage() {
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
     .slice(0, 5);
 
+  const needsProfile =
+    !profile?.primaryGradeId || profile.primaryAreas.length === 0;
+  const isNewTeacher = recentDocs.length === 0;
+
   const modules = [
     {
       title: "Schemes of Work",
@@ -93,31 +98,38 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {(!profile?.primaryGradeId || profile.primaryAreas.length === 0) && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-medium text-amber-900">
-              Complete your teaching profile
-            </p>
-            <p className="text-xs text-amber-800 mt-0.5">
-              Set your main grade and learning areas so MwalimuKit can prefill your document tools.
-            </p>
+      {/* A new account has no analytics worth showing. Lead with the action. */}
+      {isNewTeacher ? (
+        <GettingStarted needsProfile={needsProfile} />
+      ) : (
+        <>
+          {needsProfile && (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-medium text-amber-900">
+                  Complete your teaching profile
+                </p>
+                <p className="text-xs text-amber-800 mt-0.5">
+                  Set your main grade and learning areas so MwalimuKit can prefill your document tools.
+                </p>
+              </div>
+              <Button asChild size="sm" className="mt-3 sm:mt-0">
+                <Link href="/profile">Update Profile</Link>
+              </Button>
+            </div>
+          )}
+
+          {/* Module tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {modules.map((m) => (
+              <ModuleTile key={m.title} {...m} />
+            ))}
           </div>
-          <Button asChild size="sm" className="mt-3 sm:mt-0">
-            <Link href="/profile">Update Profile</Link>
-          </Button>
-        </div>
+
+          {/* Recent documents */}
+          <RecentDocuments documents={recentDocs} />
+        </>
       )}
-
-      {/* Module tiles */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {modules.map((m) => (
-          <ModuleTile key={m.title} {...m} />
-        ))}
-      </div>
-
-      {/* Recent documents */}
-      <RecentDocuments documents={recentDocs} />
     </div>
   );
 }

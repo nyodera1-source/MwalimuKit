@@ -29,7 +29,7 @@ export function Sidebar() {
           <LogoMark />
           <div>
             <h1 className="text-lg font-bold text-white">MwalimuKit</h1>
-            <p className="text-[11px] text-blue-300/60">CBE Teacher Toolkit</p>
+            <p className="text-[11px] text-blue-300/60">Schemes &amp; Lesson Plans</p>
           </div>
         </div>
       </div>
