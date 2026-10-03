@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
 
   const keyInquiryQuestion = generateInquiryQuestion(learningAreaName, strandName, subStrandName);
 
-  const resources = generateResourceSuggestions(learningAreaName, strandName);
+  const resources = generateResourceSuggestions(learningAreaName);
 
   return NextResponse.json({
     objectives,
@@ -132,7 +132,7 @@ function generateInquiryQuestion(
   return `How can understanding ${topic.toLowerCase()} help us in our daily lives?`;
 }
 
-function generateResourceSuggestions(learningArea: string, strand: string): string {
+function generateResourceSuggestions(learningArea: string): string {
   const common = "Learner's textbook, Chalkboard/whiteboard, Writing materials";
 
   const specific: Record<string, string> = {

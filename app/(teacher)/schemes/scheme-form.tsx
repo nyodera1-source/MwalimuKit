@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useEffect, useCallback } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -123,7 +123,9 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
   // Step 2: Topic selection
   const [strands, setStrands] = useState<StrandOption[]>([]);
-  const [loadingStrands, setLoadingStrands] = useState(false);
+  const [loadingStrands, setLoadingStrands] = useState(
+    Boolean(defaults?.learningAreaId)
+  );
   const [selectedSubStrandIds, setSelectedSubStrandIds] = useState<string[]>(
     defaults?.schemeData?.selectedSubStrandIds || []
   );
@@ -149,10 +151,6 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     defaults?.schemeData?.entries || []
   );
 
-  // AI enhancement state
-  const [aiEnhancing, setAiEnhancing] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
-
   // Previous term carryover
   const [carryoverEnabled, setCarryoverEnabled] = useState(
     defaults?.schemeData?.carryoverEnabled || false
@@ -170,20 +168,15 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     defaults?.schemeData?.carryoverLessons || 2
   );
 
-  // Auto-generate title
-  useEffect(() => {
-    if (autoTitle && cascadeNames.grade && cascadeNames.learningArea) {
-      setTitle(`${cascadeNames.grade} - ${cascadeNames.learningArea} - Term ${term}, ${year}`);
-    }
-  }, [autoTitle, cascadeNames, term, year]);
+  const generatedTitle = cascadeNames.grade && cascadeNames.learningArea
+    ? `${cascadeNames.grade} - ${cascadeNames.learningArea} - Term ${term}, ${year}`
+    : "";
+  const displayedTitle = autoTitle && generatedTitle ? generatedTitle : title;
 
   // Fetch strands when learning area changes
   useEffect(() => {
-    if (!learningAreaId) {
-      setStrands([]);
-      return;
-    }
-    setLoadingStrands(true);
+    if (!learningAreaId) return;
+
     fetch(`/api/curriculum/strands?learningAreaId=${learningAreaId}&deep=true`)
       .then((r) => r.json())
       .then((data) => {
@@ -256,9 +249,11 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
   // Counter to rotate intro styles across calls so consecutive lessons
   // covering the same sub-strand get different phrasing.
-  let activityStyleCounter = 0;
-
-  function makeTlActivities(subTopicNames: string, objectives: string): string {
+  function makeTlActivities(
+    subTopicNames: string,
+    objectives: string,
+    styleIndex = 0
+  ): string {
     const subtopics = subTopicNames.split("\n").filter(Boolean);
     const parts: string[] = [];
     const obj = objectives.toLowerCase();
@@ -275,10 +270,9 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
       (s: string) => `Demonstration and explanation of ${s}.`,
     ];
     for (let i = 0; i < subtopics.length; i++) {
-      const idx = (activityStyleCounter + i) % introStyles.length;
+      const idx = (styleIndex + i) % introStyles.length;
       parts.push(introStyles[idx](subtopics[i].trim()));
     }
-    activityStyleCounter += subtopics.length;
 
     // Objective-specific activities — use alternating phrasings
     const explainAlts = [
@@ -298,13 +292,13 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     ];
 
     if (obj.includes("explain") || obj.includes("describe")) {
-      parts.push(explainAlts[activityStyleCounter % explainAlts.length]);
+      parts.push(explainAlts[styleIndex % explainAlts.length]);
     }
     if (obj.includes("identify") || obj.includes("classify") || obj.includes("list")) {
-      parts.push(identifyAlts[activityStyleCounter % identifyAlts.length]);
+      parts.push(identifyAlts[styleIndex % identifyAlts.length]);
     }
     if (obj.includes("calculate") || obj.includes("determine") || obj.includes("measure")) {
-      parts.push(calculateAlts[activityStyleCounter % calculateAlts.length]);
+      parts.push(calculateAlts[styleIndex % calculateAlts.length]);
     }
     if (obj.includes("solve")) {
       parts.push("Problem-solving exercises in pairs.");
@@ -330,7 +324,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
     // Vary the closing activity
     const closings = ["Q&A session.", "Recap and Q&A.", "Oral questions and summary.", "Review and learner feedback."];
-    parts.push(closings[activityStyleCounter % closings.length]);
+    parts.push(closings[styleIndex % closings.length]);
     return parts.join(" ");
   }
 
@@ -345,7 +339,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
   }
 
   // Generate entries grouped by week (matching reference PDF format)
-  const generateEntries = useCallback(() => {
+  const generateEntries = () => {
     const actualReferenceBook =
       referenceBook === "Other (specify below)" && customReferenceBook
         ? customReferenceBook
@@ -483,7 +477,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
           topic: topicName,
           subTopic: subTopicNames,
           objectives,
-          tlActivities: makeTlActivities(subTopicNames, objectives),
+          tlActivities: makeTlActivities(subTopicNames, objectives, globalLessonIdx),
           tlAids: makeTlAids(actualReferenceBook, objectives),
           reference: actualReferenceBook || "",
           remarks: "",
@@ -492,58 +486,6 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     }
 
     setEntries(newEntries);
-  }, [strands, selectedSubStrandIds, breaks, firstWeek, firstLesson, lastWeek, lastLesson, lessonsPerWeek, referenceBook, customReferenceBook, carryoverEnabled, carryoverTopic, carryoverSubTopic, carryoverObjectives, carryoverLessons]);
-
-  // Enhance entries with AI
-  const enhanceWithAI = async () => {
-    if (entries.length === 0) return;
-    setAiEnhancing(true);
-    setAiError(null);
-    try {
-      const res = await fetch("/api/schemes/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          gradeId,
-          learningAreaId,
-          referenceBook,
-          entries: entries.map((e) => ({
-            week: e.week,
-            lesson: e.lesson,
-            topic: e.topic,
-            subTopic: e.subTopic,
-            objectives: e.objectives,
-          })),
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Enhancement failed");
-      }
-      const { enhanced } = await res.json();
-      // Merge enhanced content back into entries by week number
-      setEntries((prev) =>
-        prev.map((entry) => {
-          const match = enhanced.find(
-            (e: { week: number; objectives: string; tlActivities: string; tlAids: string }) =>
-              e.week === entry.week
-          );
-          if (match) {
-            return {
-              ...entry,
-              objectives: match.objectives || entry.objectives,
-              tlActivities: match.tlActivities || entry.tlActivities,
-              tlAids: match.tlAids || entry.tlAids,
-            };
-          }
-          return entry;
-        })
-      );
-    } catch (err) {
-      setAiError(err instanceof Error ? err.message : "Failed to enhance");
-    } finally {
-      setAiEnhancing(false);
-    }
   };
 
   const finalReferenceBook =
@@ -580,7 +522,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
       <input type="hidden" name="learningAreaId" value={learningAreaId} />
       <input type="hidden" name="term" value={term} />
       <input type="hidden" name="year" value={year} />
-      <input type="hidden" name="title" value={title} />
+      <input type="hidden" name="title" value={displayedTitle} />
       <input type="hidden" name="schemeData" value={schemeDataJson} />
       <input type="hidden" name="status" value="draft" />
 
@@ -640,8 +582,14 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               defaultGradeId={defaults?.gradeId || defaultGradeId}
               defaultLearningAreaId={defaults?.learningAreaId}
               onChange={(sel: CascadeSelection) => {
+                const nextLearningAreaId = sel.learningAreaId || "";
+                if (nextLearningAreaId !== learningAreaId) {
+                  setStrands([]);
+                  setSelectedSubStrandIds([]);
+                  setLoadingStrands(Boolean(nextLearningAreaId));
+                }
                 setGradeId(sel.gradeId || "");
-                setLearningAreaId(sel.learningAreaId || "");
+                setLearningAreaId(nextLearningAreaId);
               }}
               onNamesChange={(names) => setCascadeNames(names)}
               showStrand={false}
@@ -714,7 +662,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                 <Label htmlFor="title">Scheme Title</Label>
                 <Input
                   id="title"
-                  value={title}
+                  value={displayedTitle}
                   onChange={(e) => { setTitle(e.target.value); setAutoTitle(false); }}
                   placeholder="Auto-generated"
                 />
@@ -1084,34 +1032,11 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                   <ClipboardPenLine className="h-4 w-4 mr-2" />
                   Generate Scheme
                 </Button>
-                {entries.length > 0 && (
-                  <Button
-                    type="button"
-                    className="bg-purple-600 hover:bg-purple-700"
-                    onClick={enhanceWithAI}
-                    disabled={aiEnhancing}
-                  >
-                    {aiEnhancing ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Enhancing...
-                      </>
-                    ) : (
-                      <>
-                        <ClipboardPenLine className="h-4 w-4 mr-2" />
-                        Improve Entries
-                      </>
-                    )}
-                  </Button>
-                )}
               </div>
               <p className="text-xs text-muted-foreground">
                 Distributes {selectedSubStrandIds.length} subtopics across Week {firstWeek}–{lastWeek}, {lessonsPerWeek} lessons/week.
                 {entries.length > 0 && " You can edit entries in the table below, then click 'Save Scheme' when ready."}
               </p>
-              {aiError && (
-                <p className="text-xs text-red-600">{aiError}</p>
-              )}
             </div>
 
             {entries.length > 0 && (() => {

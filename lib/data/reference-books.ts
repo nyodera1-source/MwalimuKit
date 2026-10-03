@@ -26,7 +26,6 @@ export function getReferenceBookOptions(
   grade: string,
   learningArea: string
 ): string[] {
-  const gradeNum = grade.toLowerCase();
   const subject = learningArea.toLowerCase();
 
   const books: string[] = [];

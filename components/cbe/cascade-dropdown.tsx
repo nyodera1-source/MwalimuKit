@@ -48,10 +48,10 @@ export function CascadeDropdown({
   const [slos, setSlos] = useState<Option[]>([]);
   const [loading, setLoading] = useState({
     grades: true,
-    learningAreas: false,
-    strands: false,
-    subStrands: false,
-    slos: false,
+    learningAreas: Boolean(defaultGradeId),
+    strands: Boolean(defaultLearningAreaId),
+    subStrands: Boolean(defaultStrandId),
+    slos: Boolean(defaultSubStrandId && showSLO),
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -65,7 +65,6 @@ export function CascadeDropdown({
 
   // Fetch grades on mount
   useEffect(() => {
-    setLoading((prev) => ({ ...prev, grades: true }));
     fetch("/api/curriculum/grades")
       .then((r) => {
         if (!r.ok) throw new Error("Could not load grades");
@@ -82,7 +81,7 @@ export function CascadeDropdown({
   // Fetch learning areas when grade changes
   useEffect(() => {
     if (selection.gradeId) {
-      setLoading((prev) => ({ ...prev, learningAreas: true }));
+      queueMicrotask(() => setLoading((prev) => ({ ...prev, learningAreas: true })));
       fetch(`/api/curriculum/learning-areas?gradeId=${selection.gradeId}`)
         .then((r) => {
           if (!r.ok) throw new Error("Could not load learning areas");
@@ -98,17 +97,19 @@ export function CascadeDropdown({
         })
         .finally(() => setLoading((prev) => ({ ...prev, learningAreas: false })));
     } else {
-      setLearningAreas([]);
+      queueMicrotask(() => setLearningAreas([]));
     }
-    setStrands([]);
-    setSubStrands([]);
-    setSlos([]);
+    queueMicrotask(() => {
+      setStrands([]);
+      setSubStrands([]);
+      setSlos([]);
+    });
   }, [selection.gradeId]);
 
   // Fetch strands when learning area changes
   useEffect(() => {
     if (selection.learningAreaId) {
-      setLoading((prev) => ({ ...prev, strands: true }));
+      queueMicrotask(() => setLoading((prev) => ({ ...prev, strands: true })));
       fetch(`/api/curriculum/strands?learningAreaId=${selection.learningAreaId}`)
         .then((r) => {
           if (!r.ok) throw new Error("Could not load strands");
@@ -124,16 +125,18 @@ export function CascadeDropdown({
         })
         .finally(() => setLoading((prev) => ({ ...prev, strands: false })));
     } else {
-      setStrands([]);
+      queueMicrotask(() => setStrands([]));
     }
-    setSubStrands([]);
-    setSlos([]);
+    queueMicrotask(() => {
+      setSubStrands([]);
+      setSlos([]);
+    });
   }, [selection.learningAreaId]);
 
   // Fetch sub-strands when strand changes
   useEffect(() => {
     if (selection.strandId) {
-      setLoading((prev) => ({ ...prev, subStrands: true }));
+      queueMicrotask(() => setLoading((prev) => ({ ...prev, subStrands: true })));
       fetch(`/api/curriculum/sub-strands?strandId=${selection.strandId}`)
         .then((r) => {
           if (!r.ok) throw new Error("Could not load sub-strands");
@@ -149,15 +152,15 @@ export function CascadeDropdown({
         })
         .finally(() => setLoading((prev) => ({ ...prev, subStrands: false })));
     } else {
-      setSubStrands([]);
+      queueMicrotask(() => setSubStrands([]));
     }
-    setSlos([]);
+    queueMicrotask(() => setSlos([]));
   }, [selection.strandId]);
 
   // Fetch SLOs when sub-strand changes
   useEffect(() => {
     if (selection.subStrandId && showSLO) {
-      setLoading((prev) => ({ ...prev, slos: true }));
+      queueMicrotask(() => setLoading((prev) => ({ ...prev, slos: true })));
       fetch(`/api/curriculum/slos?subStrandId=${selection.subStrandId}`)
         .then((r) => {
           if (!r.ok) throw new Error("Could not load SLOs");
@@ -173,7 +176,7 @@ export function CascadeDropdown({
         })
         .finally(() => setLoading((prev) => ({ ...prev, slos: false })));
     } else {
-      setSlos([]);
+      queueMicrotask(() => setSlos([]));
     }
   }, [selection.subStrandId, showSLO]);
 

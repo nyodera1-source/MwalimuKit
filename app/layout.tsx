@@ -3,9 +3,9 @@ import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MwalimuKit — CBE Teacher Toolkit",
+  title: "MwalimuKit - CBE Schemes and Lesson Plans",
   description:
-    "Create CBE-aligned lesson plans, schemes of work, and teaching notes for Kenyan teachers (Grade 1-10).",
+    "Create CBE-aligned schemes of work and lesson plans for Kenyan teachers (Grade 1-10).",
 };
 
 export default function RootLayout({

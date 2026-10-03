@@ -25,19 +25,34 @@ interface ProfileFormProps {
 
 export function ProfileForm({ user, grades, initialLearningAreas }: ProfileFormProps) {
   const [state, action, pending] = useActionState(updateProfile, null);
-  const [learningAreas, setLearningAreas] = useState(initialLearningAreas);
   const [selectedGradeId, setSelectedGradeId] = useState(user.primaryGradeId || "");
   const [selectedAreas, setSelectedAreas] = useState<string[]>(user.primaryAreas);
 
+  // Areas are tagged with the grade they were fetched for, so a stale response
+  // from a previous grade is never shown while the new one is in flight.
+  const [areasForGrade, setAreasForGrade] = useState<{
+    gradeId: string;
+    areas: { id: string; name: string }[];
+  }>({ gradeId: user.primaryGradeId || "", areas: initialLearningAreas });
+
   useEffect(() => {
-    if (selectedGradeId) {
-      fetch(`/api/curriculum/learning-areas?gradeId=${selectedGradeId}`)
-        .then((r) => r.json())
-        .then(setLearningAreas);
-    } else {
-      setLearningAreas([]);
-    }
+    if (!selectedGradeId) return;
+
+    const controller = new AbortController();
+    fetch(`/api/curriculum/learning-areas?gradeId=${selectedGradeId}`, {
+      signal: controller.signal,
+    })
+      .then((r) => r.json())
+      .then((areas) => setAreasForGrade({ gradeId: selectedGradeId, areas }))
+      .catch(() => {
+        /* aborted or network error: keep current areas */
+      });
+
+    return () => controller.abort();
   }, [selectedGradeId]);
+
+  const learningAreas =
+    areasForGrade.gradeId === selectedGradeId ? areasForGrade.areas : [];
 
   const toggleArea = (areaId: string) => {
     setSelectedAreas((prev) =>

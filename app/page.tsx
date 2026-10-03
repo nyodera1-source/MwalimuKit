@@ -5,11 +5,9 @@ import { Button } from "@/components/ui/button";
 import {
   FileText,
   BookOpen,
-  StickyNote,
   GraduationCap,
   Phone,
   Mail,
-  ClipboardList,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -17,26 +15,14 @@ export default function HomePage() {
     {
       icon: FileText,
       title: "Lesson Plans",
-      desc: "CBE-aligned lesson planning with guided forms and smart drafting support",
+      desc: "CBE-aligned lesson planning with guided curriculum selections",
       color: "bg-blue-100 text-blue-600",
     },
     {
       icon: BookOpen,
       title: "Schemes of Work",
-      desc: "Term-by-term scheme generation following KICD guidelines",
-      color: "bg-emerald-100 text-emerald-600",
-    },
-    {
-      icon: ClipboardList,
-      title: "Assignments",
-      desc: "Printable weekly, mid-term, and end-term assignments",
-      color: "bg-amber-100 text-amber-600",
-    },
-    {
-      icon: StickyNote,
-      title: "Teaching Notes",
-      desc: "Curriculum-ready notes for every topic across all subjects",
-      color: "bg-purple-100 text-purple-600",
+      desc: "Term-by-term planning shaped around your lessons and school breaks",
+      color: "bg-blue-100 text-blue-600",
     },
   ];
 
@@ -48,13 +34,13 @@ export default function HomePage() {
     },
     {
       title: "Choose Your Tool",
-      desc: "Pick from lesson plans, schemes, or teaching notes",
-      color: "bg-emerald-500",
+      desc: "Choose a scheme of work or lesson plan",
+      color: "bg-blue-500",
     },
     {
       title: "Generate & Download",
       desc: "Get your CBE-aligned document ready to use in minutes",
-      color: "bg-amber-500",
+      color: "bg-blue-500",
     },
   ];
 
@@ -99,13 +85,13 @@ export default function HomePage() {
               Built for Kenyan CBE Teachers
             </div>
             <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-              Your Complete CBE
+              CBE Plans Made
               <br />
-              Teaching Toolkit
+              for Kenyan Teachers
             </h2>
             <p className="mt-5 text-lg lg:text-xl text-blue-100 max-w-xl">
-              Create lesson plans, schemes of work, and teaching notes — all
-              aligned to the KICD curriculum. Free to get started.
+              Create lesson plans and schemes of work aligned to the KICD
+              curriculum and your school timetable.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button
@@ -145,14 +131,13 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto w-full">
           <div className="text-center mb-12">
             <h3 className="text-2xl lg:text-3xl font-bold text-gray-900">
-              Everything You Need to Teach
+              Planning Tools for Teachers
             </h3>
             <p className="mt-3 text-gray-500 max-w-lg mx-auto">
-              All your teaching tools in one place, designed specifically for the
-              Kenyan Competency-Based Education curriculum.
+              Focused tools for preparing the two documents teachers use most.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {features.map((f) => (
               <div
                 key={f.title}

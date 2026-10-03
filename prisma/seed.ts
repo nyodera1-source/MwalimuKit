@@ -15,7 +15,7 @@ import { grade10Data } from "./seed/data/grade-10";
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter } as any);
+const prisma = new PrismaClient({ adapter });
 
 const CORE_COMPETENCIES = [
   { name: "Communication and Collaboration", description: "Ability to communicate effectively and work with others" },

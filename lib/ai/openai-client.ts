@@ -3,6 +3,7 @@ import OpenAI from "openai";
 const globalForOpenAI = globalThis as unknown as { openai?: OpenAI };
 
 export const openaiModel = process.env.OPENAI_MODEL || "gpt-5.2";
+export const liveAIEnabled = process.env.ENABLE_LIVE_AI === "true";
 
 export class AIProviderError extends Error {
   status?: number;
@@ -15,6 +16,10 @@ export class AIProviderError extends Error {
 }
 
 function getOpenAIClient() {
+  if (!liveAIEnabled) {
+    throw new AIProviderError("Live AI generation is disabled.", 503);
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new AIProviderError("OPENAI_API_KEY is not configured.", 500);
