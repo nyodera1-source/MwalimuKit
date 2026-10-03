@@ -114,25 +114,64 @@ describe("seeded curriculum", () => {
     assert.ok(pressure?.includes(ch(0x03c1)), "Grade 10 Greek rho intact");
   });
 
-  test("seed shape matches the documented curriculum scale", async () => {
+  test("per-grade scale is unchanged outside Grade 7", async () => {
     const { allGrades } = await import("../prisma/seed/data/index");
 
-    let areas = 0, strands = 0, subStrands = 0, outcomes = 0;
-    for (const g of allGrades) {
-      areas += g.learningAreas.length;
+    const count = (g: (typeof allGrades)[number]) => {
+      let areas = 0, strands = 0, subStrands = 0, outcomes = 0;
       for (const la of g.learningAreas) {
+        areas++;
         strands += la.strands.length;
         for (const s of la.strands) {
           subStrands += s.subStrands.length;
           for (const ss of s.subStrands) outcomes += ss.slos.length;
         }
       }
+      return { areas, strands, subStrands, outcomes };
+    };
+
+    // Pinned per grade rather than in aggregate. Grade 7 moves as subjects are
+    // re-transcribed from the KICD designs; a whole-corpus total would need
+    // editing after every subject and would hide collateral damage to the
+    // grades that have not been touched.
+    const expected: Record<number, { areas: number; strands: number; subStrands: number; outcomes: number }> = {
+      1: { areas: 7, strands: 20, subStrands: 39, outcomes: 88 },
+      2: { areas: 7, strands: 26, subStrands: 61, outcomes: 162 },
+      3: { areas: 7, strands: 26, subStrands: 69, outcomes: 193 },
+      4: { areas: 10, strands: 38, subStrands: 78, outcomes: 212 },
+      5: { areas: 10, strands: 32, subStrands: 51, outcomes: 109 },
+      6: { areas: 10, strands: 35, subStrands: 72, outcomes: 191 },
+      // Grade 7 is intentionally absent: Grade 7 Mathematics has been replaced
+      // with the transcribed design and the other subjects are still pending.
+      8: { areas: 9, strands: 33, subStrands: 67, outcomes: 189 },
+      9: { areas: 9, strands: 32, subStrands: 47, outcomes: 101 },
+      10: { areas: 39, strands: 106, subStrands: 157, outcomes: 316 },
+    };
+
+    for (const g of allGrades) {
+      if (g.level === 7) continue;
+      assert.deepEqual(count(g), expected[g.level], `Grade ${g.level} shape changed`);
     }
 
     assert.equal(allGrades.length, 10);
+  });
+
+  test("Grade 7 retains all nine learning areas", async () => {
+    const { allGrades } = await import("../prisma/seed/data/index");
+    const g7 = allGrades.find((g) => g.level === 7)!;
     assert.deepEqual(
-      { areas, strands, subStrands, outcomes },
-      { areas: 117, strands: 380, subStrands: 688, outcomes: 1659 }
+      g7.learningAreas.map((a) => a.name).sort(),
+      [
+        "Agriculture",
+        "Creative Arts and Sports",
+        "English",
+        "Integrated Science",
+        "Kiswahili",
+        "Mathematics",
+        "Pre-Technical Studies",
+        "Religious Education",
+        "Social Studies",
+      ]
     );
   });
 });

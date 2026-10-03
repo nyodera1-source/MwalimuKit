@@ -1,109 +1,18 @@
-export const grade7Data = {
-  level: 7,
-  name: "Grade 7",
-  learningAreas: [
-    {
-      name: "Mathematics",
-      strands: [
-        {
-          name: "Numbers",
-          order: 1,
-          subStrands: [
-            {
-              name: "Integers",
-              order: 1,
-              slos: [
-                { description: "Identify and represent integers on a number line", cognitiveLevel: "understand" },
-                { description: "Perform addition and subtraction of integers", cognitiveLevel: "apply" },
-                { description: "Perform multiplication and division of integers", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Fractions, Decimals and Percentages",
-              order: 2,
-              slos: [
-                { description: "Perform operations on fractions including division", cognitiveLevel: "apply" },
-                { description: "Solve problems involving percentages including profit, loss and discount", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Algebra",
-          order: 2,
-          subStrands: [
-            {
-              name: "Algebraic Expressions",
-              order: 1,
-              slos: [
-                { description: "Formulate algebraic expressions from word statements", cognitiveLevel: "apply" },
-                { description: "Simplify algebraic expressions by collecting like terms", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Linear Equations",
-              order: 2,
-              slos: [
-                { description: "Solve linear equations in one unknown", cognitiveLevel: "apply" },
-                { description: "Form and solve linear equations from word problems", cognitiveLevel: "analyze" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Geometry",
-          order: 3,
-          subStrands: [
-            {
-              name: "Angles and Lines",
-              order: 1,
-              slos: [
-                { description: "Identify and calculate complementary and supplementary angles", cognitiveLevel: "apply" },
-                { description: "Calculate angles formed by parallel lines and transversals", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Triangles and Quadrilaterals",
-              order: 2,
-              slos: [
-                { description: "Classify triangles by sides and angles", cognitiveLevel: "understand" },
-                { description: "Calculate the angle sum of triangles and quadrilaterals", cognitiveLevel: "apply" },
-                { description: "Construct triangles given specific measurements", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Coordinates and Graphs",
-          order: 4,
-          subStrands: [
-            {
-              name: "Cartesian Plane",
-              order: 1,
-              slos: [
-                { description: "Plot points on the Cartesian plane using coordinates", cognitiveLevel: "apply" },
-                { description: "Draw and interpret linear graphs", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Statistics",
-          order: 5,
-          subStrands: [
-            {
-              name: "Data Collection and Representation",
-              order: 1,
-              slos: [
-                { description: "Collect and organise data using frequency tables", cognitiveLevel: "apply" },
-                { description: "Represent data using pie charts", cognitiveLevel: "apply" },
-                { description: "Calculate the mean, median and mode of a data set", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
+import { grade7MathematicsData } from "./grade-7-mathematics";
+
+/**
+ * Grade 7 learning areas still awaiting transcription from the KICD designs.
+ *
+ * Mathematics is now transcribed - see grade-7-mathematics.ts. The entries
+ * below are the previous hand-written seed, whose strand structures do not
+ * match the published designs. They remain seeded so no learning area
+ * disappears from the running site, and all stay unverified until
+ * re-transcribed.
+ *
+ * Do not treat these as curriculum-accurate. Transcribe each subject from
+ * its design PDF before relying on it.
+ */
+const PENDING_LEARNING_AREAS = [
     {
       name: "English",
       strands: [
@@ -619,5 +528,13 @@ export const grade7Data = {
         },
       ],
     },
+];
+
+export const grade7Data = {
+  level: 7,
+  name: "Grade 7",
+  learningAreas: [
+    ...grade7MathematicsData.learningAreas,
+    ...PENDING_LEARNING_AREAS,
   ],
 };

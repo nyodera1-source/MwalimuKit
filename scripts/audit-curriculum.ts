@@ -18,6 +18,7 @@ import {
   VALID_TERMS,
   type GradeData,
 } from "../prisma/seed/data/index";
+import { INCOMPLETE_IN_SOURCE } from "../prisma/seed/data/grade-7-mathematics";
 import { findEncodingIssues } from "../lib/curriculum/checks";
 
 type Severity = "error" | "warning";
@@ -240,14 +241,33 @@ function auditGrade(grade: GradeData) {
         }
         if (sub.suggestedLessons !== undefined) {
           lessonCountsPresent++;
-          if (sub.suggestedLessons <= 0) {
+          if (!Number.isInteger(sub.suggestedLessons) || sub.suggestedLessons <= 0) {
             report(
               "error",
               "lessons.non-positive",
               ssloc,
-              `suggestedLessons ${sub.suggestedLessons} must be greater than 0`
+              `suggestedLessons ${sub.suggestedLessons} must be a positive integer`
             );
           }
+        }
+
+        // Transcribed rows carry a citation. A row claiming "verified" without
+        // one is a claim nothing backs, so treat it as an error.
+        if (sub.verification === "verified" && !sub.sourceRef) {
+          report(
+            "error",
+            "verification.no-citation",
+            ssloc,
+            'marked "verified" but has no sourceRef — verification must cite a page'
+          );
+        }
+        if (sub.sourceRef && !/p\.\d+/.test(sub.sourceRef)) {
+          report(
+            "warning",
+            "sourceRef.no-page",
+            ssloc,
+            `sourceRef has no page reference: ${JSON.stringify(sub.sourceRef)}`
+          );
         }
 
         const seenDescriptions = new Map<string, number>();
@@ -340,6 +360,19 @@ if (levels.length !== 10 || !expected.every((l) => levels.includes(l))) {
 }
 
 for (const grade of allGrades) auditGrade(grade);
+
+// ── defects in the published designs themselves ─────────────────────────────
+// Not ours to fix and not fixable by inference: the outcome ends mid-sentence
+// in the KICD PDF. Surfaced here so they stay visible in `npm run verify`
+// rather than being buried in a data module.
+
+const sourceDefects = INCOMPLETE_IN_SOURCE.map(
+  (d) => `${d.location}: "${d.text}" — ${d.issue}`
+);
+
+for (const defect of sourceDefects) {
+  report("warning", "source.incomplete-outcome", "KICD design", defect);
+}
 
 // ── report ──────────────────────────────────────────────────────────────────
 

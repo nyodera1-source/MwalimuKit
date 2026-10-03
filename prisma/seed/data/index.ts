@@ -25,6 +25,8 @@ export interface SLOData {
   cognitiveLevel: string;
   /** Estimated lessons to cover this outcome. Populated in Phase 2B. */
   suggestedLessons?: number;
+  /** "verified" requires a source citation on the parent sub-strand. */
+  verification?: "unverified" | "verified" | "disputed";
 }
 
 export interface SubStrandData {
@@ -37,6 +39,11 @@ export interface SubStrandData {
   suggestedLessons?: number;
   /** Citation into the KICD curriculum design. Populated in Phase 2B. */
   sourceRef?: string;
+  /**
+   * "unverified" until a teacher has checked the row against the design.
+   * "verified" requires a sourceRef — the audit script rejects the pairing.
+   */
+  verification?: "unverified" | "verified" | "disputed";
 }
 
 export interface StrandData {
