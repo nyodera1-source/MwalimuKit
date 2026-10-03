@@ -22,6 +22,10 @@ export async function GET(req: NextRequest) {
           select: {
             id: true,
             name: true,
+            suggestedTerm: true,
+            suggestedLessons: true,
+            verification: true,
+            sourceRef: true,
             slos: {
               orderBy: { order: "asc" },
               select: { id: true, description: true },

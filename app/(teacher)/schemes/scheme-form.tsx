@@ -20,6 +20,10 @@ import { createSchemeOfWork, updateSchemeOfWork } from "./actions";
 import { getReferenceBookOptions } from "@/lib/data/reference-books";
 import { BREAK_TYPES, getPublicHolidayOptions } from "@/lib/data/scheme-breaks";
 import {
+  buildPacedLessonBatches,
+  summarizePacing,
+} from "@/lib/curriculum/pacing";
+import {
   ArrowRight,
   ArrowLeft,
   Loader2,
@@ -36,6 +40,10 @@ import {
 interface SubStrandOption {
   id: string;
   name: string;
+  suggestedTerm: number | null;
+  suggestedLessons: number | null;
+  verification: string;
+  sourceRef: string | null;
   slos: { id: string; description: string }[];
 }
 
@@ -63,6 +71,41 @@ interface LessonEntry {
   tlAids: string;
   reference: string;
   remarks: string;
+}
+
+function countLessonSlots(
+  firstWeek: number,
+  firstLesson: number,
+  lastWeek: number,
+  lastLesson: number,
+  lessonsPerWeek: number,
+  excludedWeeks: Set<number>
+) {
+  let total = 0;
+  for (let week = firstWeek; week <= lastWeek; week++) {
+    if (excludedWeeks.has(week)) continue;
+    const start = week === firstWeek ? firstLesson : 1;
+    const end = week === lastWeek ? lastLesson : lessonsPerWeek;
+    total += Math.max(0, end - start + 1);
+  }
+  return total;
+}
+
+function countFirstTeachingWeekSlots(
+  firstWeek: number,
+  firstLesson: number,
+  lastWeek: number,
+  lastLesson: number,
+  lessonsPerWeek: number,
+  excludedWeeks: Set<number>
+) {
+  for (let week = firstWeek; week <= lastWeek; week++) {
+    if (excludedWeeks.has(week)) continue;
+    const start = week === firstWeek ? firstLesson : 1;
+    const end = week === lastWeek ? lastLesson : lessonsPerWeek;
+    return Math.max(0, end - start + 1);
+  }
+  return 0;
 }
 
 interface SchemeDefaults {
@@ -172,6 +215,72 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     ? `${cascadeNames.grade} - ${cascadeNames.learningArea} - Term ${term}, ${year}`
     : "";
   const displayedTitle = autoTitle && generatedTitle ? generatedTitle : title;
+
+  const selectedSubStrands = strands.flatMap((strand) =>
+    strand.subStrands.filter((sub) => selectedSubStrandIds.includes(sub.id))
+  );
+  const breakWeekSet = new Set<number>();
+  if (!noBreaks) {
+    for (const entry of breaks) {
+      for (let week = entry.weekNumber; week < entry.weekNumber + entry.duration; week++) {
+        breakWeekSet.add(week);
+      }
+    }
+  }
+  const capacityBeforeBreaks = countLessonSlots(
+    firstWeek,
+    firstLesson,
+    lastWeek,
+    lastLesson,
+    lessonsPerWeek,
+    new Set()
+  );
+  const hasCarryover = carryoverEnabled && Boolean(carryoverTopic);
+  const carryoverSlotsBeforeBreaks = hasCarryover
+    ? Math.min(
+        carryoverLessons,
+        countFirstTeachingWeekSlots(
+          firstWeek,
+          firstLesson,
+          lastWeek,
+          lastLesson,
+          lessonsPerWeek,
+          new Set()
+        )
+      )
+    : 0;
+  const carryoverSlotsAfterBreaks = hasCarryover
+    ? Math.min(
+        carryoverLessons,
+        countFirstTeachingWeekSlots(
+          firstWeek,
+          firstLesson,
+          lastWeek,
+          lastLesson,
+          lessonsPerWeek,
+          breakWeekSet
+        )
+      )
+    : 0;
+  const curriculumCapacity = Math.max(
+    0,
+    countLessonSlots(
+      firstWeek,
+      firstLesson,
+      lastWeek,
+      lastLesson,
+      lessonsPerWeek,
+      breakWeekSet
+    ) - carryoverSlotsAfterBreaks
+  );
+  const pacingBeforeBreaks = summarizePacing(
+    selectedSubStrands.map((sub) => sub.suggestedLessons),
+    Math.max(0, capacityBeforeBreaks - carryoverSlotsBeforeBreaks)
+  );
+  const finalPacing = summarizePacing(
+    selectedSubStrands.map((sub) => sub.suggestedLessons),
+    curriculumCapacity
+  );
 
   // Fetch strands when learning area changes
   useEffect(() => {
@@ -431,35 +540,44 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
       (sum, tw) => sum + (tw.endLesson - tw.startLesson + 1),
       0
     );
-    const totalSloCount = allSloItems.length;
-
-    if (totalSloCount === 0 || totalLessonSlots === 0) {
+    if (allSloItems.length === 0 || totalLessonSlots === 0) {
       setEntries(newEntries);
       return;
     }
 
-    // Distribute SLOs across individual lessons, grouping into
-    // per-lesson batches so each lesson gets unique objectives.
+    // Use the published pacing where every selected sub-strand has guidance.
+    // Otherwise retain the proportional fallback for legacy curriculum rows.
+    const pacedBatches = buildPacedLessonBatches(
+      orderedSubStrands.map(({ strandName, subStrand }) => ({
+        suggestedLessons: subStrand.suggestedLessons,
+        items: subStrand.slos.map((slo) => ({
+          strandName,
+          subStrandName: subStrand.name,
+          sloDescription: slo.description,
+        })),
+      })),
+      totalLessonSlots
+    );
+    const lessonBatches = pacedBatches ?? Array.from(
+      { length: totalLessonSlots },
+      (_, lessonIndex) => {
+        const start = Math.floor(lessonIndex * allSloItems.length / totalLessonSlots);
+        const proportionalEnd = Math.floor(
+          (lessonIndex + 1) * allSloItems.length / totalLessonSlots
+        );
+        const end = Math.max(start + 1, proportionalEnd);
+        return allSloItems.slice(start, Math.min(end, allSloItems.length));
+      }
+    );
+    let curriculumLessonIndex = 0;
+
     for (const tw of remainingWeeks) {
       const lessonsInWeek = tw.endLesson - tw.startLesson + 1;
 
       for (let l = 0; l < lessonsInWeek; l++) {
+        if (curriculumLessonIndex >= lessonBatches.length) break;
         const lessonNum = tw.startLesson + l;
-
-        // Proportionally assign SLOs to this lesson
-        const globalLessonIdx = newEntries.length - (carryoverEnabled && carryoverTopic ? 1 : 0);
-        const sloStart = Math.floor(globalLessonIdx * totalSloCount / totalLessonSlots);
-        const sloEnd = Math.floor((globalLessonIdx + 1) * totalSloCount / totalLessonSlots);
-
-        // Gather the SLOs for this specific lesson
-        const lessonSlos: SloItem[] = [];
-        if (sloStart === sloEnd && sloStart < totalSloCount) {
-          lessonSlos.push(allSloItems[sloStart]);
-        } else {
-          for (let s = sloStart; s < sloEnd && s < totalSloCount; s++) {
-            lessonSlos.push(allSloItems[s]);
-          }
-        }
+        const lessonSlos = lessonBatches[curriculumLessonIndex];
 
         if (lessonSlos.length === 0) continue;
 
@@ -477,11 +595,12 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
           topic: topicName,
           subTopic: subTopicNames,
           objectives,
-          tlActivities: makeTlActivities(subTopicNames, objectives, globalLessonIdx),
+          tlActivities: makeTlActivities(subTopicNames, objectives, curriculumLessonIndex),
           tlAids: makeTlAids(actualReferenceBook, objectives),
           reference: actualReferenceBook || "",
           remarks: "",
         });
+        curriculumLessonIndex++;
       }
     }
 
@@ -744,7 +863,16 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                                 onCheckedChange={() => toggleSubStrand(sub.id)}
                                 className="mt-0.5"
                               />
-                              <span className="text-sm">{sub.name}</span>
+                              <span className="min-w-0 flex-1 text-sm">{sub.name}</span>
+                              {sub.suggestedLessons && (
+                                <Badge
+                                  variant="outline"
+                                  className="ml-auto text-xs text-blue-700 border-blue-200"
+                                  title={sub.sourceRef || undefined}
+                                >
+                                  {sub.suggestedLessons} lessons
+                                </Badge>
+                              )}
                             </label>
                           ))}
                         </div>
@@ -786,6 +914,32 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                 </SelectContent>
               </Select>
             </div>
+
+            {pacingBeforeBreaks.availability === "complete" && (
+              <div className="rounded-md border border-blue-200 bg-blue-50/60 p-3 text-sm">
+                <div className="flex flex-wrap gap-x-6 gap-y-1">
+                  <span>
+                    Selected content: <strong>{pacingBeforeBreaks.suggestedLessons} lessons</strong>
+                  </span>
+                  <span>
+                    Capacity before breaks: <strong>{pacingBeforeBreaks.capacity} lessons</strong>
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-blue-700">
+                  {pacingBeforeBreaks.difference === 0
+                    ? "The selected content matches the available timetable."
+                    : Number(pacingBeforeBreaks.difference) > 0
+                      ? `${pacingBeforeBreaks.difference} lesson slots remain for other content or interruptions.`
+                      : `${Math.abs(Number(pacingBeforeBreaks.difference))} more lesson slots are needed for the selected content.`}
+                </p>
+              </div>
+            )}
+
+            {pacingBeforeBreaks.availability === "partial" && (
+              <div className="rounded-md border border-blue-200 bg-blue-50/60 p-3 text-xs text-blue-700">
+                Suggested lesson counts are available for only part of the selected content. Final pacing remains editable.
+              </div>
+            )}
 
             <div className="border rounded-md p-4 space-y-3">
               <h4 className="font-medium text-sm">First Lesson Details</h4>
@@ -1026,6 +1180,26 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               </>
             )}
 
+            {finalPacing.availability === "complete" && (
+              <div className="rounded-md border border-blue-200 bg-blue-50/60 p-3 text-sm">
+                <div className="flex flex-wrap gap-x-6 gap-y-1">
+                  <span>
+                    Selected content: <strong>{finalPacing.suggestedLessons} lessons</strong>
+                  </span>
+                  <span>
+                    Final teaching capacity: <strong>{finalPacing.capacity} lessons</strong>
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-blue-700">
+                  {finalPacing.difference === 0
+                    ? "Coverage is balanced."
+                    : Number(finalPacing.difference) > 0
+                      ? `${finalPacing.difference} teaching slots will remain after this content.`
+                      : `${Math.abs(Number(finalPacing.difference))} suggested lessons will not fit in this timetable.`}
+                </p>
+              </div>
+            )}
+
             <div className="border-t pt-4 space-y-3">
               <div className="flex flex-wrap items-center gap-3">
                 <Button type="button" variant="secondary" onClick={generateEntries}>
@@ -1034,7 +1208,9 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Distributes {selectedSubStrandIds.length} subtopics across Week {firstWeek}–{lastWeek}, {lessonsPerWeek} lessons/week.
+                {finalPacing.availability === "complete"
+                  ? `Uses the suggested pacing for ${selectedSubStrandIds.length} selected subtopics within the available timetable.`
+                  : `Distributes ${selectedSubStrandIds.length} subtopics across Week ${firstWeek}-${lastWeek}, ${lessonsPerWeek} lessons/week.`}
                 {entries.length > 0 && " You can edit entries in the table below, then click 'Save Scheme' when ready."}
               </p>
             </div>
