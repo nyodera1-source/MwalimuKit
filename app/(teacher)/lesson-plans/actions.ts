@@ -3,6 +3,10 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { lessonPlanSchema } from "@/lib/validations";
+import {
+  validateCurriculumChain,
+  validateCompetencies,
+} from "@/lib/curriculum/validate";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -38,6 +42,20 @@ export async function createLessonPlan(prevState: unknown, formData: FormData) {
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
   }
+
+  // Shape is valid; confirm grade → area → strand → sub-strand → outcomes is
+  // a real chain before writing.
+  const curriculumCheck = await validateCurriculumChain({
+    gradeId: parsed.data.gradeId,
+    learningAreaId: parsed.data.learningAreaId,
+    strandId: parsed.data.strandId,
+    subStrandId: parsed.data.subStrandId,
+    sloIds: parsed.data.sloIds,
+  });
+  if (!curriculumCheck.ok) return { error: curriculumCheck.message };
+
+  const competencyCheck = await validateCompetencies(parsed.data.competencyIds);
+  if (!competencyCheck.ok) return { error: competencyCheck.message };
 
   const { date, duration, objectives, keyInquiryQuestion, resources, digitalResources,
     activitiesIntroduction, activitiesDevelopment, activitiesConclusion,
@@ -115,6 +133,18 @@ export async function updateLessonPlan(prevState: unknown, formData: FormData) {
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
   }
+
+  const curriculumCheck = await validateCurriculumChain({
+    gradeId: parsed.data.gradeId,
+    learningAreaId: parsed.data.learningAreaId,
+    strandId: parsed.data.strandId,
+    subStrandId: parsed.data.subStrandId,
+    sloIds: parsed.data.sloIds,
+  });
+  if (!curriculumCheck.ok) return { error: curriculumCheck.message };
+
+  const competencyCheck = await validateCompetencies(parsed.data.competencyIds);
+  if (!competencyCheck.ok) return { error: competencyCheck.message };
 
   const { date, duration, objectives, keyInquiryQuestion, resources, digitalResources,
     activitiesIntroduction, activitiesDevelopment, activitiesConclusion,

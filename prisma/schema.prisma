@@ -114,6 +114,17 @@ model SubStrand {
   name     String
   order    Int    @default(0)
 
+  // ── Phase 2: curriculum verification ──
+  // "suggested*" fields are overridable defaults, not constraints. Schools
+  // legitimately run behind or ahead of the suggested pacing, and the coverage
+  // checker warns rather than blocking. Do not convert these to NOT NULL.
+  suggestedTerm    Int?      @map("suggested_term")     // 1 | 2 | 3
+  suggestedLessons Int?      @map("suggested_lessons")  // drives the coverage checker
+  verification     String    @default("unverified")     // unverified | verified | disputed
+  verifiedBy       String?   @map("verified_by")
+  verifiedAt       DateTime? @map("verified_at")
+  sourceRef        String?   @map("source_ref")         // KICD curriculum design + page
+
   strand Strand @relation(fields: [strandId], references: [id], onDelete: Cascade)
   slos   SLO[]
 
@@ -122,6 +133,7 @@ model SubStrand {
   curriculumNote CurriculumNote?
 
   @@unique([strandId, name])
+  @@index([verification])
   @@map("sub_strands")
 }
 
@@ -132,9 +144,15 @@ model SLO {
   cognitiveLevel String? @map("cognitive_level")
   order          Int     @default(0)
 
+  // ── Phase 2: curriculum verification ──
+  suggestedLessons Int?      @map("suggested_lessons")
+  verification     String    @default("unverified")
+  verifiedAt       DateTime? @map("verified_at")
+
   subStrand    SubStrand       @relation(fields: [subStrandId], references: [id], onDelete: Cascade)
   competencies SLOCompetency[]
 
+  @@index([verification])
   @@map("slos")
 }
 
@@ -157,6 +175,25 @@ model SLOCompetency {
 
   @@id([sloId, competencyId])
   @@map("slo_competencies")
+}
+
+/// Which curriculum design the seeded rows were transcribed from.
+///
+/// Every curriculum row should be traceable to one of these. Until Phase 2B
+/// populates the source fields, nothing may be marked `verified` — a claim of
+/// verification with no citation is worse than an honest `unverified`.
+model CurriculumVersion {
+  id            String   @id @default(cuid())
+  code          String   @unique // e.g. "cbc-2019"
+  title         String
+  sourceUrl     String?  @map("source_url")
+  sourceNote    String?  @map("source_note")
+  effectiveYear Int?     @map("effective_year")
+  isCurrent     Boolean  @default(false) @map("is_current")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("curriculum_versions")
 }
 
 // ─── DOCUMENT TABLES (shells for Phase 1 dashboard, fully used Phase 2) ───

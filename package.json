@@ -10,7 +10,8 @@
     "lint": "eslint",
     "test": "node --import tsx --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "verify": "npm run typecheck && npm run lint && npm run test",
+    "audit:curriculum": "tsx scripts/audit-curriculum.ts",
+    "verify": "npm run typecheck && npm run lint && npm run audit:curriculum && npm run test",
     "db:seed": "tsx prisma/seed.ts"
   },
   "prisma": {

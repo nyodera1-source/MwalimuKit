@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { schemeOfWorkSchema } from "@/lib/validations";
+import { validateGradeAndLearningArea } from "@/lib/curriculum/validate";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -24,6 +25,13 @@ export async function createSchemeOfWork(prevState: unknown, formData: FormData)
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
   }
+
+  // Shape is valid; confirm the selection is internally consistent before writing.
+  const curriculumCheck = await validateGradeAndLearningArea(
+    parsed.data.gradeId,
+    parsed.data.learningAreaId
+  );
+  if (!curriculumCheck.ok) return { error: curriculumCheck.message };
 
   let schemeData: unknown;
   try {
@@ -79,6 +87,12 @@ export async function updateSchemeOfWork(prevState: unknown, formData: FormData)
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
   }
+
+  const curriculumCheck = await validateGradeAndLearningArea(
+    parsed.data.gradeId,
+    parsed.data.learningAreaId
+  );
+  if (!curriculumCheck.ok) return { error: curriculumCheck.message };
 
   let schemeData: unknown;
   try {
