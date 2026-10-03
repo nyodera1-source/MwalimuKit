@@ -22,6 +22,13 @@ export const C1_CONTROL = new RegExp(
 /** U+FFFD REPLACEMENT CHARACTER, produced when lossy bytes are decoded. */
 export const REPLACEMENT_CHAR = new RegExp(ch(0xfffd));
 
+/**
+ * NUL. It has no legitimate place in curriculum text, and it is invisible in
+ * source — a NUL used as a template-literal separator once made composite
+ * keys fail to match while still looking correct in review.
+ */
+export const NUL_CHAR = new RegExp(ch(0x00));
+
 /** C0 controls other than tab, newline and carriage return, plus DEL. */
 export const BAD_CONTROL = new RegExp(
   `[${ch(0x00)}-${ch(0x08)}${ch(0x0b)}${ch(0x0c)}${ch(0x0e)}-${ch(0x1f)}${ch(0x7f)}]`
@@ -30,7 +37,8 @@ export const BAD_CONTROL = new RegExp(
 export type EncodingIssueCode =
   | "encoding.c1-control"
   | "encoding.replacement-char"
-  | "encoding.control-char";
+  | "encoding.control-char"
+  | "encoding.nul";
 
 export interface EncodingIssue {
   code: EncodingIssueCode;
@@ -48,6 +56,12 @@ export interface EncodingIssue {
 export function findEncodingIssues(value: string): EncodingIssue[] {
   const issues: EncodingIssue[] = [];
 
+  if (NUL_CHAR.test(value)) {
+    issues.push({
+      code: "encoding.nul",
+      detail: `contains NUL characters: ${JSON.stringify(value)}`,
+    });
+  }
   if (C1_CONTROL.test(value)) {
     issues.push({
       code: "encoding.c1-control",

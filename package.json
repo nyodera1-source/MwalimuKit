@@ -11,6 +11,8 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
     "audit:curriculum": "tsx scripts/audit-curriculum.ts",
+    "curriculum:reconcile": "tsx scripts/reconcile-curriculum.ts",
+    "curriculum:reconcile:apply": "tsx scripts/reconcile-curriculum.ts --apply",
     "verify": "npm run typecheck && npm run lint && npm run audit:curriculum && npm run test",
     "db:seed": "tsx prisma/seed.ts"
   },

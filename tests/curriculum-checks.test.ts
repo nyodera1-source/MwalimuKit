@@ -72,6 +72,14 @@ describe("encoding detection", () => {
     assert.deepEqual(findEncodingIssues("προσοχή · √25 · ±3"), []);
   });
 
+  test("catches NUL characters, which are invisible in source", () => {
+    // A NUL once used as a template-literal separator in the reconciliation
+    // keys made every lookup miss while looking correct in review.
+    const withNul = `7${ch(0x00)}mathematics${ch(0x00)}numbers`;
+    const issues = findEncodingIssues(withNul);
+    assert.equal(issues[0]?.code, "encoding.nul");
+  });
+
   test("rejects blank text", () => {
     assert.equal(isCleanText(""), false);
     assert.equal(isCleanText("   "), false);
