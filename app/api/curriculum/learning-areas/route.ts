@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PILOT_RESPONSE_HEADERS, pilotLearningAreaWhere } from "@/lib/curriculum/pilot";
 
 export async function GET(req: NextRequest) {
   const gradeId = req.nextUrl.searchParams.get("gradeId");
@@ -8,12 +9,12 @@ export async function GET(req: NextRequest) {
   }
 
   const learningAreas = await prisma.learningArea.findMany({
-    where: { gradeId },
+    where: pilotLearningAreaWhere(gradeId),
     orderBy: { order: "asc" },
     select: { id: true, name: true },
   });
 
   return NextResponse.json(learningAreas, {
-    headers: { "Cache-Control": "public, max-age=86400" },
+    headers: PILOT_RESPONSE_HEADERS,
   });
 }

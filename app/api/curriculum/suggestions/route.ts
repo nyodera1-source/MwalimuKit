@@ -1,5 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  PILOT_GRADE_LEVEL,
+  PILOT_LEARNING_AREA,
+  PILOT_RESPONSE_HEADERS,
+} from "@/lib/curriculum/pilot";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -10,45 +15,73 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "subStrandId or strandId required" }, { status: 400 });
   }
 
-  // Fetch SLOs for the sub-strand (or all sub-strands of the strand)
-  const sloWhere = subStrandId
-    ? { subStrandId }
-    : { subStrand: { strandId: strandId! } };
-
-  const slos = await prisma.sLO.findMany({
-    where: sloWhere,
-    select: { description: true, cognitiveLevel: true },
-    orderBy: { order: "asc" },
-  });
-
-  // Fetch the strand and sub-strand names for context
   let strandName = "";
   let subStrandName = "";
   let learningAreaName = "";
+  let slos: { description: string; cognitiveLevel: string | null }[] = [];
 
   if (subStrandId) {
-    const ss = await prisma.subStrand.findUnique({
-      where: { id: subStrandId },
+    const ss = await prisma.subStrand.findFirst({
+      where: {
+        id: subStrandId,
+        strand: {
+          learningArea: {
+            name: PILOT_LEARNING_AREA,
+            grade: { level: PILOT_GRADE_LEVEL },
+          },
+        },
+      },
       include: {
+        slos: {
+          orderBy: { order: "asc" },
+          select: { description: true, cognitiveLevel: true },
+        },
         strand: {
           include: { learningArea: { select: { name: true } } },
         },
       },
     });
-    if (ss) {
-      subStrandName = ss.name;
-      strandName = ss.strand.name;
-      learningAreaName = ss.strand.learningArea.name;
+    if (!ss) {
+      return NextResponse.json(
+        { error: "Curriculum topic is not available in the current pilot." },
+        { status: 404, headers: PILOT_RESPONSE_HEADERS }
+      );
     }
+    subStrandName = ss.name;
+    strandName = ss.strand.name;
+    learningAreaName = ss.strand.learningArea.name;
+    slos = ss.slos;
   } else if (strandId) {
-    const s = await prisma.strand.findUnique({
-      where: { id: strandId },
-      include: { learningArea: { select: { name: true } } },
+    const s = await prisma.strand.findFirst({
+      where: {
+        id: strandId,
+        learningArea: {
+          name: PILOT_LEARNING_AREA,
+          grade: { level: PILOT_GRADE_LEVEL },
+        },
+      },
+      include: {
+        learningArea: { select: { name: true } },
+        subStrands: {
+          orderBy: { order: "asc" },
+          select: {
+            slos: {
+              orderBy: { order: "asc" },
+              select: { description: true, cognitiveLevel: true },
+            },
+          },
+        },
+      },
     });
-    if (s) {
-      strandName = s.name;
-      learningAreaName = s.learningArea.name;
+    if (!s) {
+      return NextResponse.json(
+        { error: "Curriculum strand is not available in the current pilot." },
+        { status: 404, headers: PILOT_RESPONSE_HEADERS }
+      );
     }
+    strandName = s.name;
+    learningAreaName = s.learningArea.name;
+    slos = s.subStrands.flatMap((subStrand) => subStrand.slos);
   }
 
   // Generate suggestions based on the SLOs and context
@@ -62,13 +95,16 @@ export async function GET(request: NextRequest) {
 
   const resources = generateResourceSuggestions(learningAreaName);
 
-  return NextResponse.json({
-    objectives,
-    keyInquiryQuestion,
-    resources,
-    sloDescriptions,
-    context: { learningAreaName, strandName, subStrandName },
-  });
+  return NextResponse.json(
+    {
+      objectives,
+      keyInquiryQuestion,
+      resources,
+      sloDescriptions,
+      context: { learningAreaName, strandName, subStrandName },
+    },
+    { headers: PILOT_RESPONSE_HEADERS }
+  );
 }
 
 function generateInquiryQuestion(

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PILOT_RESPONSE_HEADERS, pilotStrandWhere } from "@/lib/curriculum/pilot";
 
 export async function GET(req: NextRequest) {
   const learningAreaId = req.nextUrl.searchParams.get("learningAreaId");
@@ -12,7 +13,7 @@ export async function GET(req: NextRequest) {
   if (deep) {
     // Return strands with sub-strands and SLOs (for scheme of work form)
     const strands = await prisma.strand.findMany({
-      where: { learningAreaId },
+      where: pilotStrandWhere(learningAreaId),
       orderBy: { order: "asc" },
       select: {
         id: true,
@@ -36,17 +37,17 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({ strands }, {
-      headers: { "Cache-Control": "public, max-age=86400" },
+      headers: PILOT_RESPONSE_HEADERS,
     });
   }
 
   const strands = await prisma.strand.findMany({
-    where: { learningAreaId },
+    where: pilotStrandWhere(learningAreaId),
     orderBy: { order: "asc" },
     select: { id: true, name: true },
   });
 
   return NextResponse.json(strands, {
-    headers: { "Cache-Control": "public, max-age=86400" },
+    headers: PILOT_RESPONSE_HEADERS,
   });
 }
