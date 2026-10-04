@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Download, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Download, FilePlus2, Pencil, Trash2 } from "lucide-react";
 import { deleteSchemeOfWork } from "../../actions";
 import type { SchemeConfig } from "@/lib/export/scheme-of-work-types";
 
@@ -36,12 +36,12 @@ export default async function PreviewSchemePage({
 
   // Build display items: lessons + combined breaks sorted by week
   type DisplayItem =
-    | { kind: "lesson"; entry: (typeof entries)[0] }
+    | { kind: "lesson"; entry: (typeof entries)[0]; entryIndex: number }
     | { kind: "break"; title: string; weekLabel: string; startWeek: number };
   const displayItems: DisplayItem[] = [];
 
-  for (const entry of entries) {
-    displayItems.push({ kind: "lesson", entry });
+  for (const [entryIndex, entry] of entries.entries()) {
+    displayItems.push({ kind: "lesson", entry, entryIndex });
   }
   for (const b of breaks) {
     const weekLabel = b.duration > 1
@@ -169,6 +169,7 @@ export default async function PreviewSchemePage({
                       <th className="border p-2 text-left">T/L AIDS</th>
                       <th className="border p-2 text-left">REFERENCE</th>
                       <th className="border p-2 text-left">REMARKS</th>
+                      <th className="border p-2 text-center w-12">PLAN</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -177,7 +178,7 @@ export default async function PreviewSchemePage({
                         return (
                           <tr key={`break-${idx}`} className="bg-amber-50">
                             <td className="border p-2 font-bold text-center">{item.weekLabel}</td>
-                            <td colSpan={8} className="border p-2 text-center italic font-medium text-amber-700">
+                            <td colSpan={9} className="border p-2 text-center italic font-medium text-amber-700">
                               {item.title}
                             </td>
                           </tr>
@@ -195,6 +196,22 @@ export default async function PreviewSchemePage({
                           <td className="border p-2 whitespace-pre-wrap">{entry.tlAids || "—"}</td>
                           <td className="border p-2 whitespace-pre-wrap">{entry.reference || "—"}</td>
                           <td className="border p-2 whitespace-pre-wrap">{entry.remarks || ""}</td>
+                          <td className="border p-1 text-center">
+                            {entry.strandId && entry.subStrandId && entry.sloIds?.length ? (
+                              <Button variant="ghost" size="icon" asChild title="Create lesson plan">
+                                <Link
+                                  href={`/lesson-plans/new?schemeId=${scheme.id}&lesson=${item.entryIndex}`}
+                                  aria-label={`Create lesson plan for week ${entry.week}, lesson ${entry.lesson}`}
+                                >
+                                  <FilePlus2 className="h-4 w-4 text-blue-600" />
+                                </Link>
+                              </Button>
+                            ) : (
+                              <span className="text-muted-foreground" title="Regenerate this scheme to enable lesson-plan handoff">
+                                —
+                              </span>
+                            )}
+                          </td>
                         </tr>
                       );
                     })}

@@ -71,6 +71,9 @@ interface LessonEntry {
   tlAids: string;
   reference: string;
   remarks: string;
+  strandId?: string;
+  subStrandId?: string;
+  sloIds?: string[];
 }
 
 function countLessonSlots(
@@ -470,11 +473,11 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     }
 
     // Get selected sub-strands in curriculum order
-    const orderedSubStrands: { strandName: string; subStrand: SubStrandOption }[] = [];
+    const orderedSubStrands: { strandId: string; strandName: string; subStrand: SubStrandOption }[] = [];
     for (const strand of strands) {
       for (const sub of strand.subStrands) {
         if (selectedSubStrandIds.includes(sub.id)) {
-          orderedSubStrands.push({ strandName: strand.name, subStrand: sub });
+          orderedSubStrands.push({ strandId: strand.id, strandName: strand.name, subStrand: sub });
         }
       }
     }
@@ -521,16 +524,22 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     const remainingWeeks = teachingWeeks.slice(weekIdx);
 
     interface SloItem {
+      strandId: string;
       strandName: string;
+      subStrandId: string;
       subStrandName: string;
+      sloId: string;
       sloDescription: string;
     }
 
     const allSloItems: SloItem[] = orderedSubStrands.flatMap(
-      ({ strandName, subStrand }) =>
+      ({ strandId, strandName, subStrand }) =>
         subStrand.slos.map((slo) => ({
+          strandId,
           strandName,
+          subStrandId: subStrand.id,
           subStrandName: subStrand.name,
+          sloId: slo.id,
           sloDescription: slo.description,
         }))
     );
@@ -548,11 +557,14 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     // Use the published pacing where every selected sub-strand has guidance.
     // Otherwise retain the proportional fallback for legacy curriculum rows.
     const pacedBatches = buildPacedLessonBatches(
-      orderedSubStrands.map(({ strandName, subStrand }) => ({
+      orderedSubStrands.map(({ strandId, strandName, subStrand }) => ({
         suggestedLessons: subStrand.suggestedLessons,
         items: subStrand.slos.map((slo) => ({
+          strandId,
           strandName,
+          subStrandId: subStrand.id,
           subStrandName: subStrand.name,
+          sloId: slo.id,
           sloDescription: slo.description,
         })),
       })),
@@ -588,6 +600,9 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
         const objectives =
           "By the end of the lesson, the learner should be able to:\n" +
           lessonSlos.map((s) => `${s.sloDescription}.`).join(" ");
+        const strandIds = [...new Set(lessonSlos.map((s) => s.strandId))];
+        const subStrandIds = [...new Set(lessonSlos.map((s) => s.subStrandId))];
+        const hasSingleCurriculumSource = strandIds.length === 1 && subStrandIds.length === 1;
 
         newEntries.push({
           week: tw.week,
@@ -599,6 +614,11 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
           tlAids: makeTlAids(actualReferenceBook, objectives),
           reference: actualReferenceBook || "",
           remarks: "",
+          strandId: hasSingleCurriculumSource ? strandIds[0] : undefined,
+          subStrandId: hasSingleCurriculumSource ? subStrandIds[0] : undefined,
+          sloIds: hasSingleCurriculumSource
+            ? [...new Set(lessonSlos.map((s) => s.sloId))]
+            : undefined,
         });
         curriculumLessonIndex++;
       }

@@ -14,6 +14,9 @@ export interface SchemeLessonEntry {
   tlAids: string;
   reference: string;
   remarks: string;
+  strandId?: string;
+  subStrandId?: string;
+  sloIds?: string[];
 }
 
 export interface SchemeConfig {
