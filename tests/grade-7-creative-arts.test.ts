@@ -74,7 +74,7 @@ describe("transcribed Grade 7 Creative Arts and Sports", () => {
 });
 
 describe("Grade 7 assembly", () => {
-  test("eight of the nine core subjects are transcribed", () => {
+  test("all nine core subjects are transcribed and each appears once", () => {
     const names = grade7Data.learningAreas.map((a) => a.name);
     for (const n of [
       "Mathematics",
@@ -85,13 +85,14 @@ describe("Grade 7 assembly", () => {
       "Social Studies",
       "Agriculture and Nutrition",
       "Creative Arts and Sports",
+      // Religious Education is published as two designs; the single hand-written
+      // area is gone, replaced here by Christian Religious Education.
+      "Christian Religious Education",
     ]) {
       assert.equal(names.filter((x) => x === n).length, 1, `${n} count`);
     }
     assert.equal(new Set(names).size, names.length, "duplicate learning area");
     assert.equal(grade7Data.learningAreas.length, 9);
-    // Religious Education is held back: the design publishes Christian and
-    // Islamic separately and splitting the seeded single area needs a decision.
-    assert.equal(names.filter((n) => n === "Religious Education").length, 1);
+    assert.equal(names.filter((n) => n === "Religious Education").length, 0);
   });
 });

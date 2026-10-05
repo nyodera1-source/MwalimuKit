@@ -122,8 +122,8 @@ export const grade7IntegratedScienceData: GradeData = {
                 { description: "identify parts of the human male and female reproductive systems", cognitiveLevel: "apply" },
                 { description: "describe functions of parts of the male and female reproductive system", cognitiveLevel: "apply" },
                 { description: "describe the physical changes that take place in boys and girls during adolescence", cognitiveLevel: "apply" },
-                { description: "develop a plan to manage Learners", cognitiveLevel: "apply" },
-                { description: "appreciate that physical changes in boys and girls during adolescence have social and reproductive implications. search for information on developmental challenges during adolescence and coping mechanisms, discuss and share with peers", cognitiveLevel: "apply" },
+                { description: "develop a plan to manage developmental challenges during adolescence", cognitiveLevel: "apply" },
+                { description: "appreciate that physical changes in boys and girls during adolescence have social and reproductive implications.", cognitiveLevel: "apply" },
               ],
             },
             {

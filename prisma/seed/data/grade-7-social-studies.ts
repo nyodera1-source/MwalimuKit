@@ -204,7 +204,7 @@ export const grade7SocialStudiesData: GradeData = {
                 { description: "illustrate methods of irrigation used in ancient Egypt", cognitiveLevel: "apply" },
                 { description: "assess the contribution of the Nile valley agriculture to world civilization", cognitiveLevel: "apply" },
                 { description: "explore possible careers in Agriculture", cognitiveLevel: "apply" },
-                { description: "value the importance of domestication of plants and animals in Africa. The learners", cognitiveLevel: "apply" },
+                { description: "value the importance of domestication of plants and animals in Africa.", cognitiveLevel: "apply" },
               ],
             },
             {

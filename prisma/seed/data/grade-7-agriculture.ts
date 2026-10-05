@@ -48,7 +48,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "explain the causes of soil pollution in gardening", cognitiveLevel: "apply" },
                 { description: "control soil pollution in home environment", cognitiveLevel: "apply" },
-                { description: "demonstrate responsibility in using safe farming practices to conserve the soil. Learners", cognitiveLevel: "apply" },
+                { description: "demonstrate responsibility in using safe farming practices to conserve the soil.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -60,7 +60,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "describe how surface run-off can be used in gardening", cognitiveLevel: "apply" },
                 { description: "construct water retention structures to conserve surface runoff", cognitiveLevel: "apply" },
-                { description: "adopt utilization of surface run-off in gardening. Learners", cognitiveLevel: "apply" },
+                { description: "adopt utilization of surface run-off in gardening.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -72,7 +72,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "identify ways of conserving vitamins and mineral salts in vegetables", cognitiveLevel: "apply" },
                 { description: "conserve vitamins and mineral salts in vegetables", cognitiveLevel: "apply" },
-                { description: "adopt conservation of vitamins and mineral salts in vegetables. Learners", cognitiveLevel: "apply" },
+                { description: "adopt conservation of vitamins and mineral salts in vegetables.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -84,7 +84,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "explain the importance of trees in conserving the environment", cognitiveLevel: "apply" },
                 { description: "plant trees to conserve the environment", cognitiveLevel: "apply" },
-                { description: "adopt tree planting as a way of conserving the environment. Learners", cognitiveLevel: "apply" },
+                { description: "adopt tree planting as a way of conserving the environment.", cognitiveLevel: "apply" },
               ],
             },
           ],
@@ -102,7 +102,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "determine appropriate tilth for selected planting material", cognitiveLevel: "apply" },
                 { description: "prepare a suitable tilth for establishing selected planting material", cognitiveLevel: "apply" },
-                { description: "adopt appropriate tilth in establishing a selected planting material. Learners", cognitiveLevel: "apply" },
+                { description: "adopt appropriate tilth in establishing a selected planting material.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -114,7 +114,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "explain management practices carried out on crops", cognitiveLevel: "apply" },
                 { description: "carry out management practices in crop production", cognitiveLevel: "apply" },
-                { description: "appreciate importance of various management practices in crop production. Learners", cognitiveLevel: "apply" },
+                { description: "appreciate importance of various management practices in crop production.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -126,7 +126,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "explain how to prepare animal products for various purposes", cognitiveLevel: "apply" },
                 { description: "prepare animal products for various purposes", cognitiveLevel: "apply" },
-                { description: "embrace preparation of animal products for various purposes. Learners", cognitiveLevel: "apply" },
+                { description: "embrace preparation of animal products for various purposes.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -138,7 +138,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "describe methods of cooking different types of foods", cognitiveLevel: "apply" },
                 { description: "cook food using various methods", cognitiveLevel: "apply" },
-                { description: "appreciate the use of varied methods of cooking food. Learners", cognitiveLevel: "apply" },
+                { description: "appreciate the use of varied methods of cooking food.", cognitiveLevel: "apply" },
               ],
             },
           ],
@@ -156,7 +156,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "describe hygiene practices in rearing domestic animals", cognitiveLevel: "apply" },
                 { description: "carry out hygiene practices in rearing domestic animals", cognitiveLevel: "apply" },
-                { description: "appreciate importance of hygiene practices in rearing domestic animals. Learners", cognitiveLevel: "apply" },
+                { description: "appreciate importance of hygiene practices in rearing domestic animals.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -168,7 +168,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "describe how to launder a loose coloured article for hygiene purpose", cognitiveLevel: "apply" },
                 { description: "launder a loose coloured article for hygiene purposes", cognitiveLevel: "apply" },
-                { description: "embrace laundering of loose coloured article for hygiene purposes. Learners", cognitiveLevel: "apply" },
+                { description: "embrace laundering of loose coloured article for hygiene purposes.", cognitiveLevel: "apply" },
               ],
             },
           ],
@@ -186,7 +186,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "describe knitting stitches used in making household articles", cognitiveLevel: "apply" },
                 { description: "knit various articles for household use", cognitiveLevel: "apply" },
-                { description: "embrace knitted articles for household use Learners", cognitiveLevel: "apply" },
+                { description: "embrace knitted articles for household use", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -198,7 +198,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "describe framed suspended garden for growing crops", cognitiveLevel: "apply" },
                 { description: "construct a framed structure for suspended garden", cognitiveLevel: "apply" },
-                { description: "embrace the use of framed suspended garden for growing crops. Learners", cognitiveLevel: "apply" },
+                { description: "embrace the use of framed suspended garden for growing crops.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -210,7 +210,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "explain ways of adding value on crop produce", cognitiveLevel: "apply" },
                 { description: "add value to a selected crop produce", cognitiveLevel: "apply" },
-                { description: "appreciate the importance of value addition on crop produce. Learners", cognitiveLevel: "apply" },
+                { description: "appreciate the importance of value addition on crop produce.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -222,7 +222,7 @@ export const grade7AgricultureData: GradeData = {
               slos: [
                 { description: "identify the forms of soap used at household level", cognitiveLevel: "apply" },
                 { description: "make homemade soap using natural ingredients", cognitiveLevel: "apply" },
-                { description: "embrace homemade soap for household use. Learners", cognitiveLevel: "apply" },
+                { description: "embrace homemade soap for household use.", cognitiveLevel: "apply" },
               ],
             },
           ],

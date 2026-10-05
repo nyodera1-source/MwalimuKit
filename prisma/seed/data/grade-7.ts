@@ -6,19 +6,23 @@ import { grade7IntegratedScienceData } from "./grade-7-integrated-science";
 import { grade7SocialStudiesData } from "./grade-7-social-studies";
 import { grade7AgricultureData } from "./grade-7-agriculture";
 import { grade7CreativeArtsData } from "./grade-7-creative-arts";
+import { grade7CreData } from "./grade-7-cre";
 import type { LearningAreaData } from "./index";
 
 /**
  * Grade 7 learning areas still awaiting transcription from the KICD designs.
  *
- * Mathematics is now transcribed - see grade-7-mathematics.ts. The entries
- * below are the previous hand-written seed, whose strand structures do not
- * match the published designs. They remain seeded so no learning area
- * disappears from the running site, and all stay unverified until
- * re-transcribed.
+ * Every core area in Grade 7 is now transcribed from its own module, so this
+ * list is empty. Religious Education is the one exception that needed a
+ * structural decision: the KICD designs publish Christian and Islamic
+ * Religious Education as separate subjects, each with its own strand
+ * structure and its own lesson count, so the single hand-written
+ * "Religious Education" area was replaced by Christian Religious Education
+ * (grade-7-cre.ts) and Islamic Religious Education follows the same way.
  *
- * Do not treat these as curriculum-accurate. Transcribe each subject from
- * its design PDF before relying on it.
+ * New pending entries belong here, and the filter below removes any name once
+ * its design has been transcribed — otherwise both copies appear in the
+ * subject picker.
  */
 /**
  * Annotated so every entry shares the optional Phase 2B fields. Without this,
@@ -26,49 +30,7 @@ import type { LearningAreaData } from "./index";
  * pending blocks, and a .filter() over it cannot narrow — so callers reading
  * subStrands.suggestedLessons or .sourceRef fail to typecheck.
  */
-const PENDING_LEARNING_AREAS: LearningAreaData[] = [
-    {
-      name: "Religious Education",
-      strands: [
-        {
-          name: "Foundations of Faith",
-          order: 1,
-          subStrands: [
-            {
-              name: "Sacred Texts",
-              order: 1,
-              slos: [
-                { description: "Identify and explain key teachings from sacred texts", cognitiveLevel: "understand" },
-                { description: "Apply teachings from sacred texts to daily life", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Ethics and Morality",
-          order: 2,
-          subStrands: [
-            {
-              name: "Moral Decision Making",
-              order: 1,
-              slos: [
-                { description: "Identify moral dilemmas and discuss possible responses", cognitiveLevel: "analyze" },
-                { description: "Apply moral principles in resolving conflicts", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Responsibility and Stewardship",
-              order: 2,
-              slos: [
-                { description: "Explain the concept of environmental stewardship", cognitiveLevel: "understand" },
-                { description: "Demonstrate responsible behaviour towards the environment", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-];
+const PENDING_LEARNING_AREAS: LearningAreaData[] = [];
 
 export const grade7Data = {
   level: 7,
@@ -82,6 +44,7 @@ export const grade7Data = {
     ...grade7SocialStudiesData.learningAreas,
     ...grade7AgricultureData.learningAreas,
     ...grade7CreativeArtsData.learningAreas,
+    ...grade7CreData.learningAreas,
     // Transcribed subjects come from their own modules; drop the stale
     // hand-written copies still sitting in PENDING_LEARNING_AREAS.
     ...PENDING_LEARNING_AREAS.filter(
@@ -94,7 +57,10 @@ export const grade7Data = {
         // The design merges Nutrition into the subject, so the stale standalone
         // "Agriculture" area must go or both names appear in the picker.
         area.name !== "Agriculture" &&
-        area.name !== "Creative Arts and Sports"
+        area.name !== "Creative Arts and Sports" &&
+        // Religious Education is published as two subjects, so the single
+        // seeded area would sit beside both of them.
+        area.name !== "Religious Education"
     ),
   ],
 };

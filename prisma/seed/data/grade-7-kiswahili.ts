@@ -311,7 +311,7 @@ export const grade7KiswahiliData: GradeData = {
                 { description: "kutambua majibu ya maamkuzi na maagano ya nyakati mbalimbali za siku", cognitiveLevel: "apply" },
                 { description: "kutambua maamkuzi yanayotumiwa na makundi mbalimbali ya kijamii pamoja na majibu ya maamkuzi hayo", cognitiveLevel: "apply" },
                 { description: "kutumia maamkuzi na maagano mwafaka katika miktadha mbalimbali", cognitiveLevel: "apply" },
-                { description: "kujenga mazoea ya kutumia maamkuzi na maagano mwafaka katika maisha ya kila siku ili kufanikisha mahusiano. maagano mwafaka kulingana na nyakati za siku", cognitiveLevel: "apply" },
+                { description: "kujenga mazoea ya kutumia maamkuzi na maagano mwafaka katika maisha ya kila siku ili kufanikisha mahusiano.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -487,7 +487,7 @@ export const grade7KiswahiliData: GradeData = {
                 { description: "kutambua aina za uzungumzaji wa kupasha habari", cognitiveLevel: "apply" },
                 { description: "kujadili vipengele vya kuzingatia katika kuzungumza ili kupasha habari", cognitiveLevel: "apply" },
                 { description: "kupasha habari kwa kutumia vipengele vifaavyo", cognitiveLevel: "apply" },
-                { description: "kuchangamkia kupasha habari mbalimbali ili kufanikisha mawasiliano. mwalimu, mgeni mwalikwa au katika vifaa vya kidijitali na kutathmini kama umetumia vipengele vifaavyo vya kuzungumza ili kupasha habari", cognitiveLevel: "apply" },
+                { description: "kuchangamkia kupasha habari mbalimbali ili kufanikisha mawasiliano.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -677,7 +677,7 @@ export const grade7KiswahiliData: GradeData = {
                 { description: "kutambua umuhimu wa kuzungumza kwa kuambatanisha na vitendo au ishara", cognitiveLevel: "apply" },
                 { description: "kujadili vitendo au ishara vya kuambatanisha na mazungumzo", cognitiveLevel: "apply" },
                 { description: "kutoa mazungumzo kwa kuyaambatanisha na", cognitiveLevel: "apply" },
-                { description: "kujenga mazoea ya kuzungumza kwa kuambatanisha na vitendo au ishara ili kufanikisha mawasiliano. mazungumzo yanayoambatanisha vitendo au ishara kutoka kwa mwalimu, mgeni mwalikwa au kwenye vifaa vya kidijitali", cognitiveLevel: "apply" },
+                { description: "kujenga mazoea ya kuzungumza kwa kuambatanisha na vitendo au ishara ili kufanikisha mawasiliano.", cognitiveLevel: "apply" },
               ],
             },
             {

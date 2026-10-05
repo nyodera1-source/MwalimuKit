@@ -171,13 +171,15 @@ describe("seeded curriculum", () => {
       g7.learningAreas.map((a) => a.name).sort(),
       [
         "Agriculture and Nutrition",
+        // Religious Education is published as two designs. The hand-written
+        // single area is gone; Islamic Religious Education arrives with it.
+        "Christian Religious Education",
         "Creative Arts and Sports",
         "English",
         "Integrated Science",
         "Kiswahili",
         "Mathematics",
         "Pre-Technical Studies",
-        "Religious Education",
         "Social Studies",
       ]
     );
@@ -190,7 +192,7 @@ describe("seeded curriculum", () => {
     // Social Studies 3 times and Creative Arts 12 times before being caught.
     const { allGrades } = await import("../prisma/seed/data/index");
     const TAIL =
-      /[\s,;.]*(?:(?:The|the)\s+)?(?:Learner|Mwanafunzi)(?:\s+(?:is|aelekezwe))?$/i;
+      /[\s,;.]*(?:(?:The|the)\s+)?(?:Learner|Mwanafunzi)s?(?:\s+(?:is|aelekezwe))?$/i;
 
     const offenders: string[] = [];
     for (const grade of allGrades) {
@@ -210,5 +212,36 @@ describe("seeded curriculum", () => {
     }
 
     assert.deepEqual(offenders, [], `terminator fragments found:\n${offenders.join("\n")}`);
+  });
+
+  test("no outcome carries text after its own full stop", async () => {
+    // A KICD outcome is one sentence, separated from the next by a comma. Where
+    // a table row spans a page break the two columns interleave, so the
+    // learning-experience column resumes inside an outcome — "... purposes.
+    // Galatians 5:22-24 and outline biblical teachings ..." — and a split
+    // terminator can arrive as "... purposes. Learners". Twenty outcomes were
+    // shipped in this state before the pattern was named.
+    //
+    // A stop closed by one or two letters is an abbreviation the design itself
+    // writes ("Kutambua k.m. kwenye orodha") and is not a leak.
+    const { allGrades } = await import("../prisma/seed/data/index");
+    const LEAK = /[A-Za-z]{4,}\.\s+[A-Za-z]/;
+
+    const offenders: string[] = [];
+    for (const grade of allGrades) {
+      for (const area of grade.learningAreas) {
+        for (const strand of area.strands) {
+          for (const sub of strand.subStrands) {
+            for (const slo of sub.slos) {
+              if (LEAK.test(slo.description)) {
+                offenders.push(`${grade.name} / ${area.name} / ${sub.name}: "${slo.description}"`);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    assert.deepEqual(offenders, [], `text after a full stop:\n${offenders.join("\n")}`);
   });
 });

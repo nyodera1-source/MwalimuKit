@@ -292,7 +292,7 @@ export const grade7MathematicsData: GradeData = {
                 { description: "solve angles in a parallelogram in different situation", cognitiveLevel: "apply" },
                 { description: "identify angle properties of polygons up to hexagon in different situations", cognitiveLevel: "apply" },
                 { description: "relate interior angles, exterior angles and the number of sides of a polygon", cognitiveLevel: "apply" },
-                { description: "solve angles and sides of polygons up to hexagon in learning situations,", cognitiveLevel: "apply" },
+                { description: "solve angles and sides of polygons up to hexagon in learning situations", cognitiveLevel: "apply" },
                 { description: "reflect on use of angles in objects within the environment.", cognitiveLevel: "apply" },
               ],
             },

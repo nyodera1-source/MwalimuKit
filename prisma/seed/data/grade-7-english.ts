@@ -253,7 +253,7 @@ export const grade7EnglishData: GradeData = {
                 { description: "distinguish between specific and general information from a listening text", cognitiveLevel: "apply" },
                 { description: "select specific information from a listening text", cognitiveLevel: "apply" },
                 { description: "listen and respond to texts on leadership", cognitiveLevel: "apply" },
-                { description: "emphasise the value of listening skills in communication. and answer questions posed by the speaker.", cognitiveLevel: "apply" },
+                { description: "emphasise the value of listening skills in communication.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -708,7 +708,7 @@ export const grade7EnglishData: GradeData = {
               slos: [
                 { description: "list ways of expressing views/opinions in different contexts", cognitiveLevel: "apply" },
                 { description: "use different expressions that indicate own views/opinions in a given text", cognitiveLevel: "apply" },
-                { description: "acknowledge the value of one’s views/opinions as a lifelong skill in communication. ways used to express opinions/views", cognitiveLevel: "apply" },
+                { description: "acknowledge the value of one’s views/opinions as a lifelong skill in communication.", cognitiveLevel: "apply" },
               ],
             },
             {
@@ -846,7 +846,7 @@ export const grade7EnglishData: GradeData = {
                 { description: "identify words with the sounds /v/, /f/, /n/ and /ŋ/ from a text", cognitiveLevel: "apply" },
                 { description: "pronounce words with the sounds /v/, /f/, /n/ and /ŋ/ in sentences", cognitiveLevel: "apply" },
                 { description: "use correct intonation for yes/no and wh- questions in varied contexts", cognitiveLevel: "apply" },
-                { description: "appreciate the importance of correct pronunciation and intonation in a conversation. following target sounds: v/ as in very; /f/ as in ferry /n/ as in been an /ŋ/ as in being", cognitiveLevel: "apply" },
+                { description: "appreciate the importance of correct pronunciation and intonation in a conversation.", cognitiveLevel: "apply" },
               ],
             },
             {
