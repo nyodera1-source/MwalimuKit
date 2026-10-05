@@ -182,4 +182,33 @@ describe("seeded curriculum", () => {
       ]
     );
   });
+
+  test("no outcome ends in a terminator fragment", async () => {
+    // The learning-experience cue is split by the PDF layout — "The learner is
+    // guided to:", "Learner is guided to:", "Mwanafunzi aelekezwe:" — so a stop
+    // marker can leave its leading words glued to the final outcome. This hit
+    // Social Studies 3 times and Creative Arts 12 times before being caught.
+    const { allGrades } = await import("../prisma/seed/data/index");
+    const TAIL =
+      /[\s,;.]*(?:(?:The|the)\s+)?(?:Learner|Mwanafunzi)(?:\s+(?:is|aelekezwe))?$/i;
+
+    const offenders: string[] = [];
+    for (const grade of allGrades) {
+      for (const area of grade.learningAreas) {
+        for (const strand of area.strands) {
+          for (const sub of strand.subStrands) {
+            for (const slo of sub.slos) {
+              if (TAIL.test(slo.description.trim())) {
+                offenders.push(
+                  `${grade.name} / ${area.name} / ${sub.name}: "${slo.description.slice(-40)}"`
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+
+    assert.deepEqual(offenders, [], `terminator fragments found:\n${offenders.join("\n")}`);
+  });
 });

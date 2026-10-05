@@ -5,6 +5,7 @@ import { grade7KiswahiliData } from "./grade-7-kiswahili";
 import { grade7IntegratedScienceData } from "./grade-7-integrated-science";
 import { grade7SocialStudiesData } from "./grade-7-social-studies";
 import { grade7AgricultureData } from "./grade-7-agriculture";
+import { grade7CreativeArtsData } from "./grade-7-creative-arts";
 import type { LearningAreaData } from "./index";
 
 /**
@@ -26,69 +27,6 @@ import type { LearningAreaData } from "./index";
  * subStrands.suggestedLessons or .sourceRef fail to typecheck.
  */
 const PENDING_LEARNING_AREAS: LearningAreaData[] = [
-    {
-      name: "Creative Arts and Sports",
-      strands: [
-        {
-          name: "Visual Arts",
-          order: 1,
-          subStrands: [
-            {
-              name: "Drawing and Design",
-              order: 1,
-              slos: [
-                { description: "Create observational drawings using different media", cognitiveLevel: "apply" },
-                { description: "Apply elements of design (line, shape, colour, texture) in compositions", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Performing Arts",
-          order: 2,
-          subStrands: [
-            {
-              name: "Music",
-              order: 1,
-              slos: [
-                { description: "Read and perform simple music notation", cognitiveLevel: "apply" },
-                { description: "Compose short musical pieces using simple rhythms", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Drama and Theatre",
-              order: 2,
-              slos: [
-                { description: "Perform short dramatic pieces with expression", cognitiveLevel: "apply" },
-                { description: "Analyse characters and themes in dramatic texts", cognitiveLevel: "analyze" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Sports",
-          order: 3,
-          subStrands: [
-            {
-              name: "Athletics",
-              order: 1,
-              slos: [
-                { description: "Perform sprinting techniques with proper form", cognitiveLevel: "apply" },
-                { description: "Demonstrate field events skills (shot put, high jump)", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Ball Games",
-              order: 2,
-              slos: [
-                { description: "Apply tactical play in team sports", cognitiveLevel: "apply" },
-                { description: "Officiate basic games applying standard rules", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
     {
       name: "Religious Education",
       strands: [
@@ -143,6 +81,7 @@ export const grade7Data = {
     ...grade7IntegratedScienceData.learningAreas,
     ...grade7SocialStudiesData.learningAreas,
     ...grade7AgricultureData.learningAreas,
+    ...grade7CreativeArtsData.learningAreas,
     // Transcribed subjects come from their own modules; drop the stale
     // hand-written copies still sitting in PENDING_LEARNING_AREAS.
     ...PENDING_LEARNING_AREAS.filter(
@@ -154,7 +93,8 @@ export const grade7Data = {
         area.name !== "Social Studies" &&
         // The design merges Nutrition into the subject, so the stale standalone
         // "Agriculture" area must go or both names appear in the picker.
-        area.name !== "Agriculture"
+        area.name !== "Agriculture" &&
+        area.name !== "Creative Arts and Sports"
     ),
   ],
 };
