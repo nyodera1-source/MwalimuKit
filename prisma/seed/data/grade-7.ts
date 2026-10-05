@@ -2,6 +2,7 @@ import { grade7MathematicsData } from "./grade-7-mathematics";
 import { grade7PreTechnicalStudiesData } from "./grade-7-pre-technical-studies";
 import { grade7EnglishData } from "./grade-7-english";
 import { grade7KiswahiliData } from "./grade-7-kiswahili";
+import { grade7IntegratedScienceData } from "./grade-7-integrated-science";
 
 /**
  * Grade 7 learning areas still awaiting transcription from the KICD designs.
@@ -16,91 +17,6 @@ import { grade7KiswahiliData } from "./grade-7-kiswahili";
  * its design PDF before relying on it.
  */
 const PENDING_LEARNING_AREAS = [
-    {
-      name: "Integrated Science",
-      strands: [
-        {
-          name: "Scientific Investigation",
-          order: 1,
-          subStrands: [
-            {
-              name: "Scientific Method",
-              order: 1,
-              slos: [
-                { description: "Design simple experiments to test hypotheses", cognitiveLevel: "apply" },
-                { description: "Record and present experimental data accurately", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Matter",
-          order: 2,
-          subStrands: [
-            {
-              name: "States of Matter",
-              order: 1,
-              slos: [
-                { description: "Explain changes of state in terms of particle theory", cognitiveLevel: "understand" },
-                { description: "Investigate factors affecting the rate of evaporation", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Properties of Matter",
-              order: 2,
-              slos: [
-                { description: "Classify matter as elements, compounds and mixtures", cognitiveLevel: "understand" },
-                { description: "Describe physical and chemical properties of common substances", cognitiveLevel: "understand" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Living Things",
-          order: 3,
-          subStrands: [
-            {
-              name: "Cells",
-              order: 1,
-              slos: [
-                { description: "Identify parts of plant and animal cells using a microscope", cognitiveLevel: "remember" },
-                { description: "Compare plant and animal cells", cognitiveLevel: "analyze" },
-              ],
-            },
-            {
-              name: "Classification of Living Things",
-              order: 2,
-              slos: [
-                { description: "Classify organisms into the five kingdoms", cognitiveLevel: "understand" },
-                { description: "Use dichotomous keys to identify organisms", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Force and Energy",
-          order: 4,
-          subStrands: [
-            {
-              name: "Force and Motion",
-              order: 1,
-              slos: [
-                { description: "Measure and calculate speed, distance and time", cognitiveLevel: "apply" },
-                { description: "Investigate the relationship between force, mass and acceleration", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Energy",
-              order: 2,
-              slos: [
-                { description: "Distinguish between kinetic and potential energy", cognitiveLevel: "understand" },
-                { description: "Describe energy transformations in everyday situations", cognitiveLevel: "understand" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
     {
       name: "Social Studies",
       strands: [
@@ -386,13 +302,15 @@ export const grade7Data = {
     ...grade7PreTechnicalStudiesData.learningAreas,
     ...grade7EnglishData.learningAreas,
     ...grade7KiswahiliData.learningAreas,
+    ...grade7IntegratedScienceData.learningAreas,
     // Transcribed subjects come from their own modules; drop the stale
     // hand-written copies still sitting in PENDING_LEARNING_AREAS.
     ...PENDING_LEARNING_AREAS.filter(
       (area) =>
         area.name !== "Pre-Technical Studies" &&
         area.name !== "English" &&
-        area.name !== "Kiswahili"
+        area.name !== "Kiswahili" &&
+        area.name !== "Integrated Science"
     ),
   ],
 };
