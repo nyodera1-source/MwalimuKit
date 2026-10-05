@@ -4,6 +4,8 @@ import { grade7EnglishData } from "./grade-7-english";
 import { grade7KiswahiliData } from "./grade-7-kiswahili";
 import { grade7IntegratedScienceData } from "./grade-7-integrated-science";
 import { grade7SocialStudiesData } from "./grade-7-social-studies";
+import { grade7AgricultureData } from "./grade-7-agriculture";
+import type { LearningAreaData } from "./index";
 
 /**
  * Grade 7 learning areas still awaiting transcription from the KICD designs.
@@ -17,62 +19,13 @@ import { grade7SocialStudiesData } from "./grade-7-social-studies";
  * Do not treat these as curriculum-accurate. Transcribe each subject from
  * its design PDF before relying on it.
  */
-const PENDING_LEARNING_AREAS = [
-    {
-      name: "Agriculture",
-      strands: [
-        {
-          name: "Soil Science",
-          order: 1,
-          subStrands: [
-            {
-              name: "Soil Formation and Types",
-              order: 1,
-              slos: [
-                { description: "Describe the process of soil formation", cognitiveLevel: "understand" },
-                { description: "Identify and classify soil types (sandy, clay, loam)", cognitiveLevel: "understand" },
-              ],
-            },
-            {
-              name: "Soil Fertility",
-              order: 2,
-              slos: [
-                { description: "Describe methods of maintaining soil fertility", cognitiveLevel: "understand" },
-                { description: "Explain the role of organic and inorganic fertilisers", cognitiveLevel: "understand" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Crop Production",
-          order: 2,
-          subStrands: [
-            {
-              name: "Crop Husbandry",
-              order: 1,
-              slos: [
-                { description: "Describe land preparation methods for crop planting", cognitiveLevel: "understand" },
-                { description: "Explain factors to consider when selecting planting materials", cognitiveLevel: "analyze" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Animal Production",
-          order: 3,
-          subStrands: [
-            {
-              name: "Livestock Husbandry",
-              order: 1,
-              slos: [
-                { description: "Describe housing and feeding requirements for cattle", cognitiveLevel: "understand" },
-                { description: "Identify common livestock diseases and control measures", cognitiveLevel: "remember" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
+/**
+ * Annotated so every entry shares the optional Phase 2B fields. Without this,
+ * grade7Data.learningAreas widens to a union of the transcribed modules and the
+ * pending blocks, and a .filter() over it cannot narrow — so callers reading
+ * subStrands.suggestedLessons or .sourceRef fail to typecheck.
+ */
+const PENDING_LEARNING_AREAS: LearningAreaData[] = [
     {
       name: "Creative Arts and Sports",
       strands: [
@@ -189,6 +142,7 @@ export const grade7Data = {
     ...grade7KiswahiliData.learningAreas,
     ...grade7IntegratedScienceData.learningAreas,
     ...grade7SocialStudiesData.learningAreas,
+    ...grade7AgricultureData.learningAreas,
     // Transcribed subjects come from their own modules; drop the stale
     // hand-written copies still sitting in PENDING_LEARNING_AREAS.
     ...PENDING_LEARNING_AREAS.filter(
@@ -197,7 +151,10 @@ export const grade7Data = {
         area.name !== "English" &&
         area.name !== "Kiswahili" &&
         area.name !== "Integrated Science" &&
-        area.name !== "Social Studies"
+        area.name !== "Social Studies" &&
+        // The design merges Nutrition into the subject, so the stale standalone
+        // "Agriculture" area must go or both names appear in the picker.
+        area.name !== "Agriculture"
     ),
   ],
 };

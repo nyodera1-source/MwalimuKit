@@ -170,7 +170,7 @@ describe("seeded curriculum", () => {
     assert.deepEqual(
       g7.learningAreas.map((a) => a.name).sort(),
       [
-        "Agriculture",
+        "Agriculture and Nutrition",
         "Creative Arts and Sports",
         "English",
         "Integrated Science",

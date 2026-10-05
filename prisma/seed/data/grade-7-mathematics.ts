@@ -22,7 +22,9 @@
  * verification stays "unverified" — no teacher has reviewed this yet.
  */
 
-export const grade7MathematicsData = {
+import type { GradeData } from "./index";
+
+export const grade7MathematicsData: GradeData = {
   level: 7,
   name: "Grade 7",
   learningAreas: [

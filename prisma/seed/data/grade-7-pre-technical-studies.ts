@@ -29,7 +29,9 @@ const SOURCE_PAGES: Record<string, number> = {
 const sourceRef = (strand: string, subStrand: string) =>
   `KICD G7 Pre-Technical Studies p.${SOURCE_PAGES[subStrand]}, Strand ${strand}, Sub-strand ${subStrand}`;
 
-export const grade7PreTechnicalStudiesData = {
+import type { GradeData } from "./index";
+
+export const grade7PreTechnicalStudiesData: GradeData = {
   level: 7,
   name: "Grade 7",
   learningAreas: [
