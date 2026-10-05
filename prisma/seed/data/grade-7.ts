@@ -1,6 +1,7 @@
 import { grade7MathematicsData } from "./grade-7-mathematics";
 import { grade7PreTechnicalStudiesData } from "./grade-7-pre-technical-studies";
 import { grade7EnglishData } from "./grade-7-english";
+import { grade7KiswahiliData } from "./grade-7-kiswahili";
 
 /**
  * Grade 7 learning areas still awaiting transcription from the KICD designs.
@@ -15,75 +16,6 @@ import { grade7EnglishData } from "./grade-7-english";
  * its design PDF before relying on it.
  */
 const PENDING_LEARNING_AREAS = [
-    {
-      name: "Kiswahili",
-      strands: [
-        {
-          name: "Kusikiliza na Kuzungumza",
-          order: 1,
-          subStrands: [
-            {
-              name: "Stadi za Mdomo",
-              order: 1,
-              slos: [
-                { description: "Kusikiliza na kuchambua hotuba na mazungumzo", cognitiveLevel: "analyze" },
-                { description: "Kutoa hotuba fupi kwa lugha fasaha", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Kusoma",
-          order: 2,
-          subStrands: [
-            {
-              name: "Ufahamu",
-              order: 1,
-              slos: [
-                { description: "Kusoma na kuelewa maandishi ya aina mbalimbali", cognitiveLevel: "understand" },
-                { description: "Kuchambua maandishi kwa kina", cognitiveLevel: "analyze" },
-              ],
-            },
-            {
-              name: "Fasihi",
-              order: 2,
-              slos: [
-                { description: "Kusoma na kujadili hadithi fupi", cognitiveLevel: "understand" },
-                { description: "Kutambua vipengele vya fasihi katika maandishi", cognitiveLevel: "analyze" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Sarufi",
-          order: 3,
-          subStrands: [
-            {
-              name: "Ngeli na Viambishi",
-              order: 1,
-              slos: [
-                { description: "Kutumia ngeli za nomino kwa usahihi katika sentensi", cognitiveLevel: "apply" },
-                { description: "Kutambua na kutumia viambishi vya nafsi, njeo na hali", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Kuandika",
-          order: 4,
-          subStrands: [
-            {
-              name: "Insha",
-              order: 1,
-              slos: [
-                { description: "Kuandika insha ya masimulizi na maelezo", cognitiveLevel: "apply" },
-                { description: "Kuandika barua rasmi na zisizo rasmi", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
     {
       name: "Integrated Science",
       strands: [
@@ -453,10 +385,14 @@ export const grade7Data = {
     ...grade7MathematicsData.learningAreas,
     ...grade7PreTechnicalStudiesData.learningAreas,
     ...grade7EnglishData.learningAreas,
-    // Pre-Technical Studies and English are transcribed; drop the stale
+    ...grade7KiswahiliData.learningAreas,
+    // Transcribed subjects come from their own modules; drop the stale
     // hand-written copies still sitting in PENDING_LEARNING_AREAS.
     ...PENDING_LEARNING_AREAS.filter(
-      (area) => area.name !== "Pre-Technical Studies" && area.name !== "English"
+      (area) =>
+        area.name !== "Pre-Technical Studies" &&
+        area.name !== "English" &&
+        area.name !== "Kiswahili"
     ),
   ],
 };

@@ -128,6 +128,8 @@ let strandCount = 0;
 let subStrandCount = 0;
 let sloCount = 0;
 let termsPlaced = 0;
+/** Learning areas whose citations carry no page; see the report below. */
+const pageless = new Set<string>();
 let lessonCountsPresent = 0;
 
 function auditGrade(grade: GradeData) {
@@ -262,12 +264,10 @@ function auditGrade(grade: GradeData) {
           );
         }
         if (sub.sourceRef && !/p\.\d+/.test(sub.sourceRef)) {
-          report(
-            "warning",
-            "sourceRef.no-page",
-            ssloc,
-            `sourceRef has no page reference: ${JSON.stringify(sub.sourceRef)}`
-          );
+          // Aggregate per learning area. Some designs print bare page numbers
+          // with no recoverable marker, and one warning per row would bury the
+          // findings that matter.
+          pageless.add(`${g} / ${la.name}`);
         }
 
         const seenDescriptions = new Map<string, number>();
@@ -375,6 +375,17 @@ for (const defect of sourceDefects) {
 }
 
 // ── report ──────────────────────────────────────────────────────────────────
+
+
+// One warning per learning area rather than per row.
+for (const area of pageless) {
+  report(
+    "warning",
+    "sourceRef.no-page",
+    area,
+    "citations omit a page number; this design does not expose recoverable page markers"
+  );
+}
 
 const errors = findings.filter((f) => f.severity === "error");
 const warnings = findings.filter((f) => f.severity === "warning");
