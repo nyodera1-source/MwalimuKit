@@ -25,7 +25,7 @@ describe("transcribed Grade 7 Pre-Technical Studies", () => {
   test("has 14 sub-strands totalling 120 suggested lessons", () => {
     assert.equal(subStrands.length, 14);
     assert.equal(
-      subStrands.reduce((total, subStrand) => total + subStrand.suggestedLessons, 0),
+      subStrands.reduce((total, subStrand) => total + (subStrand.suggestedLessons ?? 0), 0),
       120
     );
   });
@@ -33,7 +33,8 @@ describe("transcribed Grade 7 Pre-Technical Studies", () => {
   test("every sub-strand has outcomes, a citation and review status", () => {
     for (const subStrand of subStrands) {
       assert.ok(subStrand.slos.length > 0, `${subStrand.name} has no outcomes`);
-      assert.match(subStrand.sourceRef, /KICD G7 Pre-Technical Studies/);
+      assert.ok(subStrand.sourceRef, `${subStrand.name} has no citation`);
+      assert.match(subStrand.sourceRef!, /KICD G7 Pre-Technical Studies/);
       assert.equal(subStrand.verification, "unverified");
     }
   });

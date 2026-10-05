@@ -118,14 +118,16 @@ describe("transcribed Grade 7 Christian Religious Education", () => {
 });
 
 describe("Grade 7 Religious Education split", () => {
-  test("replaces the hand-written Religious Education area with the design", () => {
+  test("replaces the hand-written Religious Education area with both designs", () => {
     const names = grade7Data.learningAreas.map((a) => a.name);
     assert.equal(names.filter((n) => n === "Christian Religious Education").length, 1);
+    assert.equal(names.filter((n) => n === "Islamic Religious Education").length, 1);
     // The single seeded area is gone: KICD publishes Christian and Islamic as
-    // separate designs with their own strands and their own lesson counts, so
-    // keeping it would put three RE entries in the subject picker.
+    // separate designs with their own strands and their own lesson counts —
+    // 100 published against 121 — so keeping it would put three RE entries in
+    // the subject picker.
     assert.equal(names.filter((n) => n === "Religious Education").length, 0);
     assert.equal(new Set(names).size, names.length, "duplicate learning area");
-    assert.equal(grade7Data.learningAreas.length, 9);
+    assert.equal(grade7Data.learningAreas.length, 10);
   });
 });

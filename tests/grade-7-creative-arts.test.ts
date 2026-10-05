@@ -85,14 +85,16 @@ describe("Grade 7 assembly", () => {
       "Social Studies",
       "Agriculture and Nutrition",
       "Creative Arts and Sports",
-      // Religious Education is published as two designs; the single hand-written
-      // area is gone, replaced here by Christian Religious Education.
+      // Religious Education is published as two designs; the single
+      // hand-written area is gone, replaced by these two. Nine subjects, ten
+      // learning areas.
       "Christian Religious Education",
+      "Islamic Religious Education",
     ]) {
       assert.equal(names.filter((x) => x === n).length, 1, `${n} count`);
     }
     assert.equal(new Set(names).size, names.length, "duplicate learning area");
-    assert.equal(grade7Data.learningAreas.length, 9);
+    assert.equal(grade7Data.learningAreas.length, 10);
     assert.equal(names.filter((n) => n === "Religious Education").length, 0);
   });
 });

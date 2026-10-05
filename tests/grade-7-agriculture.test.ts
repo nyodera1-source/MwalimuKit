@@ -91,6 +91,6 @@ describe("Grade 7 assembly", () => {
       "stale standalone Agriculture area must not appear alongside the renamed subject"
     );
     assert.equal(new Set(names).size, names.length, "duplicate learning area");
-    assert.equal(grade7Data.learningAreas.length, 9);
+    assert.equal(grade7Data.learningAreas.length, 10);
   });
 });
