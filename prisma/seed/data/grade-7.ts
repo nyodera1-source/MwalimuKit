@@ -3,6 +3,7 @@ import { grade7PreTechnicalStudiesData } from "./grade-7-pre-technical-studies";
 import { grade7EnglishData } from "./grade-7-english";
 import { grade7KiswahiliData } from "./grade-7-kiswahili";
 import { grade7IntegratedScienceData } from "./grade-7-integrated-science";
+import { grade7SocialStudiesData } from "./grade-7-social-studies";
 
 /**
  * Grade 7 learning areas still awaiting transcription from the KICD designs.
@@ -17,122 +18,6 @@ import { grade7IntegratedScienceData } from "./grade-7-integrated-science";
  * its design PDF before relying on it.
  */
 const PENDING_LEARNING_AREAS = [
-    {
-      name: "Social Studies",
-      strands: [
-        {
-          name: "History",
-          order: 1,
-          subStrands: [
-            {
-              name: "History of Eastern Africa",
-              order: 1,
-              slos: [
-                { description: "Describe early trade contacts along the East African coast", cognitiveLevel: "understand" },
-                { description: "Explain the impact of colonialism on East African communities", cognitiveLevel: "analyze" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Geography",
-          order: 2,
-          subStrands: [
-            {
-              name: "Physical Features",
-              order: 1,
-              slos: [
-                { description: "Describe major physical features of Africa", cognitiveLevel: "understand" },
-                { description: "Explain the formation of major relief features", cognitiveLevel: "understand" },
-              ],
-            },
-            {
-              name: "Population",
-              order: 2,
-              slos: [
-                { description: "Describe factors influencing population distribution in Kenya", cognitiveLevel: "understand" },
-                { description: "Explain causes and effects of rural-urban migration", cognitiveLevel: "analyze" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Citizenship and Governance",
-          order: 3,
-          subStrands: [
-            {
-              name: "Governance",
-              order: 1,
-              slos: [
-                { description: "Describe the structure of Kenya's national government", cognitiveLevel: "understand" },
-                { description: "Explain the role of the three arms of government", cognitiveLevel: "understand" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Pre-Technical Studies",
-      strands: [
-        {
-          name: "Technical Drawing",
-          order: 1,
-          subStrands: [
-            {
-              name: "Basic Drawing",
-              order: 1,
-              slos: [
-                { description: "Use drawing instruments to construct geometric shapes", cognitiveLevel: "apply" },
-                { description: "Draw objects in first angle orthographic projection", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Materials and Tools",
-          order: 2,
-          subStrands: [
-            {
-              name: "Workshop Practice",
-              order: 1,
-              slos: [
-                { description: "Identify and use common workshop tools safely", cognitiveLevel: "apply" },
-                { description: "Classify materials as metals, wood, plastics and ceramics", cognitiveLevel: "understand" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Simple Electronics",
-          order: 3,
-          subStrands: [
-            {
-              name: "Basic Circuits",
-              order: 1,
-              slos: [
-                { description: "Identify electronic components (resistors, capacitors, LEDs)", cognitiveLevel: "remember" },
-                { description: "Construct simple circuits on a breadboard", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Structures",
-          order: 4,
-          subStrands: [
-            {
-              name: "Building Structures",
-              order: 1,
-              slos: [
-                { description: "Identify types of structures and their uses", cognitiveLevel: "remember" },
-                { description: "Build simple model structures using available materials", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
     {
       name: "Agriculture",
       strands: [
@@ -303,6 +188,7 @@ export const grade7Data = {
     ...grade7EnglishData.learningAreas,
     ...grade7KiswahiliData.learningAreas,
     ...grade7IntegratedScienceData.learningAreas,
+    ...grade7SocialStudiesData.learningAreas,
     // Transcribed subjects come from their own modules; drop the stale
     // hand-written copies still sitting in PENDING_LEARNING_AREAS.
     ...PENDING_LEARNING_AREAS.filter(
@@ -310,7 +196,8 @@ export const grade7Data = {
         area.name !== "Pre-Technical Studies" &&
         area.name !== "English" &&
         area.name !== "Kiswahili" &&
-        area.name !== "Integrated Science"
+        area.name !== "Integrated Science" &&
+        area.name !== "Social Studies"
     ),
   ],
 };
