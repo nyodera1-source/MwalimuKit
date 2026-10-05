@@ -1,4 +1,6 @@
 import { grade7MathematicsData } from "./grade-7-mathematics";
+import { grade7PreTechnicalStudiesData } from "./grade-7-pre-technical-studies";
+import { grade7EnglishData } from "./grade-7-english";
 
 /**
  * Grade 7 learning areas still awaiting transcription from the KICD designs.
@@ -13,92 +15,6 @@ import { grade7MathematicsData } from "./grade-7-mathematics";
  * its design PDF before relying on it.
  */
 const PENDING_LEARNING_AREAS = [
-    {
-      name: "English",
-      strands: [
-        {
-          name: "Listening and Speaking",
-          order: 1,
-          subStrands: [
-            {
-              name: "Oral Skills",
-              order: 1,
-              slos: [
-                { description: "Listen critically and evaluate oral presentations", cognitiveLevel: "analyze" },
-                { description: "Present information clearly using appropriate language", cognitiveLevel: "apply" },
-                { description: "Participate in structured debates and discussions", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Reading",
-          order: 2,
-          subStrands: [
-            {
-              name: "Comprehension",
-              order: 1,
-              slos: [
-                { description: "Read and analyse texts for both literal and inferential meaning", cognitiveLevel: "analyze" },
-                { description: "Identify literary devices in texts (simile, metaphor, personification)", cognitiveLevel: "understand" },
-              ],
-            },
-            {
-              name: "Literature",
-              order: 2,
-              slos: [
-                { description: "Read and respond to prose fiction", cognitiveLevel: "understand" },
-                { description: "Analyse character and plot development in narratives", cognitiveLevel: "analyze" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Grammar",
-          order: 3,
-          subStrands: [
-            {
-              name: "Sentence Structure",
-              order: 1,
-              slos: [
-                { description: "Construct compound and complex sentences", cognitiveLevel: "apply" },
-                { description: "Use direct and indirect speech correctly", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Tenses and Agreement",
-              order: 2,
-              slos: [
-                { description: "Use present perfect and past perfect tenses correctly", cognitiveLevel: "apply" },
-                { description: "Ensure subject-verb agreement in sentences", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "Writing",
-          order: 4,
-          subStrands: [
-            {
-              name: "Essay Writing",
-              order: 1,
-              slos: [
-                { description: "Write narrative essays with well-developed paragraphs", cognitiveLevel: "apply" },
-                { description: "Write descriptive essays using vivid language", cognitiveLevel: "apply" },
-              ],
-            },
-            {
-              name: "Functional Writing",
-              order: 2,
-              slos: [
-                { description: "Write formal and informal letters", cognitiveLevel: "apply" },
-                { description: "Write simple reports and notices", cognitiveLevel: "apply" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
     {
       name: "Kiswahili",
       strands: [
@@ -535,6 +451,12 @@ export const grade7Data = {
   name: "Grade 7",
   learningAreas: [
     ...grade7MathematicsData.learningAreas,
-    ...PENDING_LEARNING_AREAS,
+    ...grade7PreTechnicalStudiesData.learningAreas,
+    ...grade7EnglishData.learningAreas,
+    // Pre-Technical Studies and English are transcribed; drop the stale
+    // hand-written copies still sitting in PENDING_LEARNING_AREAS.
+    ...PENDING_LEARNING_AREAS.filter(
+      (area) => area.name !== "Pre-Technical Studies" && area.name !== "English"
+    ),
   ],
 };

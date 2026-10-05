@@ -120,6 +120,13 @@ model SubStrand {
   // checker warns rather than blocking. Do not convert these to NOT NULL.
   suggestedTerm    Int?      @map("suggested_term")     // 1 | 2 | 3
   suggestedLessons Int?      @map("suggested_lessons")  // drives the coverage checker
+  /// Intermediate grouping for subjects that publish one. English runs
+  /// theme -> skill strand -> unit, and the skill strand (Listening and
+  /// Speaking, Reading, Grammar in Use, Writing) repeats across all 15 themes,
+  /// so it cannot be a Strand: strands are unique per learning area. Kept as a
+  /// plain field so scheme builders can still group and blueprints can be
+  /// reused across themes.
+  skillStrand      String?   @map("skill_strand")
   verification     String    @default("unverified")     // unverified | verified | disputed
   verifiedBy       String?   @map("verified_by")
   verifiedAt       DateTime? @map("verified_at")

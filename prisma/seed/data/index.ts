@@ -40,6 +40,12 @@ export interface SubStrandData {
   /** Citation into the KICD curriculum design. Populated in Phase 2B. */
   sourceRef?: string;
   /**
+   * Intermediate grouping for subjects that publish one. English runs
+   * theme -> skill strand -> unit, and the skill strand repeats across every
+   * theme so it cannot be modelled as a Strand.
+   */
+  skillStrand?: string;
+  /**
    * "unverified" until a teacher has checked the row against the design.
    * "verified" requires a sourceRef — the audit script rejects the pairing.
    */

@@ -59,6 +59,7 @@ async function seedGrade(gradeData: GradeData) {
             suggestedTerm: ssData.suggestedTerm ?? null,
             suggestedLessons: ssData.suggestedLessons ?? null,
             sourceRef: ssData.sourceRef ?? null,
+            skillStrand: ssData.skillStrand ?? null,
           },
           create: {
             strandId: strand.id,
@@ -67,6 +68,7 @@ async function seedGrade(gradeData: GradeData) {
             suggestedTerm: ssData.suggestedTerm ?? null,
             suggestedLessons: ssData.suggestedLessons ?? null,
             sourceRef: ssData.sourceRef ?? null,
+            skillStrand: ssData.skillStrand ?? null,
           },
         });
         ssCount++;
