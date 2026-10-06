@@ -94,7 +94,7 @@ describe("Grade 7 assembly", () => {
       assert.equal(names.filter((x) => x === n).length, 1, `${n} count`);
     }
     assert.equal(new Set(names).size, names.length, "duplicate learning area");
-    assert.equal(grade7Data.learningAreas.length, 10);
+    assert.equal(grade7Data.learningAreas.length, 14);
     assert.equal(names.filter((n) => n === "Religious Education").length, 0);
   });
 });

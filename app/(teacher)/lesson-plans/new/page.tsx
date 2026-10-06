@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { LessonPlanForm } from "../lesson-plan-form";
 import type { SchemeConfig } from "@/lib/export/scheme-of-work-types";
 import { getLessonPlanHandoff } from "@/lib/schemes/lesson-plan-handoff";
-import { PILOT_GRADE_LEVEL, PILOT_LEARNING_AREA } from "@/lib/curriculum/pilot";
+import { PILOT_GRADE_LEVEL, PILOT_LEARNING_AREAS } from "@/lib/curriculum/pilot";
 
 export default async function NewLessonPlanPage({
   searchParams,
@@ -43,7 +43,7 @@ export default async function NewLessonPlanPage({
             learningArea: {
               id: scheme.learningAreaId,
               gradeId: scheme.gradeId,
-              name: PILOT_LEARNING_AREA,
+              name: { in: [...PILOT_LEARNING_AREAS] },
               grade: { level: PILOT_GRADE_LEVEL },
             },
           },

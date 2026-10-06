@@ -127,7 +127,7 @@ model SubStrand {
   /// plain field so scheme builders can still group and blueprints can be
   /// reused across themes.
   skillStrand      String?   @map("skill_strand")
-  verification     String    @default("unverified")     // unverified | verified | disputed
+  verification     String    @default("unverified")     // unverified | verified | disputed | superseded
   verifiedBy       String?   @map("verified_by")
   verifiedAt       DateTime? @map("verified_at")
   sourceRef        String?   @map("source_ref")         // KICD curriculum design + page

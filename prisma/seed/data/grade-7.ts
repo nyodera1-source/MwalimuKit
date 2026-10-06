@@ -8,6 +8,10 @@ import { grade7AgricultureData } from "./grade-7-agriculture";
 import { grade7CreativeArtsData } from "./grade-7-creative-arts";
 import { grade7CreData } from "./grade-7-cre";
 import { grade7IreData } from "./grade-7-ire";
+import { grade7FrenchData } from "./grade-7-french";
+import { grade7ArabicData } from "./grade-7-arabic";
+import { grade7HinduData } from "./grade-7-hindu";
+import { grade7GermanData } from "./grade-7-german";
 import type { LearningAreaData } from "./index";
 
 /**
@@ -35,6 +39,27 @@ import type { LearningAreaData } from "./index";
  */
 const PENDING_LEARNING_AREAS: LearningAreaData[] = [];
 
+function distinguishRepeatedSubStrands(areas: LearningAreaData[]): LearningAreaData[] {
+  return areas.map((area) => ({
+    ...area,
+    strands: area.strands.map((strand) => {
+      const counts = new Map<string, number>();
+      for (const sub of strand.subStrands) {
+        counts.set(sub.name, (counts.get(sub.name) ?? 0) + 1);
+      }
+      return {
+        ...strand,
+        subStrands: strand.subStrands.map((sub) => ({
+          ...sub,
+          name: (counts.get(sub.name) ?? 0) > 1
+            ? `${sub.name} (${strand.order}.${sub.order})`
+            : sub.name,
+        })),
+      };
+    }),
+  }));
+}
+
 export const grade7Data = {
   level: 7,
   name: "Grade 7",
@@ -49,6 +74,10 @@ export const grade7Data = {
     ...grade7CreativeArtsData.learningAreas,
     ...grade7CreData.learningAreas,
     ...grade7IreData.learningAreas,
+    ...grade7FrenchData.learningAreas,
+    ...distinguishRepeatedSubStrands(grade7ArabicData.learningAreas),
+    ...grade7HinduData.learningAreas,
+    ...distinguishRepeatedSubStrands(grade7GermanData.learningAreas),
     // Transcribed subjects come from their own modules; drop the stale
     // hand-written copies still sitting in PENDING_LEARNING_AREAS.
     ...PENDING_LEARNING_AREAS.filter(

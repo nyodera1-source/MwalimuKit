@@ -3,6 +3,10 @@ import pg from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../lib/generated/prisma/client.js";
 import { allGrades } from "../prisma/seed/data/index";
+import {
+  matchesTranscribedGrade7,
+  TRANSCRIBED_GRADE_7_AREAS,
+} from "../lib/curriculum/transcribed-grade-7";
 
 function expectedCurriculumSize() {
   let learningAreas = 0;
@@ -34,12 +38,42 @@ async function main() {
   const expected = expectedCurriculumSize();
 
   try {
-    const [grades, learningAreas, strands, subStrands, outcomes] = await Promise.all([
+    const [grades, learningAreas, strands, subStrands, outcomes, grade7] = await Promise.all([
       prisma.grade.count(),
       prisma.learningArea.count(),
       prisma.strand.count(),
       prisma.subStrand.count(),
       prisma.sLO.count(),
+      prisma.grade.findUnique({
+        where: { level: 7 },
+        select: {
+          learningAreas: {
+            where: { name: { in: TRANSCRIBED_GRADE_7_AREAS } },
+            select: {
+              name: true,
+              strands: {
+                select: {
+                  name: true,
+                  order: true,
+                  subStrands: {
+                    select: {
+                      name: true,
+                      order: true,
+                      verification: true,
+                      suggestedLessons: true,
+                      sourceRef: true,
+                      skillStrand: true,
+                      slos: {
+                        select: { description: true, order: true, verification: true },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
     ]);
 
     const complete =
@@ -49,23 +83,21 @@ async function main() {
       subStrands >= expected.subStrands &&
       outcomes >= expected.outcomes;
 
-    if (complete) {
-      console.log("Curriculum data is already present; seed skipped.");
+    if (complete && matchesTranscribedGrade7(grade7?.learningAreas ?? [])) {
+      console.log("Curriculum data matches the transcribed Grade 7 subjects.");
       return;
     }
 
-    console.log(
-      `Curriculum incomplete (${grades}/${expected.grades} grades, ` +
-        `${subStrands}/${expected.subStrands} sub-strands). Running one-time seed...`
+    throw new Error(
+      `Curriculum is not current (${grades}/${expected.grades} grades, ` +
+        `${subStrands}/${expected.subStrands} sub-strands). ` +
+        "Apply pending migrations and explicitly sync the transcribed Grade 7 subjects before building."
     );
   } finally {
     await prisma.$disconnect();
     await pool.end();
   }
 
-  // seed.ts owns and closes its own connection. Import only after the guard
-  // confirms that production needs recovery.
-  await import("../prisma/seed");
 }
 
 main().catch((error) => {

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { PILOT_GRADE_LEVEL, PILOT_LEARNING_AREA } from "@/lib/curriculum/pilot";
+import { PILOT_GRADE_LEVEL, PILOT_LEARNING_AREAS } from "@/lib/curriculum/pilot";
 
 /**
  * Phase 2A — server-side curriculum relationship validation.
@@ -42,7 +42,7 @@ export async function validateGradeAndLearningArea(
     where: {
       id: learningAreaId,
       gradeId,
-      name: PILOT_LEARNING_AREA,
+      name: { in: [...PILOT_LEARNING_AREAS] },
       grade: { level: PILOT_GRADE_LEVEL },
     },
     select: { id: true },
@@ -76,17 +76,31 @@ export async function validateCurriculumChain(input: {
   const subStrand = await prisma.subStrand.findFirst({
     where: {
       id: subStrandId,
+      verification: { not: "superseded" },
+      sourceRef: { startsWith: "KICD G7 " },
       strand: {
         id: strandId,
+        subStrands: {
+          some: {
+            verification: { not: "superseded" },
+            sourceRef: { startsWith: "KICD G7 " },
+          },
+        },
         learningArea: {
           id: learningAreaId,
           gradeId,
-          name: PILOT_LEARNING_AREA,
+          name: { in: [...PILOT_LEARNING_AREAS] },
           grade: { level: PILOT_GRADE_LEVEL },
         },
       },
     },
-    select: { id: true, slos: { select: { id: true } } },
+    select: {
+      id: true,
+      slos: {
+        where: { verification: { not: "superseded" } },
+        select: { id: true },
+      },
+    },
   });
 
   if (!subStrand) return fail(GENERIC);

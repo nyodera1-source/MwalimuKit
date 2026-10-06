@@ -128,6 +128,6 @@ describe("Grade 7 Religious Education split", () => {
     // the subject picker.
     assert.equal(names.filter((n) => n === "Religious Education").length, 0);
     assert.equal(new Set(names).size, names.length, "duplicate learning area");
-    assert.equal(grade7Data.learningAreas.length, 10);
+    assert.equal(grade7Data.learningAreas.length, 14);
   });
 });

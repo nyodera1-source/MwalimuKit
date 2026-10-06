@@ -99,7 +99,7 @@ describe("Grade 7 assembly", () => {
   test("Mathematics leads the learning areas and pending subjects follow", () => {
     assert.equal(grade7Data.level, 7);
     assert.equal(grade7Data.learningAreas[0].name, "Mathematics");
-    assert.equal(grade7Data.learningAreas.length, 10);
+    assert.equal(grade7Data.learningAreas.length, 14);
   });
 
   test("no duplicate learning area names", () => {

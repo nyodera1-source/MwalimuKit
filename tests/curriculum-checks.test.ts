@@ -164,18 +164,22 @@ describe("seeded curriculum", () => {
     assert.equal(allGrades.length, 10);
   });
 
-  test("Grade 7 retains all ten learning areas", async () => {
+  test("Grade 7 retains all fourteen learning areas", async () => {
     const { allGrades } = await import("../prisma/seed/data/index");
     const g7 = allGrades.find((g) => g.level === 7)!;
     assert.deepEqual(
       g7.learningAreas.map((a) => a.name).sort(),
       [
         "Agriculture and Nutrition",
+        "Arabic",
         // Religious Education is published as two designs. The hand-written
         // single area is gone; both designs are transcribed in its place.
         "Christian Religious Education",
         "Creative Arts and Sports",
         "English",
+        "French",
+        "German",
+        "Hindu Religious Education",
         "Integrated Science",
         "Islamic Religious Education",
         "Kiswahili",

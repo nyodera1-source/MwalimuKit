@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import {
   PILOT_GRADE_LEVEL,
-  PILOT_LEARNING_AREA,
+  PILOT_LEARNING_AREAS,
   PILOT_RESPONSE_HEADERS,
 } from "@/lib/curriculum/pilot";
 
@@ -24,15 +24,24 @@ export async function GET(request: NextRequest) {
     const ss = await prisma.subStrand.findFirst({
       where: {
         id: subStrandId,
+        verification: { not: "superseded" },
+        sourceRef: { startsWith: "KICD G7 " },
         strand: {
+          subStrands: {
+            some: {
+              verification: { not: "superseded" },
+              sourceRef: { startsWith: "KICD G7 " },
+            },
+          },
           learningArea: {
-            name: PILOT_LEARNING_AREA,
+            name: { in: [...PILOT_LEARNING_AREAS] },
             grade: { level: PILOT_GRADE_LEVEL },
           },
         },
       },
       include: {
         slos: {
+          where: { verification: { not: "superseded" } },
           orderBy: { order: "asc" },
           select: { description: true, cognitiveLevel: true },
         },
@@ -55,17 +64,28 @@ export async function GET(request: NextRequest) {
     const s = await prisma.strand.findFirst({
       where: {
         id: strandId,
+        subStrands: {
+          some: {
+            verification: { not: "superseded" },
+            sourceRef: { startsWith: "KICD G7 " },
+          },
+        },
         learningArea: {
-          name: PILOT_LEARNING_AREA,
+          name: { in: [...PILOT_LEARNING_AREAS] },
           grade: { level: PILOT_GRADE_LEVEL },
         },
       },
       include: {
         learningArea: { select: { name: true } },
         subStrands: {
+          where: {
+            verification: { not: "superseded" },
+            sourceRef: { startsWith: "KICD G7 " },
+          },
           orderBy: { order: "asc" },
           select: {
             slos: {
+              where: { verification: { not: "superseded" } },
               orderBy: { order: "asc" },
               select: { description: true, cognitiveLevel: true },
             },

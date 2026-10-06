@@ -19,6 +19,10 @@ export async function GET(req: NextRequest) {
         id: true,
         name: true,
         subStrands: {
+          where: {
+            verification: { not: "superseded" },
+            sourceRef: { startsWith: "KICD G7 " },
+          },
           orderBy: { order: "asc" },
           select: {
             id: true,
@@ -28,6 +32,7 @@ export async function GET(req: NextRequest) {
             verification: true,
             sourceRef: true,
             slos: {
+              where: { verification: { not: "superseded" } },
               orderBy: { order: "asc" },
               select: { id: true, description: true },
             },
