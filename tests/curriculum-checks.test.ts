@@ -122,7 +122,7 @@ describe("seeded curriculum", () => {
     assert.ok(pressure?.includes(ch(0x03c1)), "Grade 10 Greek rho intact");
   });
 
-  test("per-grade scale is unchanged outside Grade 7", async () => {
+  test("per-grade scale changes only for actively transcribed grades", async () => {
     const { allGrades } = await import("../prisma/seed/data/index");
 
     const count = (g: (typeof allGrades)[number]) => {
@@ -149,15 +149,15 @@ describe("seeded curriculum", () => {
       4: { areas: 10, strands: 38, subStrands: 78, outcomes: 212 },
       5: { areas: 10, strands: 32, subStrands: 51, outcomes: 109 },
       6: { areas: 10, strands: 35, subStrands: 72, outcomes: 191 },
-      // Grade 7 is intentionally absent: Grade 7 Mathematics has been replaced
-      // with the transcribed design and the other subjects are still pending.
-      8: { areas: 9, strands: 33, subStrands: 67, outcomes: 189 },
-      9: { areas: 9, strands: 32, subStrands: 47, outcomes: 101 },
+      // Grades 7 and 8 are intentionally absent: Grade 7 is fully
+      // transcribed, while Grade 8 is being transcribed in parallel.
+      // Grade 9 now contains the 13 source-backed learning areas.
+      9: { areas: 13, strands: 79, subStrands: 316, outcomes: 1252 },
       10: { areas: 39, strands: 106, subStrands: 157, outcomes: 316 },
     };
 
     for (const g of allGrades) {
-      if (g.level === 7) continue;
+      if (g.level === 7 || g.level === 8) continue;
       assert.deepEqual(count(g), expected[g.level], `Grade ${g.level} shape changed`);
     }
 

@@ -7,6 +7,7 @@ export interface LessonPlanHandoff {
   sloIds: string[];
   content: {
     objectives: string;
+    keyInquiryQuestion?: string;
     resources: string;
     activities: { development: string };
   };
@@ -32,6 +33,7 @@ export function getLessonPlanHandoff(
     sloIds: [...new Set(entry.sloIds)],
     content: {
       objectives: entry.objectives,
+      ...(entry.keyInquiryQuestion ? { keyInquiryQuestion: entry.keyInquiryQuestion } : {}),
       resources: entry.tlAids,
       activities: { development: entry.tlActivities },
     },

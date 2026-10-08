@@ -7,10 +7,8 @@ import {
   allGrades,
   type GradeData,
 } from "./seed/data/index";
-import {
-  isTranscribedGrade7Area,
-  transcribedGrade7Areas,
-} from "../lib/curriculum/transcribed-grade-7";
+import { transcribedGrade7Areas } from "../lib/curriculum/transcribed-grade-7";
+import { isTranscribedCurriculumArea } from "../lib/curriculum/transcribed-curriculum";
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -40,7 +38,7 @@ async function seedGrade(gradeData: GradeData) {
   let laCount = 0, strandCount = 0, ssCount = 0, sloCount = 0;
 
   for (const [laIndex, laData] of gradeData.learningAreas.entries()) {
-    const transcribed = isTranscribedGrade7Area(gradeData.level, laData.name);
+    const transcribed = isTranscribedCurriculumArea(gradeData.level, laData.name);
     const la = await prisma.learningArea.upsert({
       where: { gradeId_name: { gradeId: grade.id, name: laData.name } },
       update: { order: laIndex + 1 },

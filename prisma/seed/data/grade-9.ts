@@ -1,4 +1,19 @@
-export const grade9Data = {
+import { grade9ArabicData } from "./grade-9-arabic";
+import { grade9AgricultureAndNutritionData } from "./grade-9-agriculture-and-nutrition";
+import { grade9ChristianReligiousEducationData } from "./grade-9-christian-religious-education";
+import { grade9CreativeArtsAndSportsData } from "./grade-9-creative-arts-and-sports";
+import { grade9EnglishData } from "./grade-9-english";
+import { grade9FrenchData } from "./grade-9-french";
+import { grade9HinduReligiousEducationData } from "./grade-9-hindu-religious-education";
+import { grade9IntegratedScienceData } from "./grade-9-integrated-science";
+import { grade9IslamicReligiousEducationData } from "./grade-9-islamic-religious-education";
+import { grade9KiswahiliData } from "./grade-9-kiswahili";
+import { grade9MathematicsData } from "./grade-9-mathematics";
+import { grade9PreTechnicalStudiesData } from "./grade-9-pre-technical-studies";
+import { grade9SocialStudiesData } from "./grade-9-social-studies";
+import type { GradeData } from "./index";
+
+const legacyGrade9Data: GradeData = {
   level: 9,
   name: "Grade 9",
   learningAreas: [
@@ -622,5 +637,38 @@ export const grade9Data = {
         },
       ],
     },
+  ],
+};
+
+export const grade9Data: GradeData = {
+  ...legacyGrade9Data,
+  learningAreas: [
+    ...grade9MathematicsData.learningAreas,
+    ...grade9EnglishData.learningAreas,
+    ...grade9KiswahiliData.learningAreas,
+    ...grade9IntegratedScienceData.learningAreas,
+    ...grade9SocialStudiesData.learningAreas,
+    ...grade9PreTechnicalStudiesData.learningAreas,
+    ...legacyGrade9Data.learningAreas.filter(
+      (area) =>
+        ![
+          "Mathematics",
+          "English",
+          "Kiswahili",
+          "Integrated Science",
+          "Social Studies",
+          "Pre-Technical Studies",
+          "Agriculture",
+          "Creative Arts and Sports",
+          "Religious Education",
+        ].includes(area.name)
+    ),
+    ...grade9AgricultureAndNutritionData.learningAreas,
+    ...grade9CreativeArtsAndSportsData.learningAreas,
+    ...grade9ArabicData.learningAreas,
+    ...grade9FrenchData.learningAreas,
+    ...grade9ChristianReligiousEducationData.learningAreas,
+    ...grade9HinduReligiousEducationData.learningAreas,
+    ...grade9IslamicReligiousEducationData.learningAreas,
   ],
 };

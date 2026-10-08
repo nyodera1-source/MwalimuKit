@@ -50,24 +50,24 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
   doc.addPage();
   let y = margin;
 
-  // Column widths for 8 columns (A4 landscape = 297mm, content ≈ 277mm)
-  const colRatios = [10, 10, 28, 30, 52, 50, 34, 35];
+  // Keep the printable table focused; remarks remain editable in the app.
+  const colRatios = [8, 8, 20, 24, 43, 51, 28, 35, 31];
   const totalRatio = colRatios.reduce((a, b) => a + b, 0);
   const cols = colRatios.map((r) => (r / totalRatio) * contentWidth);
 
   const headers = [
-    "WK", "LSN", "STRAND", "SUB-STRAND", "OBJECTIVES",
-    "T/L ACTIVITIES", "T/L AIDS", "REFERENCE",
+    "WK", "LSN", "STRAND", "SUB-STRAND", "OUTCOMES",
+    "ACTIVITIES", "KEY INQUIRY", "RESOURCES / REF", "ASSESSMENT",
   ];
 
   const HEADER_COLOR = [55, 65, 81] as const; // Professional dark gray
   const LIGHT_BG = [249, 250, 251] as const; // Light gray background
-  const LINE_HEIGHT = 3.5;
+  const LINE_HEIGHT = 3.2;
 
   function drawPageHeader() {
     // School name top-left on every page
     if (data.schoolName) {
-      doc.setFontSize(8);
+      doc.setFontSize(7);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(100, 100, 100);
       doc.text(data.schoolName, margin, y);
@@ -174,15 +174,16 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
       entry.subTopic || "—",
       entry.objectives || "—",
       entry.tlActivities || "—",
-      entry.tlAids || "—",
-      entry.reference || "—",
+      entry.keyInquiryQuestion || "—",
+      [entry.tlAids, entry.reference].filter(Boolean).join("; ") || "—",
+      entry.assessmentMethod || "—",
     ];
 
     // Calculate row height
     let maxLines = 1;
     const cellTexts: string[][] = [];
     for (let i = 0; i < values.length; i++) {
-      doc.setFontSize(8);
+      doc.setFontSize(7);
       const lines = doc.splitTextToSize(values[i], cols[i] - 3);
       cellTexts.push(lines);
       maxLines = Math.max(maxLines, lines.length);
@@ -194,7 +195,7 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
     let x = margin;
     for (let i = 0; i < cols.length; i++) {
       doc.rect(x, y, cols[i], rowHeight, "D");
-      doc.setFontSize(8);
+      doc.setFontSize(7);
       doc.setFont("helvetica", i < 2 ? "bold" : "normal");
       doc.setTextColor(0, 0, 0);
       doc.text(cellTexts[i], x + 1.5, y + 3);

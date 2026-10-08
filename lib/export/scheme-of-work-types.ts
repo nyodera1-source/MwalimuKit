@@ -13,6 +13,8 @@ export interface SchemeLessonEntry {
   tlActivities: string;
   tlAids: string;
   reference: string;
+  keyInquiryQuestion?: string;
+  assessmentMethod?: string;
   remarks: string;
   strandId?: string;
   subStrandId?: string;

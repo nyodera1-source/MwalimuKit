@@ -166,8 +166,10 @@ export default async function PreviewSchemePage({
                       <th className="border p-2 text-left">SUB-STRAND</th>
                       <th className="border p-2 text-left">OBJECTIVES</th>
                       <th className="border p-2 text-left">T/L ACTIVITIES</th>
-                      <th className="border p-2 text-left">T/L AIDS</th>
+                      <th className="border p-2 text-left">KEY INQUIRY</th>
+                      <th className="border p-2 text-left">RESOURCES</th>
                       <th className="border p-2 text-left">REFERENCE</th>
+                      <th className="border p-2 text-left">ASSESSMENT</th>
                       <th className="border p-2 text-left">REMARKS</th>
                       <th className="border p-2 text-center w-12">PLAN</th>
                     </tr>
@@ -178,7 +180,7 @@ export default async function PreviewSchemePage({
                         return (
                           <tr key={`break-${idx}`} className="bg-amber-50">
                             <td className="border p-2 font-bold text-center">{item.weekLabel}</td>
-                            <td colSpan={9} className="border p-2 text-center italic font-medium text-amber-700">
+                            <td colSpan={11} className="border p-2 text-center italic font-medium text-amber-700">
                               {item.title}
                             </td>
                           </tr>
@@ -193,8 +195,10 @@ export default async function PreviewSchemePage({
                           <td className="border p-2">{entry.subTopic || "—"}</td>
                           <td className="border p-2 whitespace-pre-wrap">{entry.objectives || "—"}</td>
                           <td className="border p-2 whitespace-pre-wrap">{entry.tlActivities || "—"}</td>
+                          <td className="border p-2 whitespace-pre-wrap">{entry.keyInquiryQuestion || "—"}</td>
                           <td className="border p-2 whitespace-pre-wrap">{entry.tlAids || "—"}</td>
                           <td className="border p-2 whitespace-pre-wrap">{entry.reference || "—"}</td>
+                          <td className="border p-2 whitespace-pre-wrap">{entry.assessmentMethod || "—"}</td>
                           <td className="border p-2 whitespace-pre-wrap">{entry.remarks || ""}</td>
                           <td className="border p-1 text-center">
                             {entry.strandId && entry.subStrandId && entry.sloIds?.length ? (

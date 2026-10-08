@@ -23,6 +23,7 @@ import {
   buildPacedLessonBatches,
   summarizePacing,
 } from "@/lib/curriculum/pacing";
+import { buildLessonGuidance } from "@/lib/schemes/lesson-guidance";
 import {
   ArrowRight,
   ArrowLeft,
@@ -70,6 +71,8 @@ interface LessonEntry {
   tlActivities: string;
   tlAids: string;
   reference: string;
+  keyInquiryQuestion?: string;
+  assessmentMethod?: string;
   remarks: string;
   strandId?: string;
   subStrandId?: string;
@@ -357,99 +360,6 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     setBreaks((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ─── Helpers for auto-filling T/L Activities & AIDS ───
-
-  // Counter to rotate intro styles across calls so consecutive lessons
-  // covering the same sub-strand get different phrasing.
-  function makeTlActivities(
-    subTopicNames: string,
-    objectives: string,
-    styleIndex = 0
-  ): string {
-    const subtopics = subTopicNames.split("\n").filter(Boolean);
-    const parts: string[] = [];
-    const obj = objectives.toLowerCase();
-
-    // Rotate through varied intro phrases across calls
-    const introStyles = [
-      (s: string) => `Discussion on ${s}.`,
-      (s: string) => `Teacher exposition on ${s}.`,
-      (s: string) => `Learner-centered exploration of ${s}.`,
-      (s: string) => `Group work on ${s}.`,
-      (s: string) => `Guided discovery on ${s}.`,
-      (s: string) => `Think-pair-share on ${s}.`,
-      (s: string) => `Interactive lesson on ${s}.`,
-      (s: string) => `Demonstration and explanation of ${s}.`,
-    ];
-    for (let i = 0; i < subtopics.length; i++) {
-      const idx = (styleIndex + i) % introStyles.length;
-      parts.push(introStyles[idx](subtopics[i].trim()));
-    }
-
-    // Objective-specific activities — use alternating phrasings
-    const explainAlts = [
-      "Teacher-led exposition with real-life examples.",
-      "Guided explanation using illustrations and examples.",
-      "Oral presentation by teacher with learner note-taking.",
-    ];
-    const identifyAlts = [
-      "Brainstorming session and classification exercise.",
-      "Sorting and grouping activity in small groups.",
-      "Learners identify and list key items individually, then share.",
-    ];
-    const calculateAlts = [
-      "Worked examples and practice problems.",
-      "Step-by-step problem solving on the board, then individual practice.",
-      "Guided calculation exercises with peer checking.",
-    ];
-
-    if (obj.includes("explain") || obj.includes("describe")) {
-      parts.push(explainAlts[styleIndex % explainAlts.length]);
-    }
-    if (obj.includes("identify") || obj.includes("classify") || obj.includes("list")) {
-      parts.push(identifyAlts[styleIndex % identifyAlts.length]);
-    }
-    if (obj.includes("calculate") || obj.includes("determine") || obj.includes("measure")) {
-      parts.push(calculateAlts[styleIndex % calculateAlts.length]);
-    }
-    if (obj.includes("solve")) {
-      parts.push("Problem-solving exercises in pairs.");
-    }
-    if (obj.includes("draw") || obj.includes("sketch") || obj.includes("diagram") || obj.includes("construct")) {
-      parts.push("Guided drawing and labelling.");
-    }
-    if (obj.includes("compare") || obj.includes("contrast") || obj.includes("differentiate")) {
-      parts.push("Group comparison and discussion activity.");
-    }
-    if (obj.includes("investigate") || obj.includes("experiment") || obj.includes("observe")) {
-      parts.push("Practical investigation/experiment.");
-    }
-    if (obj.includes("apply") || obj.includes("use")) {
-      parts.push("Application of concepts to real-life situations.");
-    }
-    if (obj.includes("analyse") || obj.includes("analyze") || obj.includes("interpret")) {
-      parts.push("Data analysis and interpretation exercise.");
-    }
-    if (obj.includes("formulate") || obj.includes("derive")) {
-      parts.push("Derivation and formulation exercises.");
-    }
-
-    // Vary the closing activity
-    const closings = ["Q&A session.", "Recap and Q&A.", "Oral questions and summary.", "Review and learner feedback."];
-    parts.push(closings[styleIndex % closings.length]);
-    return parts.join(" ");
-  }
-
-  function makeTlAids(_refBook: string, objectives: string = ""): string {
-    const aids: string[] = ["Textbook", "chalkboard", "chalk"];
-    const obj = objectives.toLowerCase();
-    if (obj.includes("chart") || obj.includes("graph") || obj.includes("table")) aids.push("charts");
-    if (obj.includes("diagram") || obj.includes("draw")) aids.push("diagrams");
-    if (obj.includes("model") || obj.includes("specimen")) aids.push("models/specimens");
-    if (obj.includes("experiment") || obj.includes("practical")) aids.push("lab equipment");
-    return aids.join(", ");
-  }
-
   // Generate entries grouped by week (matching reference PDF format)
   const generateEntries = () => {
     const actualReferenceBook =
@@ -497,15 +407,22 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
       const carryEnd = tw.startLesson + count - 1;
 
       const objectives = carryoverObjectives || "";
+      const carryoverGuidance = buildLessonGuidance(
+        cascadeNames.learningArea || "",
+        carryoverSubTopic,
+        carryoverObjectives || carryoverSubTopic
+      );
       newEntries.push({
         week: tw.week,
         lesson: tw.startLesson === carryEnd ? String(tw.startLesson) : `${tw.startLesson}-${carryEnd}`,
         topic: carryoverTopic,
         subTopic: carryoverSubTopic,
         objectives,
-        tlActivities: makeTlActivities(carryoverSubTopic, objectives),
-        tlAids: makeTlAids(actualReferenceBook, objectives),
+        tlActivities: carryoverGuidance.activities,
+        tlAids: carryoverGuidance.resources,
         reference: actualReferenceBook || "",
+        keyInquiryQuestion: carryoverGuidance.inquiry,
+        assessmentMethod: carryoverGuidance.assessment,
         remarks: "Spillover from previous term",
       });
 
@@ -582,6 +499,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
       }
     );
     let curriculumLessonIndex = 0;
+    const outcomeRepeats = new Map<string, number>();
 
     for (const tw of remainingWeeks) {
       const lessonsInWeek = tw.endLesson - tw.startLesson + 1;
@@ -604,15 +522,26 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
         const subStrandIds = [...new Set(lessonSlos.map((s) => s.subStrandId))];
         const hasSingleCurriculumSource = strandIds.length === 1 && subStrandIds.length === 1;
 
+        const guidanceKey = lessonSlos.map((s) => s.sloId).join("|");
+        const repeatIndex = outcomeRepeats.get(guidanceKey) || 0;
+        outcomeRepeats.set(guidanceKey, repeatIndex + 1);
+        const guidance = buildLessonGuidance(
+          cascadeNames.learningArea || "",
+          subTopicNames,
+          lessonSlos.map((s) => s.sloDescription).join(" "),
+          repeatIndex
+        );
         newEntries.push({
           week: tw.week,
           lesson: String(lessonNum),
           topic: topicName,
           subTopic: subTopicNames,
           objectives,
-          tlActivities: makeTlActivities(subTopicNames, objectives, curriculumLessonIndex),
-          tlAids: makeTlAids(actualReferenceBook, objectives),
+          tlActivities: guidance.activities,
+          tlAids: guidance.resources,
           reference: actualReferenceBook || "",
+          keyInquiryQuestion: guidance.inquiry,
+          assessmentMethod: guidance.assessment,
           remarks: "",
           strandId: hasSingleCurriculumSource ? strandIds[0] : undefined,
           subStrandId: hasSingleCurriculumSource ? subStrandIds[0] : undefined,
@@ -1272,8 +1201,10 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                         <th className="border p-1.5 text-left">SUB-STRAND</th>
                         <th className="border p-1.5 text-left">OBJECTIVES</th>
                         <th className="border p-1.5 text-left">T/L ACTIVITIES</th>
-                        <th className="border p-1.5 text-left">T/L AIDS</th>
+                        <th className="border p-1.5 text-left">KEY INQUIRY</th>
+                        <th className="border p-1.5 text-left">RESOURCES</th>
                         <th className="border p-1.5 text-left">REFERENCE</th>
+                        <th className="border p-1.5 text-left">ASSESSMENT</th>
                         <th className="border p-1.5 text-left">REMARKS</th>
                       </tr>
                     </thead>
@@ -1283,7 +1214,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                           return (
                             <tr key={`brk-${ri}`} className="bg-amber-50">
                               <td className="border p-1.5 font-bold text-center">{row.weekLabel}</td>
-                              <td colSpan={8} className="border p-1.5 text-center font-medium text-amber-700">
+                              <td colSpan={10} className="border p-1.5 text-center font-medium text-amber-700">
                                 {row.b.title || "Break"}
                               </td>
                             </tr>
@@ -1307,6 +1238,10 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                               placeholder="Discussion, Q/A, Teacher exposition..."
                             />
                             <EditableCell
+                              value={entry.keyInquiryQuestion || ""}
+                              onChange={(v) => { const n = [...entries]; n[i] = { ...n[i], keyInquiryQuestion: v }; setEntries(n); }}
+                            />
+                            <EditableCell
                               value={entry.tlAids}
                               onChange={(v) => { const n = [...entries]; n[i] = { ...n[i], tlAids: v }; setEntries(n); }}
                               placeholder="Textbook, charts, models..."
@@ -1315,6 +1250,10 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                               value={entry.reference}
                               onChange={(v) => { const n = [...entries]; n[i] = { ...n[i], reference: v }; setEntries(n); }}
                               placeholder="Book name, Pages..."
+                            />
+                            <EditableCell
+                              value={entry.assessmentMethod || ""}
+                              onChange={(v) => { const n = [...entries]; n[i] = { ...n[i], assessmentMethod: v }; setEntries(n); }}
                             />
                             <EditableCell
                               value={entry.remarks}

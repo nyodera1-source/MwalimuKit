@@ -50,4 +50,15 @@ describe("scheme to lesson-plan handoff", () => {
       null
     );
   });
+
+  test("carries a scheme inquiry question into the lesson plan", () => {
+    const withInquiry = {
+      ...config,
+      entries: [{ ...config.entries[0], keyInquiryQuestion: "How does place value change a digit?" }],
+    };
+    assert.equal(
+      getLessonPlanHandoff(withInquiry, 0)?.content.keyInquiryQuestion,
+      "How does place value change a digit?"
+    );
+  });
 });
