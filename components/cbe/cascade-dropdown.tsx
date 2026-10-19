@@ -229,35 +229,42 @@ export function CascadeDropdown({
         </Select>
       </div>
 
-      {learningAreas.length > 0 && (
-        <div className="space-y-1.5">
-          <Label className="text-sm font-medium">Learning Area</Label>
-          <Select
-            value={selection.learningAreaId || ""}
-            onValueChange={(val) => {
-              const la = learningAreas.find((l) => l.id === val);
-              queueMicrotask(() => onNamesChange?.((prev) => ({ ...prev, learningArea: la?.name })));
-              updateSelection({
-                learningAreaId: val,
-                strandId: null,
-                subStrandId: null,
-                sloIds: [],
-              });
-            }}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={loading.learningAreas ? "Loading learning areas..." : "Select learning area"} />
-            </SelectTrigger>
-            <SelectContent>
-              {learningAreas.map((la) => (
-                <SelectItem key={la.id} value={la.id}>
-                  {la.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
+      <div className="space-y-1.5">
+        <Label className="text-sm font-medium">Learning Area</Label>
+        <Select
+          value={selection.learningAreaId || ""}
+          disabled={!selection.gradeId || loading.learningAreas}
+          onValueChange={(val) => {
+            const la = learningAreas.find((l) => l.id === val);
+            queueMicrotask(() => onNamesChange?.((prev) => ({ ...prev, learningArea: la?.name })));
+            updateSelection({
+              learningAreaId: val,
+              strandId: null,
+              subStrandId: null,
+              sloIds: [],
+            });
+          }}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue
+              placeholder={
+                loading.learningAreas
+                  ? "Loading learning areas..."
+                  : selection.gradeId
+                    ? "Select learning area"
+                    : "Select grade first"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {learningAreas.map((la) => (
+              <SelectItem key={la.id} value={la.id}>
+                {la.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       {showStrand && strands.length > 0 && (
         <div className="space-y-2">

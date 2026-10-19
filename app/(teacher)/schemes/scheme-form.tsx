@@ -664,46 +664,58 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               showSLO={false}
             />
 
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium" htmlFor="referenceBook">Reference Book (KICD Approved)</Label>
-              <Select
-                value={referenceBook}
-                onValueChange={(val) => {
-                  setReferenceBook(val);
-                  if (val !== "Other (specify below)") setCustomReferenceBook("");
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select reference book" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cascadeNames.grade && cascadeNames.learningArea ? (
-                    getReferenceBookOptions(
-                      cascadeNames.grade,
-                      cascadeNames.learningArea
-                    ).map((book) => (
-                      <SelectItem key={book} value={book}>
-                        {book}
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium" htmlFor="referenceBook">Reference Book (KICD Approved)</Label>
+                <Select
+                  value={referenceBook}
+                  onValueChange={(val) => {
+                    setReferenceBook(val);
+                    if (val !== "Other (specify below)") setCustomReferenceBook("");
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select reference book" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cascadeNames.grade && cascadeNames.learningArea ? (
+                      getReferenceBookOptions(
+                        cascadeNames.grade,
+                        cascadeNames.learningArea
+                      ).map((book) => (
+                        <SelectItem key={book} value={book}>
+                          {book}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="none" disabled>
+                        Select grade and learning area first
                       </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="none" disabled>
-                      Select grade and learning area first
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              {referenceBook === "Other (specify below)" && (
+                    )}
+                  </SelectContent>
+                </Select>
+                {referenceBook === "Other (specify below)" && (
+                  <Input
+                    className="mt-2"
+                    placeholder="Enter custom reference book"
+                    value={customReferenceBook}
+                    onChange={(e) => setCustomReferenceBook(e.target.value)}
+                  />
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium" htmlFor="title">Scheme Title</Label>
                 <Input
-                  className="mt-2"
-                  placeholder="Enter custom reference book"
-                  value={customReferenceBook}
-                  onChange={(e) => setCustomReferenceBook(e.target.value)}
+                  id="title"
+                  value={displayedTitle}
+                  onChange={(e) => { setTitle(e.target.value); setAutoTitle(false); }}
+                  placeholder="Auto-generated"
                 />
-              )}
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,0.7fr)_minmax(0,0.7fr)_minmax(0,1.6fr)]">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
                 <Label className="text-sm font-medium">Term *</Label>
                 <Select value={term} onValueChange={setTerm}>
@@ -725,15 +737,6 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-sm font-medium" htmlFor="title">Scheme Title</Label>
-                <Input
-                  id="title"
-                  value={displayedTitle}
-                  onChange={(e) => { setTitle(e.target.value); setAutoTitle(false); }}
-                  placeholder="Auto-generated"
-                />
               </div>
             </div>
 
