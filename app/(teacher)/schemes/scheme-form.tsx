@@ -584,7 +584,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
   const canProceedStep3 = firstWeek > 0 && lastWeek > firstWeek && lessonsPerWeek > 0;
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form action={formAction} className="space-y-4">
       {isEdit && <input type="hidden" name="id" value={defaults!.id} />}
       <input type="hidden" name="gradeId" value={gradeId} />
       <input type="hidden" name="learningAreaId" value={learningAreaId} />
@@ -601,7 +601,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
       )}
 
       {/* Progress Steps */}
-      <div className="flex items-center gap-2 text-sm">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-sm">
         {[
           { n: 1, label: "Details" },
           { n: 2, label: "Topics" },
@@ -610,7 +610,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
         ].map(({ n, label }) => (
           <div key={n} className="flex items-center gap-2">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                 n === step
                   ? "bg-primary text-primary-foreground"
                   : n < step
@@ -623,21 +623,21 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
             <span className={`hidden sm:inline ${n === step ? "font-medium" : "text-muted-foreground"}`}>
               {label}
             </span>
-            {n < 4 && <div className="w-8 h-px bg-border" />}
+            {n < 4 && <div className="h-px w-5 shrink-0 bg-border" />}
           </div>
         ))}
       </div>
 
       {/* ─── Step 1: Learning Area & School Details ─── */}
       {step === 1 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Learning Area & School Details</CardTitle>
-            <p className="text-sm text-muted-foreground">Fields marked with * are mandatory</p>
+        <Card className="gap-0 overflow-hidden rounded-2xl shadow-sm">
+          <CardHeader className="gap-1 border-b bg-muted/20 px-5 py-4">
+            <CardTitle className="text-base">Learning Area & School Details</CardTitle>
+            <p className="text-xs text-muted-foreground">Fields marked with * are mandatory</p>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="schoolName">School</Label>
+          <CardContent className="space-y-4 px-5 py-5">
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium" htmlFor="schoolName">School</Label>
               <Input
                 id="schoolName"
                 value={schoolName}
@@ -664,8 +664,8 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               showSLO={false}
             />
 
-            <div>
-              <Label htmlFor="referenceBook">Reference Book (KICD Approved)</Label>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium" htmlFor="referenceBook">Reference Book (KICD Approved)</Label>
               <Select
                 value={referenceBook}
                 onValueChange={(val) => {
@@ -673,7 +673,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                   if (val !== "Other (specify below)") setCustomReferenceBook("");
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select reference book" />
                 </SelectTrigger>
                 <SelectContent>
@@ -703,11 +703,11 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label>Term *</Label>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,0.7fr)_minmax(0,0.7fr)_minmax(0,1.6fr)]">
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium">Term *</Label>
                 <Select value={term} onValueChange={setTerm}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {[1, 2, 3].map((t) => (
                       <SelectItem key={t} value={String(t)}>Term {t}</SelectItem>
@@ -715,10 +715,10 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label>Year *</Label>
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium">Year *</Label>
                 <Select value={year} onValueChange={setYear}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {YEAR_OPTIONS.map((y) => (
                       <SelectItem key={y} value={String(y)}>{y}</SelectItem>
@@ -726,8 +726,8 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="title">Scheme Title</Label>
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium" htmlFor="title">Scheme Title</Label>
                 <Input
                   id="title"
                   value={displayedTitle}
@@ -737,7 +737,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               </div>
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-1">
               <Button type="button" disabled={!canProceedStep1} onClick={() => setStep(2)}>
                 Next <ArrowRight className="h-4 w-4 ml-2" />
               </Button>

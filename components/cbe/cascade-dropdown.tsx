@@ -193,15 +193,15 @@ export function CascadeDropdown({
   );
 
   return (
-    <div className="space-y-4">
+    <div className="grid gap-4 md:grid-cols-2">
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="md:col-span-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
         </div>
       )}
 
-      <div className="space-y-2">
-        <Label>Grade</Label>
+      <div className="space-y-1.5">
+        <Label className="text-sm font-medium">Grade</Label>
         <Select
           value={selection.gradeId || ""}
           onValueChange={(val) => {
@@ -216,7 +216,7 @@ export function CascadeDropdown({
             });
           }}
         >
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder={loading.grades ? "Loading grades..." : "Select grade"} />
           </SelectTrigger>
           <SelectContent>
@@ -230,8 +230,8 @@ export function CascadeDropdown({
       </div>
 
       {learningAreas.length > 0 && (
-        <div className="space-y-2">
-          <Label>Learning Area</Label>
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium">Learning Area</Label>
           <Select
             value={selection.learningAreaId || ""}
             onValueChange={(val) => {
@@ -245,7 +245,7 @@ export function CascadeDropdown({
               });
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder={loading.learningAreas ? "Loading learning areas..." : "Select learning area"} />
             </SelectTrigger>
             <SelectContent>
