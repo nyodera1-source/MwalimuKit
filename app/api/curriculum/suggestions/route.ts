@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import {
-  PILOT_GRADE_LEVEL,
-  PILOT_LEARNING_AREAS,
   PILOT_RESPONSE_HEADERS,
+  pilotActiveSubStrandWhere,
+  pilotLearningAreaScope,
 } from "@/lib/curriculum/pilot";
 
 export async function GET(request: NextRequest) {
@@ -24,18 +24,13 @@ export async function GET(request: NextRequest) {
     const ss = await prisma.subStrand.findFirst({
       where: {
         id: subStrandId,
-        verification: { not: "superseded" },
-        sourceRef: { startsWith: "KICD G7 " },
+        ...pilotActiveSubStrandWhere(),
         strand: {
           subStrands: {
-            some: {
-              verification: { not: "superseded" },
-              sourceRef: { startsWith: "KICD G7 " },
-            },
+            some: pilotActiveSubStrandWhere(),
           },
           learningArea: {
-            name: { in: [...PILOT_LEARNING_AREAS] },
-            grade: { level: PILOT_GRADE_LEVEL },
+            ...pilotLearningAreaScope(),
           },
         },
       },
@@ -52,7 +47,7 @@ export async function GET(request: NextRequest) {
     });
     if (!ss) {
       return NextResponse.json(
-        { error: "Curriculum topic is not available in the current pilot." },
+        { error: "Curriculum topic is not available." },
         { status: 404, headers: PILOT_RESPONSE_HEADERS }
       );
     }
@@ -65,22 +60,17 @@ export async function GET(request: NextRequest) {
       where: {
         id: strandId,
         subStrands: {
-          some: {
-            verification: { not: "superseded" },
-            sourceRef: { startsWith: "KICD G7 " },
-          },
+          some: pilotActiveSubStrandWhere(),
         },
         learningArea: {
-          name: { in: [...PILOT_LEARNING_AREAS] },
-          grade: { level: PILOT_GRADE_LEVEL },
+          ...pilotLearningAreaScope(),
         },
       },
       include: {
         learningArea: { select: { name: true } },
         subStrands: {
           where: {
-            verification: { not: "superseded" },
-            sourceRef: { startsWith: "KICD G7 " },
+            ...pilotActiveSubStrandWhere(),
           },
           orderBy: { order: "asc" },
           select: {
@@ -95,7 +85,7 @@ export async function GET(request: NextRequest) {
     });
     if (!s) {
       return NextResponse.json(
-        { error: "Curriculum strand is not available in the current pilot." },
+        { error: "Curriculum strand is not available." },
         { status: 404, headers: PILOT_RESPONSE_HEADERS }
       );
     }

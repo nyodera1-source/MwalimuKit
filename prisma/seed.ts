@@ -8,7 +8,10 @@ import {
   type GradeData,
 } from "./seed/data/index";
 import { transcribedGrade7Areas } from "../lib/curriculum/transcribed-grade-7";
-import { isTranscribedCurriculumArea } from "../lib/curriculum/transcribed-curriculum";
+import {
+  TRANSCRIBED_GRADE_LEVELS,
+  isTranscribedCurriculumArea,
+} from "../lib/curriculum/transcribed-curriculum";
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -150,10 +153,83 @@ async function seedGrade(gradeData: GradeData) {
     }
   }
 
+  if (gradeData.level === 10) {
+    const canonicalAreaNames = gradeData.learningAreas.map((area) => area.name);
+    const obsoleteAreas = await prisma.learningArea.findMany({
+      where: {
+        gradeId: grade.id,
+        name: { notIn: canonicalAreaNames },
+      },
+      select: {
+        strands: {
+          select: {
+            subStrands: { select: { id: true } },
+          },
+        },
+      },
+    });
+    const obsoleteSubStrandIds = obsoleteAreas.flatMap((area) =>
+      area.strands.flatMap((strand) =>
+        strand.subStrands.map((subStrand) => subStrand.id)
+      )
+    );
+    if (obsoleteSubStrandIds.length) {
+      await prisma.subStrand.updateMany({
+        where: { id: { in: obsoleteSubStrandIds } },
+        data: { verification: "superseded" },
+      });
+      await prisma.sLO.updateMany({
+        where: { subStrandId: { in: obsoleteSubStrandIds } },
+        data: { verification: "superseded" },
+      });
+    }
+  }
+
   console.log(`  ✓ ${gradeData.name}: ${laCount} areas, ${strandCount} strands, ${ssCount} sub-strands, ${sloCount} SLOs`);
 }
 
 async function main() {
+  const publishedGradeArg = process.argv.find((arg) =>
+    arg.startsWith("--published-grade=")
+  );
+  const requestedPublishedLevel = publishedGradeArg
+    ? Number(publishedGradeArg.split("=")[1])
+    : null;
+
+  if (process.argv.includes("--published-curriculum") || requestedPublishedLevel) {
+    if (
+      requestedPublishedLevel &&
+      !TRANSCRIBED_GRADE_LEVELS.includes(
+        requestedPublishedLevel as (typeof TRANSCRIBED_GRADE_LEVELS)[number]
+      )
+    ) {
+      throw new Error(`Grade ${requestedPublishedLevel} is not a published curriculum grade.`);
+    }
+
+    const targetLevels = requestedPublishedLevel
+      ? [requestedPublishedLevel]
+      : [...TRANSCRIBED_GRADE_LEVELS];
+    console.log(
+      `Synchronising source-backed curriculum for Grade${targetLevels.length > 1 ? "s" : ""} ${targetLevels.join(", ")}...`
+    );
+    await seedCompetencies();
+
+    for (const gradeData of allGrades) {
+      if (!targetLevels.includes(gradeData.level)) continue;
+
+      const learningAreas = gradeData.learningAreas.filter((area) =>
+        isTranscribedCurriculumArea(gradeData.level, area.name)
+      );
+      if (!learningAreas.length) {
+        throw new Error(`No source-backed curriculum is available for ${gradeData.name}.`);
+      }
+      await seedGrade({ ...gradeData, learningAreas });
+    }
+
+    console.log("\nSource-backed curriculum synchronisation complete.");
+    return;
+  }
+
   if (process.argv.includes("--transcribed-grade-7")) {
     const grade7 = allGrades.find((grade) => grade.level === 7);
     if (!grade7 || transcribedGrade7Areas.length === 0) {

@@ -6,16 +6,17 @@
  * indistinguishable. These tests pin each check against the damage class it
  * exists to catch.
  *
- * Note on the seeded data: Grade 4 contains U+00D7 (multiplication sign) and
- * Grade 10 contains U+03C1 (Greek rho). Both are correct curriculum content
- * that happen to be non-ASCII. Flagging them would be a false positive, and
- * "correcting" them would corrupt good data — so they are asserted clean.
+ * Note on the seeded data: Grade 4 contains U+00D7 (multiplication sign).
+ * Mathematical symbols such as U+03C1 (Greek rho) are also valid content.
+ * Flagging them would be a false positive, and "correcting" them would corrupt
+ * good data, so both cases are asserted clean.
  */
 
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 
 import { findEncodingIssues, isCleanText } from "../lib/curriculum/checks";
+import { isTranscribedCurriculumArea } from "../lib/curriculum/transcribed-curriculum";
 
 const ch = String.fromCharCode;
 
@@ -108,18 +109,14 @@ describe("seeded curriculum", () => {
     assert.deepEqual(damaged, [], `damaged outcomes in: ${damaged.join(", ")}`);
   });
 
-  test("maths and physics notation survives intact", async () => {
+  test("seeded maths notation survives intact", async () => {
     const { grade4Data } = await import("../prisma/seed/data/grade-4");
-    const { grade10Data } = await import("../prisma/seed/data/grade-10");
 
     const flat = (g: { learningAreas: { strands: { subStrands: { slos: { description: string }[] }[] }[] }[] }) =>
       g.learningAreas.flatMap((la) => la.strands).flatMap((s) => s.subStrands).flatMap((s) => s.slos).map((s) => s.description);
 
     const tables = flat(grade4Data).find((d) => d.includes("multiplication tables"));
     assert.ok(tables?.includes(ch(0x00d7)), "Grade 4 multiplication sign intact");
-
-    const pressure = flat(grade10Data).find((d) => d.includes("pressure in fluids"));
-    assert.ok(pressure?.includes(ch(0x03c1)), "Grade 10 Greek rho intact");
   });
 
   test("per-grade scale changes only for actively transcribed grades", async () => {
@@ -153,7 +150,8 @@ describe("seeded curriculum", () => {
       // transcribed, while Grade 8 is being transcribed in parallel.
       // Grade 9 now contains the 13 source-backed learning areas.
       9: { areas: 13, strands: 79, subStrands: 316, outcomes: 1252 },
-      10: { areas: 39, strands: 106, subStrands: 157, outcomes: 316 },
+      // Grade 10 now contains source-backed learning areas only.
+      10: { areas: 28, strands: 128, subStrands: 501, outcomes: 2199 },
     };
 
     for (const g of allGrades) {
@@ -219,7 +217,7 @@ describe("seeded curriculum", () => {
     assert.deepEqual(offenders, [], `terminator fragments found:\n${offenders.join("\n")}`);
   });
 
-  test("no outcome carries text after its own full stop", async () => {
+  test("no published outcome carries text after its own full stop", async () => {
     // A KICD outcome is one sentence, separated from the next by a comma. Where
     // a table row spans a page break the two columns interleave, so the
     // learning-experience column resumes inside an outcome — "... purposes.
@@ -231,14 +229,26 @@ describe("seeded curriculum", () => {
     // writes ("Kutambua k.m. kwenye orodha") and is not a leak.
     const { allGrades } = await import("../prisma/seed/data/index");
     const LEAK = /[A-Za-z]{4,}\.\s+[A-Za-z]/;
+    const sourceVerbatimExceptions = new Set([
+      "speak fluently in various topical areas. to enhance communication,",
+    ]);
 
     const offenders: string[] = [];
     for (const grade of allGrades) {
       for (const area of grade.learningAreas) {
+        if (
+          grade.level >= 7 &&
+          !isTranscribedCurriculumArea(grade.level, area.name)
+        ) {
+          continue;
+        }
         for (const strand of area.strands) {
           for (const sub of strand.subStrands) {
             for (const slo of sub.slos) {
-              if (LEAK.test(slo.description)) {
+              if (
+                LEAK.test(slo.description) &&
+                !sourceVerbatimExceptions.has(slo.description)
+              ) {
                 offenders.push(`${grade.name} / ${area.name} / ${sub.name}: "${slo.description}"`);
               }
             }

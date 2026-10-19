@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
         subStrands: {
           where: {
             verification: { not: "superseded" },
-            sourceRef: { startsWith: "KICD G7 " },
+            sourceRef: { not: null },
           },
           orderBy: { order: "asc" },
           select: {
