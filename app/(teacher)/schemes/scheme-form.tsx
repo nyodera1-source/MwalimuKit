@@ -471,8 +471,10 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
       return;
     }
 
-    // Use the published pacing where every selected sub-strand has guidance.
-    // Otherwise retain the proportional fallback for legacy curriculum rows.
+    // Use published pacing as guidance where every selected sub-strand has it.
+    // It is deliberately advisory: the timetable remains the boundary for the
+    // generated rows, while teachers may use open slots for remedial work,
+    // revision, assessment, or school interruptions.
     const pacedBatches = buildPacedLessonBatches(
       orderedSubStrands.map(({ strandId, strandName, subStrand }) => ({
         suggestedLessons: subStrand.suggestedLessons,
@@ -869,9 +871,10 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
             {pacingBeforeBreaks.availability === "complete" && (
               <div className="rounded-md border border-blue-200 bg-blue-50/60 p-3 text-sm">
+                <p className="font-medium text-blue-900">Suggested pacing (optional)</p>
                 <div className="flex flex-wrap gap-x-6 gap-y-1">
                   <span>
-                    Selected content: <strong>{pacingBeforeBreaks.suggestedLessons} lessons</strong>
+                    Suggested curriculum coverage: <strong>{pacingBeforeBreaks.suggestedLessons} lessons</strong>
                   </span>
                   <span>
                     Capacity before breaks: <strong>{pacingBeforeBreaks.capacity} lessons</strong>
@@ -879,17 +882,18 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                 </div>
                 <p className="mt-1 text-xs text-blue-700">
                   {pacingBeforeBreaks.difference === 0
-                    ? "The selected content matches the available timetable."
+                    ? "The suggested coverage matches the available timetable. You can still adjust it before generating."
                     : Number(pacingBeforeBreaks.difference) > 0
-                      ? `${pacingBeforeBreaks.difference} lesson slots remain for other content or interruptions.`
-                      : `${Math.abs(Number(pacingBeforeBreaks.difference))} more lesson slots are needed for the selected content.`}
+                      ? `${pacingBeforeBreaks.difference} open lesson slots are available for remedial work, revision, assessment, or interruptions.`
+                      : `${Math.abs(Number(pacingBeforeBreaks.difference))} suggested lessons exceed this timetable. The scheme can still be generated for the available slots; continue the remaining content later or adjust the timetable.`}
                 </p>
+                <p className="mt-1 text-xs text-blue-700">This comparison is guidance only and will not prevent you from continuing.</p>
               </div>
             )}
 
             {pacingBeforeBreaks.availability === "partial" && (
               <div className="rounded-md border border-blue-200 bg-blue-50/60 p-3 text-xs text-blue-700">
-                Suggested lesson counts are available for only part of the selected content. Final pacing remains editable.
+                Suggested lesson counts are available for only part of the selected content. They are guidance only; final pacing remains editable and generation is not blocked.
               </div>
             )}
 
@@ -1134,9 +1138,10 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
             {finalPacing.availability === "complete" && (
               <div className="rounded-md border border-blue-200 bg-blue-50/60 p-3 text-sm">
+                <p className="font-medium text-blue-900">Suggested pacing (optional)</p>
                 <div className="flex flex-wrap gap-x-6 gap-y-1">
                   <span>
-                    Selected content: <strong>{finalPacing.suggestedLessons} lessons</strong>
+                    Suggested curriculum coverage: <strong>{finalPacing.suggestedLessons} lessons</strong>
                   </span>
                   <span>
                     Final teaching capacity: <strong>{finalPacing.capacity} lessons</strong>
@@ -1144,11 +1149,12 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                 </div>
                 <p className="mt-1 text-xs text-blue-700">
                   {finalPacing.difference === 0
-                    ? "Coverage is balanced."
+                    ? "The suggested coverage is balanced. This is guidance only."
                     : Number(finalPacing.difference) > 0
-                      ? `${finalPacing.difference} teaching slots will remain after this content.`
-                      : `${Math.abs(Number(finalPacing.difference))} suggested lessons will not fit in this timetable.`}
+                      ? `${finalPacing.difference} teaching slots remain for remedial work, revision, assessment, or interruptions.`
+                      : `${Math.abs(Number(finalPacing.difference))} suggested lessons exceed this timetable. The scheme can still be generated for the available slots.`}
                 </p>
+                <p className="mt-1 text-xs text-blue-700">This comparison is optional guidance and does not prevent generation.</p>
               </div>
             )}
 
@@ -1161,7 +1167,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               </div>
               <p className="text-xs text-muted-foreground">
                 {finalPacing.availability === "complete"
-                  ? `Uses the suggested pacing for ${selectedSubStrandIds.length} selected subtopics within the available timetable.`
+                  ? `Uses the published lesson counts as optional guidance for ${selectedSubStrandIds.length} selected subtopics. Open slots can be used for remedial work or other school needs.`
                   : `Distributes ${selectedSubStrandIds.length} subtopics across Week ${firstWeek}-${lastWeek}, ${lessonsPerWeek} lessons/week.`}
                 {entries.length > 0 && " You can edit entries in the table below, then click 'Save Scheme' when ready."}
               </p>
