@@ -33,6 +33,8 @@ export default async function PreviewSchemePage({
   const data = (scheme.weeks as unknown as SchemeConfig) || {};
   const entries = data.entries || [];
   const breaks = data.breaks || [];
+  const showRemarks = entries.some((entry) => (entry.remarks || "").trim().length > 0);
+  const tableColumnCount = showRemarks ? 12 : 11;
 
   // Build display items: lessons + combined breaks sorted by week
   type DisplayItem =
@@ -87,21 +89,23 @@ export default async function PreviewSchemePage({
                 <ArrowLeft className="h-4 w-4 mr-1" /> Back
               </Link>
             </Button>
-            <h1 className="text-xl font-bold">{scheme.title || "Untitled Scheme"}</h1>
-            <Badge variant={scheme.status === "published" ? "default" : "secondary"}>
-              {scheme.status}
-            </Badge>
+            <div>
+              <div className="flex items-center gap-3">
+                <h1 className="text-xl font-bold">{scheme.title || "Untitled Scheme"}</h1>
+                <Badge variant={scheme.status === "published" ? "default" : "secondary"}>
+                  {scheme.status}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Preview your scheme before downloading or making final edits.
+              </p>
+            </div>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" asChild>
               <Link href={`/schemes/${id}`}>
                 <Pencil className="h-4 w-4 mr-2" /> Edit
               </Link>
-            </Button>
-            <Button size="sm" asChild>
-              <a href={`/api/schemes/${id}/export`} download>
-                <Download className="h-4 w-4 mr-2" /> Download PDF
-              </a>
             </Button>
             <form action={async () => { "use server"; await deleteSchemeOfWork(id); }}>
               <Button type="submit" variant="destructive" size="sm">
@@ -156,9 +160,9 @@ export default async function PreviewSchemePage({
               </p>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs border-collapse">
-                  <thead>
+              <div className="max-h-[calc(100vh-18rem)] overflow-auto rounded-md border">
+                <table className="w-full min-w-[1500px] text-xs border-collapse">
+                  <thead className="sticky top-0 z-10">
                     <tr className="bg-primary text-primary-foreground">
                       <th className="border p-2 text-left w-10">WK</th>
                       <th className="border p-2 text-left w-10">LSN</th>
@@ -170,7 +174,7 @@ export default async function PreviewSchemePage({
                       <th className="border p-2 text-left">RESOURCES</th>
                       <th className="border p-2 text-left">REFERENCE</th>
                       <th className="border p-2 text-left">ASSESSMENT</th>
-                      <th className="border p-2 text-left">REMARKS</th>
+                      {showRemarks && <th className="border p-2 text-left">REMARKS</th>}
                       <th className="border p-2 text-center w-12">PLAN</th>
                     </tr>
                   </thead>
@@ -180,7 +184,7 @@ export default async function PreviewSchemePage({
                         return (
                           <tr key={`break-${idx}`} className="bg-amber-50">
                             <td className="border p-2 font-bold text-center">{item.weekLabel}</td>
-                            <td colSpan={11} className="border p-2 text-center italic font-medium text-amber-700">
+                            <td colSpan={tableColumnCount - 1} className="border p-2 text-center italic font-medium text-amber-700">
                               {item.title}
                             </td>
                           </tr>
@@ -199,7 +203,7 @@ export default async function PreviewSchemePage({
                           <td className="border p-2 whitespace-pre-wrap">{entry.tlAids || "—"}</td>
                           <td className="border p-2 whitespace-pre-wrap">{entry.reference || "—"}</td>
                           <td className="border p-2 whitespace-pre-wrap">{entry.assessmentMethod || "—"}</td>
-                          <td className="border p-2 whitespace-pre-wrap">{entry.remarks || ""}</td>
+                          {showRemarks && <td className="border p-2 whitespace-pre-wrap">{entry.remarks || ""}</td>}
                           <td className="border p-1 text-center">
                             {entry.strandId && entry.subStrandId && entry.sloIds?.length ? (
                               <Button variant="ghost" size="icon" asChild title="Create lesson plan">
@@ -224,6 +228,27 @@ export default async function PreviewSchemePage({
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        <div className="sticky bottom-4 z-20 mt-6 flex flex-col gap-3 rounded-xl border bg-background/95 p-4 shadow-lg backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-medium">Your scheme is ready</p>
+            <p className="text-sm text-muted-foreground">
+              Review the {entries.length} lesson rows, then download the finished PDF.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" asChild>
+              <Link href={`/schemes/${id}`}>
+                <Pencil className="h-4 w-4 mr-2" /> Edit Scheme
+              </Link>
+            </Button>
+            <Button asChild>
+              <a href={`/api/schemes/${id}/export`} download>
+                <Download className="h-4 w-4 mr-2" /> Download PDF
+              </a>
+            </Button>
+          </div>
         </div>
       </div>
     </>

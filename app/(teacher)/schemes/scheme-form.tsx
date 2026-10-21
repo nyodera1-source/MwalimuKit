@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useEffect } from "react";
+import { useActionState, useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -161,6 +161,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
   const isEdit = !!defaults?.id;
   const action = isEdit ? updateSchemeOfWork : createSchemeOfWork;
   const [state, formAction, pending] = useActionState(action, null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const [step, setStep] = useState(1);
 
@@ -367,7 +368,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
   };
 
   // Generate entries grouped by week (matching reference PDF format)
-  const generateEntries = () => {
+  const generateEntries = (): LessonEntry[] => {
     const actualReferenceBook =
       referenceBook === "Other (specify below)" && customReferenceBook
         ? customReferenceBook
@@ -400,7 +401,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
     if (orderedSubStrands.length === 0 || teachingWeeks.length === 0) {
       setEntries([]);
-      return;
+      return [];
     }
 
     const newEntries: LessonEntry[] = [];
@@ -474,7 +475,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     );
     if (allSloItems.length === 0 || totalLessonSlots === 0) {
       setEntries(newEntries);
-      return;
+      return newEntries;
     }
 
     // Use published pacing as guidance where every selected sub-strand has it.
@@ -564,6 +565,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     }
 
     setEntries(newEntries);
+    return newEntries;
   };
 
   const finalReferenceBook =
@@ -571,7 +573,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
       ? customReferenceBook
       : referenceBook;
 
-  const schemeDataJson = JSON.stringify({
+  const buildSchemeData = (entriesToSave = entries) => JSON.stringify({
     schoolName,
     referenceBook: finalReferenceBook,
     lessonsPerWeek,
@@ -581,7 +583,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     lastLesson,
     selectedSubStrandIds,
     breaks: noBreaks ? [] : breaks,
-    entries,
+    entries: entriesToSave,
     carryoverEnabled,
     carryoverTopic,
     carryoverSubTopic,
@@ -589,12 +591,23 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
     carryoverLessons,
   });
 
+  const schemeDataJson = buildSchemeData();
+
+  const generatePreview = () => {
+    const generatedEntries = generateEntries();
+    if (generatedEntries.length === 0 || !formRef.current) return;
+
+    const formData = new FormData(formRef.current);
+    formData.set("schemeData", buildSchemeData(generatedEntries));
+    formAction(formData);
+  };
+
   const canProceedStep1 = gradeId && learningAreaId && term && year;
   const canProceedStep2 = selectedSubStrandIds.length > 0;
   const canProceedStep3 = firstWeek > 0 && lastWeek > firstWeek && lessonsPerWeek > 0;
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form ref={formRef} action={formAction} className="space-y-4">
       {isEdit && <input type="hidden" name="id" value={defaults!.id} />}
       <input type="hidden" name="gradeId" value={gradeId} />
       <input type="hidden" name="learningAreaId" value={learningAreaId} />
@@ -1168,16 +1181,21 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
             <div className="border-t pt-4 space-y-3">
               <div className="flex flex-wrap items-center gap-3">
-                <Button type="button" variant="secondary" onClick={generateEntries}>
+                <Button
+                  type="button"
+                  onClick={generatePreview}
+                  disabled={pending}
+                  className="min-w-44"
+                >
                   <ClipboardPenLine className="h-4 w-4 mr-2" />
-                  Generate Scheme
+                  {pending ? "Preparing preview..." : "Generate Preview"}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
                 {finalPacing.availability === "complete"
                   ? `Uses the published lesson counts as optional guidance for ${selectedSubStrandIds.length} selected subtopics. Open slots can be used for remedial work or other school needs.`
                   : `Distributes ${selectedSubStrandIds.length} subtopics across Week ${firstWeek}-${lastWeek}, ${lessonsPerWeek} lessons/week.`}
-                {entries.length > 0 && " You can edit entries in the table below, then click 'Save Scheme' when ready."}
+                {" The generated scheme will open in preview, where you can review, edit, save, and download it."}
               </p>
             </div>
 
