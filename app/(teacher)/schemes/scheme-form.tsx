@@ -62,6 +62,23 @@ interface BreakEntry {
   customTitle?: string; // Only used when breakType is "Custom"
 }
 
+interface CarryoverSuggestion {
+  id: string;
+  week: number | null;
+  lesson: string;
+  topic: string;
+  subTopic: string;
+  objectives: string;
+}
+
+interface CarryoverSource {
+  available: boolean;
+  reason?: string;
+  label?: string;
+  schemeId?: string;
+  suggestions: CarryoverSuggestion[];
+}
+
 interface LessonEntry {
   week: number;
   lesson: string; // e.g. "1-2", "3", "4-5"
@@ -144,6 +161,8 @@ interface SchemeDefaults {
     carryoverSubTopic?: string;
     carryoverObjectives?: string;
     carryoverLessons?: number;
+    carryoverSourceSchemeId?: string;
+    carryoverSuggestionId?: string;
     openSlotPurpose?: string;
   };
 }
@@ -245,6 +264,17 @@ export function SchemeForm({
   const [carryoverLessons, setCarryoverLessons] = useState(
     defaults?.schemeData?.carryoverLessons || 2
   );
+  const [carryoverSuggestionId, setCarryoverSuggestionId] = useState(
+    defaults?.schemeData?.carryoverSuggestionId || ""
+  );
+  const [carryoverSourceSchemeId, setCarryoverSourceSchemeId] = useState(
+    defaults?.schemeData?.carryoverSourceSchemeId || ""
+  );
+  const [carryoverSource, setCarryoverSource] = useState<CarryoverSource>({
+    available: false,
+    suggestions: [],
+  });
+  const [loadingCarryoverSource, setLoadingCarryoverSource] = useState(false);
   const [openSlotPurpose, setOpenSlotPurpose] = useState(
     defaults?.schemeData?.openSlotPurpose || "Leave open"
   );
@@ -348,6 +378,63 @@ export function SchemeForm({
       .finally(() => setLoadingStrands(false));
   }, [learningAreaId]);
 
+  const carryoverLookupKey = `${gradeId}|${learningAreaId}|${term}`;
+  const previousCarryoverLookup = useRef("");
+
+  useEffect(() => {
+    if (!gradeId || !learningAreaId || !term) {
+      setCarryoverSource({ available: false, suggestions: [] });
+      return;
+    }
+
+    if (
+      previousCarryoverLookup.current &&
+      previousCarryoverLookup.current !== carryoverLookupKey
+    ) {
+      setCarryoverEnabled(false);
+      setCarryoverSuggestionId("");
+      setCarryoverSourceSchemeId("");
+      setCarryoverTopic("");
+      setCarryoverSubTopic("");
+      setCarryoverObjectives("");
+    }
+    previousCarryoverLookup.current = carryoverLookupKey;
+
+    const controller = new AbortController();
+    setLoadingCarryoverSource(true);
+
+    fetch(
+      `/api/curriculum/suggestions?type=carryover&gradeId=${encodeURIComponent(gradeId)}&learningAreaId=${encodeURIComponent(learningAreaId)}&term=${encodeURIComponent(term)}`,
+      { signal: controller.signal }
+    )
+      .then((response) => response.json())
+      .then((data: CarryoverSource) => {
+        if (!controller.signal.aborted) {
+          setCarryoverSource({
+            available: Boolean(data.available),
+            reason: data.reason,
+            label: data.label,
+            schemeId: data.schemeId,
+            suggestions: Array.isArray(data.suggestions) ? data.suggestions : [],
+          });
+        }
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setCarryoverSource({
+            available: false,
+            reason: "Previous-scheme suggestions could not be loaded.",
+            suggestions: [],
+          });
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoadingCarryoverSource(false);
+      });
+
+    return () => controller.abort();
+  }, [carryoverLookupKey, gradeId, learningAreaId, term]);
+
   const toggleStrand = (strandId: string) => {
     setExpandedStrands((prev) => {
       const next = new Set(prev);
@@ -388,6 +475,17 @@ export function SchemeForm({
         ? new Set()
         : new Set(strands.map((strand) => strand.id))
     );
+  };
+
+  const applyCarryoverSuggestion = (suggestionId: string) => {
+    const suggestion = carryoverSource.suggestions.find((item) => item.id === suggestionId);
+    setCarryoverSuggestionId(suggestionId);
+    setCarryoverSourceSchemeId(carryoverSource.schemeId || "");
+    if (!suggestion) return;
+
+    setCarryoverTopic(suggestion.topic);
+    setCarryoverSubTopic(suggestion.subTopic);
+    setCarryoverObjectives(suggestion.objectives);
   };
 
   const addBreak = () => {
@@ -658,6 +756,8 @@ export function SchemeForm({
     carryoverSubTopic,
     carryoverObjectives,
     carryoverLessons,
+    carryoverSourceSchemeId,
+    carryoverSuggestionId,
     openSlotPurpose,
   });
 
@@ -684,7 +784,13 @@ export function SchemeForm({
       ? "The last week must be on or after the first week."
       : "The last lesson must be on or after the first lesson."
     : null;
-  const canProceedStep3 = teachingWindowIsValid;
+  const carryoverIsValid =
+    !carryoverEnabled || Boolean(carryoverTopic && carryoverSubTopic);
+  const carryoverError =
+    carryoverEnabled && !carryoverIsValid
+      ? "Choose unfinished work from the previous scheme before continuing."
+      : null;
+  const canProceedStep3 = teachingWindowIsValid && carryoverIsValid;
 
   return (
     <form ref={formRef} action={formAction} className="space-y-4">
@@ -1110,23 +1216,59 @@ export function SchemeForm({
 
             {/* Previous term spillover */}
             <div className="rounded-md border p-3">
-              <label className="flex cursor-pointer items-center gap-2">
+              <label className={`flex items-center gap-2 ${carryoverSource.available || carryoverTopic ? "cursor-pointer" : "cursor-not-allowed"}`}>
                 <Checkbox
                   checked={carryoverEnabled}
+                  disabled={!carryoverSource.available && !carryoverTopic}
                   onCheckedChange={(v) => setCarryoverEnabled(v === true)}
                 />
-                <span className="text-sm font-medium">Include unfinished work from the previous term</span>
+                <span className="text-sm font-medium">Carry over unfinished work</span>
               </label>
+
+              {loadingCarryoverSource && (
+                <p className="mt-2 text-xs text-muted-foreground">Checking the previous scheme...</p>
+              )}
+
+              {!loadingCarryoverSource && !carryoverSource.available && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {carryoverSource.reason || "No previous-scheme work is available for this selection."}
+                </p>
+              )}
 
               {carryoverEnabled && (
                 <div className="space-y-2.5 border-t mt-3 pt-3">
+                  {carryoverSource.available && (
+                    <div className="space-y-1">
+                      <Label className="text-xs">
+                        Previous-scheme suggestion
+                        {carryoverSource.label ? ` · ${carryoverSource.label}` : ""}
+                      </Label>
+                      <Select value={carryoverSuggestionId} onValueChange={applyCarryoverSuggestion}>
+                        <SelectTrigger className="h-9 text-sm">
+                          <SelectValue placeholder="Select unfinished work" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {carryoverSource.suggestions.map((suggestion) => (
+                            <SelectItem key={suggestion.id} value={suggestion.id}>
+                              {suggestion.week ? `Week ${suggestion.week}, lesson ${suggestion.lesson} · ` : ""}
+                              {suggestion.topic}{suggestion.subTopic ? ` · ${suggestion.subTopic}` : ""}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-[11px] text-muted-foreground">
+                        Suggestions come from the selected previous scheme. You can adjust the details below.
+                      </p>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
                     <div className="space-y-1">
                       <Label className="text-xs">Topic</Label>
                       <Input
                         value={carryoverTopic}
                         onChange={(e) => setCarryoverTopic(e.target.value)}
-                        placeholder="e.g., Genetics"
+                        placeholder="Choose a previous-scheme suggestion"
                         className="h-9 text-sm"
                       />
                     </div>
@@ -1135,7 +1277,7 @@ export function SchemeForm({
                       <Input
                         value={carryoverSubTopic}
                         onChange={(e) => setCarryoverSubTopic(e.target.value)}
-                        placeholder="e.g., Gene mutations"
+                        placeholder="Sub-topic from the previous scheme"
                         className="h-9 text-sm"
                       />
                     </div>
@@ -1160,6 +1302,9 @@ export function SchemeForm({
                       </SelectContent>
                     </Select>
                   </div>
+                  {carryoverError && (
+                    <p className="text-xs text-destructive">{carryoverError}</p>
+                  )}
                 </div>
               )}
             </div>

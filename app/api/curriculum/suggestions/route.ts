@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import {
@@ -8,6 +9,10 @@ import {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
+  if (searchParams.get("type") === "carryover") {
+    return getCarryoverSuggestions(request);
+  }
+
   const subStrandId = searchParams.get("subStrandId");
   const strandId = searchParams.get("strandId");
 
@@ -115,6 +120,151 @@ export async function GET(request: NextRequest) {
     },
     { headers: PILOT_RESPONSE_HEADERS }
   );
+}
+
+interface JsonRecord {
+  [key: string]: unknown;
+}
+
+function isRecord(value: unknown): value is JsonRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function text(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+async function getCarryoverSuggestions(request: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  const { searchParams } = request.nextUrl;
+  const gradeId = searchParams.get("gradeId");
+  const learningAreaId = searchParams.get("learningAreaId");
+  const term = Number(searchParams.get("term"));
+
+  if (!gradeId || !learningAreaId || ![1, 2, 3].includes(term)) {
+    return NextResponse.json(
+      { error: "gradeId, learningAreaId and a valid term are required" },
+      { status: 400 }
+    );
+  }
+
+  const learningArea = await prisma.learningArea.findUnique({
+    where: { id: learningAreaId },
+    select: {
+      name: true,
+      gradeId: true,
+      grade: { select: { level: true } },
+    },
+  });
+
+  if (!learningArea || learningArea.gradeId !== gradeId) {
+    return NextResponse.json({ error: "Invalid grade and learning area" }, { status: 400 });
+  }
+
+  const currentLevel = learningArea.grade.level;
+  const sourceLevel = term === 1 ? currentLevel - 1 : currentLevel;
+  const sourceTerm = term === 1 ? 3 : term - 1;
+
+  if (term === 1 && (currentLevel === 7 || currentLevel === 10)) {
+    return NextResponse.json({
+      available: false,
+      suggestions: [],
+      reason: `Grade ${currentLevel} Term 1 has no previous-grade lessons to carry over.`,
+    });
+  }
+
+  if (sourceLevel < 1) {
+    return NextResponse.json({
+      available: false,
+      suggestions: [],
+      reason: "There is no earlier grade available for carry-over work.",
+    });
+  }
+
+  const sourceGrade = await prisma.grade.findUnique({
+    where: { level: sourceLevel },
+    select: { id: true, name: true },
+  });
+  if (!sourceGrade) {
+    return NextResponse.json({
+      available: false,
+      suggestions: [],
+      reason: `No curriculum source was found for Grade ${sourceLevel} Term ${sourceTerm}.`,
+    });
+  }
+
+  const sourceLearningArea = await prisma.learningArea.findFirst({
+    where: { gradeId: sourceGrade.id, name: learningArea.name },
+    select: { id: true },
+  });
+  if (!sourceLearningArea) {
+    return NextResponse.json({
+      available: false,
+      suggestions: [],
+      reason: `${learningArea.name} is not available in ${sourceGrade.name}.`,
+    });
+  }
+
+  const sourceScheme = await prisma.schemeOfWork.findFirst({
+    where: {
+      userId: session.user.id,
+      gradeId: sourceGrade.id,
+      learningAreaId: sourceLearningArea.id,
+      term: sourceTerm,
+    },
+    orderBy: { updatedAt: "desc" },
+    select: { id: true, weeks: true },
+  });
+  if (!sourceScheme) {
+    return NextResponse.json({
+      available: false,
+      suggestions: [],
+      reason: `No saved ${sourceGrade.name} ${learningArea.name} Term ${sourceTerm} scheme was found for suggestions.`,
+    });
+  }
+
+  const weeks = isRecord(sourceScheme.weeks) ? sourceScheme.weeks : {};
+  const entries = Array.isArray(weeks.entries) ? weeks.entries : [];
+  const seen = new Set<string>();
+  const suggestions = entries.flatMap((rawEntry, index) => {
+    if (!isRecord(rawEntry)) return [];
+
+    const topic = text(rawEntry.topic);
+    const subTopic = text(rawEntry.subTopic);
+    if (!topic || topic === "Open lesson slot") return [];
+
+    const key = `${topic}|${subTopic}|${text(rawEntry.objectives)}`;
+    if (seen.has(key)) return [];
+    seen.add(key);
+
+    return [{
+      id: `${sourceScheme.id}-${index}`,
+      week: typeof rawEntry.week === "number" ? rawEntry.week : null,
+      lesson: text(rawEntry.lesson),
+      topic,
+      subTopic,
+      objectives: text(rawEntry.objectives),
+    }];
+  });
+
+  if (suggestions.length === 0) {
+    return NextResponse.json({
+      available: false,
+      suggestions: [],
+      reason: `The ${sourceGrade.name} ${learningArea.name} Term ${sourceTerm} scheme has no curriculum lesson rows to suggest.`,
+    });
+  }
+
+  return NextResponse.json({
+    available: true,
+    schemeId: sourceScheme.id,
+    label: `${sourceGrade.name} ${learningArea.name} · Term ${sourceTerm}`,
+    suggestions,
+  });
 }
 
 function generateInquiryQuestion(
