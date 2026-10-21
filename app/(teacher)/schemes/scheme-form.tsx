@@ -114,6 +114,12 @@ function countFirstTeachingWeekSlots(
   return 0;
 }
 
+function formatSchemeOutcome(description: string): string {
+  const cleaned = description.trim();
+  if (!cleaned) return "";
+  return /[.!?,;:]$/.test(cleaned) ? cleaned : `${cleaned}.`;
+}
+
 interface SchemeDefaults {
   id?: string;
   title?: string;
@@ -519,7 +525,9 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
         ].join("\n");
         const objectives =
           "By the end of the lesson, the learner should be able to:\n" +
-          lessonSlos.map((s) => `${s.sloDescription}.`).join(" ");
+          lessonSlos
+            .map((s) => `- ${formatSchemeOutcome(s.sloDescription)}`)
+            .join("\n");
         const strandIds = [...new Set(lessonSlos.map((s) => s.strandId))];
         const subStrandIds = [...new Set(lessonSlos.map((s) => s.subStrandId))];
         const hasSingleCurriculumSource = strandIds.length === 1 && subStrandIds.length === 1;

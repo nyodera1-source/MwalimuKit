@@ -50,14 +50,19 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
   doc.addPage();
   let y = margin;
 
-  // Keep the printable table focused; remarks remain editable in the app.
-  const colRatios = [8, 8, 20, 24, 43, 51, 28, 35, 31];
+  // Keep the printable table focused. Add reflection only when the teacher has
+  // entered it, so the default export stays compact without losing the option.
+  const includeReflection = data.entries.some((entry) => (entry.remarks || "").trim().length > 0);
+  const colRatios = includeReflection
+    ? [8, 8, 19, 22, 39, 47, 27, 33, 29, 24]
+    : [8, 8, 20, 24, 43, 51, 28, 35, 31];
   const totalRatio = colRatios.reduce((a, b) => a + b, 0);
   const cols = colRatios.map((r) => (r / totalRatio) * contentWidth);
 
   const headers = [
     "WK", "LSN", "STRAND", "SUB-STRAND", "OUTCOMES",
     "ACTIVITIES", "KEY INQUIRY", "RESOURCES / REF", "ASSESSMENT",
+    ...(includeReflection ? ["REFLECTION"] : []),
   ];
 
   const HEADER_COLOR = [55, 65, 81] as const; // Professional dark gray
@@ -177,6 +182,7 @@ export function generateSchemeOfWorkPdf(data: SchemeOfWorkExportData): Buffer {
       entry.keyInquiryQuestion || "—",
       [entry.tlAids, entry.reference].filter(Boolean).join("; ") || "—",
       entry.assessmentMethod || "—",
+      ...(includeReflection ? [entry.remarks || "—"] : []),
     ];
 
     // Calculate row height

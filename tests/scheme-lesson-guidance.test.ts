@@ -67,4 +67,41 @@ describe("scheme lesson guidance", () => {
     );
     assert.equal(new Set(activities).size, 3);
   });
+
+  test("biology lessons use topic-specific practical guidance", () => {
+    const nutrition = buildLessonGuidance(
+      "Biology",
+      "Nutrition",
+      "describe types of nutrition in plants",
+      0
+    );
+    assert.match(nutrition.activities, /leaf and chloroplast/i);
+    assert.match(nutrition.resources, /fresh leaf|plant specimen/i);
+    assert.match(nutrition.inquiry, /adapted for making food/i);
+    assert.match(nutrition.assessment, /labelled diagrams/i);
+
+    const transport = buildLessonGuidance(
+      "Biology",
+      "Transport",
+      "relate the structure of xylem and phloem to transport",
+      1
+    );
+    assert.match(transport.activities, /coloured water/i);
+    assert.match(transport.resources, /vascular-tissue charts/i);
+    assert.match(transport.assessment, /observation record/i);
+  });
+
+  test("biology repeated lessons move from explanation to investigation to application", () => {
+    const lessons = [0, 1, 2].map((repeatIndex) =>
+      buildLessonGuidance(
+        "Biology",
+        "Gaseous Exchange and Respiration",
+        "investigate aerobic and anaerobic respiration in living organisms",
+        repeatIndex
+      )
+    );
+    assert.equal(new Set(lessons.map((lesson) => lesson.activities)).size, 3);
+    assert.match(lessons[1].activities, /microscope|germinating seeds/i);
+    assert.match(lessons[2].activities, /compare aerobic and anaerobic/i);
+  });
 });

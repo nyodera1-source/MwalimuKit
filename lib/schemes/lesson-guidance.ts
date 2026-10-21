@@ -7,6 +7,118 @@ export interface LessonGuidance {
 
 type GuidanceTemplate = LessonGuidance;
 
+function biologyGuidance(topic: string, focus: string, repeatIndex: number): LessonGuidance {
+  const context = `${topic} ${focus}`.toLowerCase();
+  const stage = repeatIndex % 3;
+
+  if (/nutrition|photosynthesis|chloroplast/.test(context)) {
+    if (stage === 1) {
+      return {
+        activities: `Learners compare a covered and exposed leaf, or labelled diagrams where a practical is not available, test for starch, and explain how chloroplast structure supports photosynthesis.`,
+        resources: "Fresh leaves; iodine solution; dropper; white tile; leaf/chloroplast charts; protective clothing; exercise books",
+        inquiry: "What evidence shows that a leaf has made food?",
+        assessment: "Observe the starch-test procedure or diagram interpretation and check whether learners link the result to chloroplast function.",
+      };
+    }
+    if (stage === 2) {
+      return {
+        activities: `Learners sequence the light and dark stages of photosynthesis, label the inputs and products, and explain how the process supports plant growth in a short group presentation.`,
+        resources: "Photosynthesis flow chart; chloroplast diagram; sequencing cards; exercise books",
+        inquiry: "How do the light and dark stages work together to make food?",
+        assessment: "Review each learner's labelled sequence and ask for one evidence-based explanation of the role of light, carbon dioxide or water.",
+      };
+    }
+    return {
+      activities: `Learners study a leaf and chloroplast diagram or specimen, identify the features involved in nutrition, and relate each feature to its function in photosynthesis.`,
+      resources: "Fresh leaf or plant specimen; chloroplast and leaf charts; hand lens or microscope if available; exercise books",
+      inquiry: "How are plant structures adapted for making food?",
+      assessment: "Check labelled diagrams and ask learners to explain one structural adaptation using evidence from the specimen or chart.",
+    };
+  }
+
+  if (/transport|xylem|phloem|root|stem|leaf|translocation/.test(context)) {
+    if (stage === 1) {
+      return {
+        activities: `Learners place a freshly cut stem in coloured water where materials permit, observe the movement through vascular tissue, and draw a labelled cross-section showing xylem and phloem.`,
+        resources: "Fresh celery or leafy stem; coloured water; clear container; hand lens; vascular-tissue charts; exercise books",
+        inquiry: "What evidence shows how water moves through a plant?",
+        assessment: "Assess the observation record and labelled drawing for accurate identification of the transport tissues.",
+      };
+    }
+    if (stage === 2) {
+      return {
+        activities: `Learners compare transport in roots, stems and leaves, trace the path of water and manufactured food, and explain how the structures support transport in a local plant.`,
+        resources: "Root, stem and leaf diagrams; plant specimen; tracing cards; comparison table; exercise books",
+        inquiry: "How do different plant parts work together as a transport system?",
+        assessment: "Review the comparison table and ask learners to justify the direction and function of xylem or phloem transport.",
+      };
+    }
+    return {
+      activities: `Learners examine root, stem and leaf diagrams or specimens, identify the tissues involved in transport, and relate their structures to absorption, movement and translocation.`,
+      resources: "Root, stem and leaf specimens or charts; hand lens; microscope slides if available; exercise books",
+      inquiry: "How are plant transport tissues adapted to their functions?",
+      assessment: "Check labelled diagrams and ask learners to relate one structural feature to its transport function.",
+    };
+  }
+
+  if (/gaseous|respiration|stomata|guard cell|pneumatophore|aerobic|anaerobic/.test(context)) {
+    if (stage === 1) {
+      return {
+        activities: `Learners observe stomata and guard cells using a microscope, prepared slide or clear diagram, then investigate respiration with germinating seeds or a teacher demonstration where apparatus is available.`,
+        resources: "Microscope and slides or stomata charts; germinating seeds; conical flask; limewater; delivery tube; protective clothing",
+        inquiry: "How do plants exchange gases and release energy?",
+        assessment: "Use an observation checklist and a short explanation task to assess identification of stomata and interpretation of the respiration result.",
+      };
+    }
+    if (stage === 2) {
+      return {
+        activities: `Learners compare aerobic and anaerobic respiration, interpret a simple experiment or data set, and explain the effects of respiration in plants and everyday processes such as baking or biogas production.`,
+        resources: "Respiration experiment results; comparison table; yeast or germinating seeds; limewater; exercise books",
+        inquiry: "Why does the availability of oxygen change the products of respiration?",
+        assessment: "Review the comparison table and ask learners to use evidence from the investigation to explain one difference between aerobic and anaerobic respiration.",
+      };
+    }
+    return {
+      activities: `Learners study diagrams of stomata, guard cells and respiratory surfaces, identify adaptations for gaseous exchange, and relate the structures to plant survival.`,
+      resources: "Stomata and respiratory-surface charts; plant specimen; hand lens or microscope if available; exercise books",
+      inquiry: "What features make a plant surface effective for gaseous exchange?",
+      assessment: "Check labelled diagrams and ask learners to relate two features of a respiratory surface to efficient gas exchange.",
+    };
+  }
+
+  if (/circulatory|blood|heart|immunity|lymph|animal transport|respiratory system in animals|respiratory structures in/.test(context)) {
+    if (stage === 1) {
+      return {
+        activities: `Learners use heart, blood-vessel or respiratory-system diagrams to trace movement, compare structures in selected animals, and model the direction of flow using arrows or a simple group model.`,
+        resources: "Animal heart and respiratory-system charts; flow arrows; model materials; microscope slides or prepared images if available",
+        inquiry: "How does the structure of an animal system support movement of substances?",
+        assessment: "Assess the model or labelled diagram and ask learners to explain the direction of blood or air movement.",
+      };
+    }
+    if (stage === 2) {
+      return {
+        activities: `Learners compare transport or respiratory systems in two animals, interpret a health or exercise scenario, and present one adaptation that improves delivery of substances or gaseous exchange.`,
+        resources: "Comparison charts; short health or exercise scenario; reference book; exercise books",
+        inquiry: "Why are animal transport and respiratory systems different in different organisms?",
+        assessment: "Review the comparison and ask learners to support one adaptation with evidence from the diagrams or scenario.",
+      };
+    }
+    return {
+      activities: `Learners study labelled diagrams or models of the relevant animal system, identify its main structures, and relate each structure to transport, protection or gaseous exchange.`,
+      resources: "Relevant animal-system charts or models; reference book; digital illustration if available; exercise books",
+      inquiry: "How do the parts of this animal system work together?",
+      assessment: "Use labelled questions and a short oral explanation to check whether learners can connect structures with functions.",
+    };
+  }
+
+  return {
+    activities: `Learners study a labelled diagram, specimen or model of ${topic}, identify the structures involved, and relate each structure to the stated biological function.`,
+    resources: `Relevant ${topic} specimen, model or chart; reference book; exercise books`,
+    inquiry: `How does the structure of ${topic} support its function?`,
+    assessment: `Review labelled work and ask learners to explain how one structure supports the function they studied.`,
+  };
+}
+
 function subjectTemplate(subject: string, topic: string, focus: string): GuidanceTemplate {
   const area = subject.toLowerCase();
   const goal = focus.replace(/[.!?]+$/, "").trim();
@@ -37,6 +149,9 @@ function subjectTemplate(subject: string, topic: string, focus: string): Guidanc
   }
 
   if (/science|biology|chemistry|physics/.test(area)) {
+    if (/biology/.test(area)) {
+      return biologyGuidance(topic, goal, 0);
+    }
     return {
       activities: `Learners observe a safe example or illustration of ${topic}, record what they notice, and use their observations to ${goal}.`,
       resources: "Relevant specimen, diagram or demonstration materials if available; observation sheet",
@@ -44,7 +159,6 @@ function subjectTemplate(subject: string, topic: string, focus: string): Guidanc
       assessment: `Review observation records and ask learners to use evidence to ${goal}.`,
     };
   }
-
   if (/social studies|history|geography|citizenship|business/.test(area)) {
     return {
       activities: `Learners examine a relevant map, source or local case about ${topic}, compare viewpoints, and explain their conclusion using evidence.`,
@@ -281,6 +395,9 @@ export function buildLessonGuidance(
         assessment: specific.assessment,
       };
     }
+  }
+  if (/biology/i.test(subject)) {
+    return biologyGuidance(topic, focus, repeatIndex);
   }
   const guidance = subjectTemplate(subject, topic, focus);
   if (repeatIndex % 3 === 1) {
