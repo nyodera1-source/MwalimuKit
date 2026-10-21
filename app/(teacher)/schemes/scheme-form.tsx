@@ -144,6 +144,7 @@ interface SchemeDefaults {
     carryoverSubTopic?: string;
     carryoverObjectives?: string;
     carryoverLessons?: number;
+    openSlotPurpose?: string;
   };
 }
 
@@ -158,6 +159,13 @@ interface SchemeFormProps {
 
 const currentYear = new Date().getFullYear();
 const YEAR_OPTIONS = [currentYear - 1, currentYear, currentYear + 1];
+const OPEN_SLOT_PURPOSES = [
+  "Remedial work",
+  "Revision",
+  "Assessment",
+  "School activity",
+  "Leave open",
+] as const;
 
 // ─── Main Form ───
 
@@ -237,6 +245,9 @@ export function SchemeForm({
   const [carryoverLessons, setCarryoverLessons] = useState(
     defaults?.schemeData?.carryoverLessons || 2
   );
+  const [openSlotPurpose, setOpenSlotPurpose] = useState(
+    defaults?.schemeData?.openSlotPurpose || "Leave open"
+  );
 
   const generatedTitle = cascadeNames.grade && cascadeNames.learningArea
     ? `${cascadeNames.grade} - ${cascadeNames.learningArea} - Term ${term}, ${year}`
@@ -312,6 +323,11 @@ export function SchemeForm({
     selectedSubStrands.map((sub) => sub.suggestedLessons),
     Math.max(0, capacityBeforeBreaks - carryoverSlotsBeforeBreaks)
   );
+  const openSlots =
+    pacingBeforeBreaks.availability === "complete" &&
+    Number(pacingBeforeBreaks.difference) > 0
+      ? Number(pacingBeforeBreaks.difference)
+      : 0;
   const finalPacing = summarizePacing(
     selectedSubStrands.map((sub) => sub.suggestedLessons),
     curriculumCapacity
@@ -546,8 +562,29 @@ export function SchemeForm({
       const lessonsInWeek = tw.endLesson - tw.startLesson + 1;
 
       for (let l = 0; l < lessonsInWeek; l++) {
-        if (curriculumLessonIndex >= lessonBatches.length) break;
         const lessonNum = tw.startLesson + l;
+        if (curriculumLessonIndex >= lessonBatches.length) {
+          if (pacedBatches) {
+            const isLeftOpen = openSlotPurpose === "Leave open";
+            newEntries.push({
+              week: tw.week,
+              lesson: String(lessonNum),
+              topic: isLeftOpen ? "Open lesson slot" : openSlotPurpose,
+              subTopic: "",
+              objectives: "",
+              tlActivities: "",
+              tlAids: "",
+              reference: actualReferenceBook || "",
+              keyInquiryQuestion: "",
+              assessmentMethod: "",
+              remarks: isLeftOpen
+                ? "Leave open for teacher use"
+                : `Reserved for ${openSlotPurpose.toLowerCase()}`,
+            });
+          }
+          curriculumLessonIndex++;
+          continue;
+        }
         const lessonSlos = lessonBatches[curriculumLessonIndex];
 
         if (lessonSlos.length === 0) continue;
@@ -621,6 +658,7 @@ export function SchemeForm({
     carryoverSubTopic,
     carryoverObjectives,
     carryoverLessons,
+    openSlotPurpose,
   });
 
   const schemeDataJson = buildSchemeData();
@@ -636,7 +674,17 @@ export function SchemeForm({
 
   const canProceedStep1 = gradeId && learningAreaId && term && year;
   const canProceedStep2 = selectedSubStrandIds.length > 0;
-  const canProceedStep3 = firstWeek > 0 && lastWeek > firstWeek && lessonsPerWeek > 0;
+  const teachingWindowIsValid =
+    firstWeek > 0 &&
+    lastWeek >= firstWeek &&
+    lessonsPerWeek > 0 &&
+    (lastWeek > firstWeek || lastLesson >= firstLesson);
+  const teachingWindowError = !teachingWindowIsValid
+    ? lastWeek < firstWeek
+      ? "The last week must be on or after the first week."
+      : "The last lesson must be on or after the first lesson."
+    : null;
+  const canProceedStep3 = teachingWindowIsValid;
 
   return (
     <form ref={formRef} action={formAction} className="space-y-4">
@@ -940,15 +988,201 @@ export function SchemeForm({
       {/* ─── Step 3: Lesson Structure ─── */}
       {step === 3 && (
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Lesson Structure</CardTitle>
-            <p className="text-sm text-muted-foreground">Fields marked with * are mandatory</p>
+          <CardHeader className="gap-1 border-b bg-muted/20 px-5 py-3">
+            <CardTitle className="text-lg">Timetable &amp; capacity</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Set the teaching window. Pacing suggestions are optional.
+            </p>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label>Number of Lessons Per Week *</Label>
-              <Select value={String(lessonsPerWeek)} onValueChange={(v) => setLessonsPerWeek(Number(v))}>
-                <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+          <CardContent className="space-y-3 px-5 py-4">
+            <div className="flex flex-wrap items-end justify-between gap-3 rounded-md border bg-white p-3">
+              <div className="space-y-1">
+                <Label className="text-sm">Lessons per week <span className="text-destructive">*</span></Label>
+                <Select value={String(lessonsPerWeek)} onValueChange={(v) => setLessonsPerWeek(Number(v))}>
+                  <SelectTrigger className="h-9 w-36"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                      <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <p className="max-w-sm text-right text-xs text-muted-foreground">
+                Breaks added on the next step will reduce the final teaching capacity.
+              </p>
+            </div>
+
+            {pacingBeforeBreaks.availability === "complete" && (
+              <div className="rounded-md border border-blue-200 bg-blue-50/60 px-3 py-2 text-sm">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-blue-950">
+                  <span><strong>{pacingBeforeBreaks.suggestedLessons}</strong> suggested</span>
+                  <span><strong>{pacingBeforeBreaks.capacity}</strong> available</span>
+                  <span className="text-xs text-blue-700">optional guidance</span>
+                </div>
+                <p className="mt-1 text-xs text-blue-700">
+                  {pacingBeforeBreaks.difference === 0
+                    ? "The suggested coverage fits this timetable. You can still adjust it before generating."
+                    : Number(pacingBeforeBreaks.difference) > 0
+                      ? `${pacingBeforeBreaks.difference} open slot${Number(pacingBeforeBreaks.difference) === 1 ? "" : "s"} remain.`
+                      : `${Math.abs(Number(pacingBeforeBreaks.difference))} suggested lesson${Math.abs(Number(pacingBeforeBreaks.difference)) === 1 ? "" : "s"} exceed this timetable; generation remains available.`}
+                </p>
+              </div>
+            )}
+
+            {pacingBeforeBreaks.availability === "partial" && (
+              <div className="rounded-md border border-blue-200 bg-blue-50/60 px-3 py-2 text-xs text-blue-700">
+                Published lesson guidance is available for only some selected topics. It is optional and will not block generation.
+              </div>
+            )}
+
+            {openSlots > 0 && (
+              <div className="flex flex-wrap items-center gap-3 rounded-md border bg-slate-50 px-3 py-2">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium">{openSlots} open lesson slot{openSlots === 1 ? "" : "s"}</p>
+                  <p className="text-xs text-muted-foreground">Choose the intended use for the generated scheme.</p>
+                </div>
+                <Select value={openSlotPurpose} onValueChange={setOpenSlotPurpose}>
+                  <SelectTrigger className="h-9 w-full sm:w-44"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {OPEN_SLOT_PURPOSES.map((purpose) => (
+                      <SelectItem key={purpose} value={purpose}>{purpose}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="rounded-md border p-3">
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <h4 className="text-sm font-medium">Teaching window</h4>
+                <span className="text-xs text-muted-foreground">Select the first and last lesson of the term.</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <div className="space-y-1">
+                  <Label className="text-xs">First week <span className="text-destructive">*</span></Label>
+                  <Select value={String(firstWeek)} onValueChange={(v) => setFirstWeek(Number(v))}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 5 }, (_, i) => i + 1).map((n) => (
+                        <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">First lesson <span className="text-destructive">*</span></Label>
+                  <Select value={String(firstLesson)} onValueChange={(v) => setFirstLesson(Number(v))}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: lessonsPerWeek }, (_, i) => i + 1).map((n) => (
+                        <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Last week <span className="text-destructive">*</span></Label>
+                  <Select value={String(lastWeek)} onValueChange={(v) => setLastWeek(Number(v))}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 18 }, (_, i) => i + 1).map((n) => (
+                        <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Last lesson <span className="text-destructive">*</span></Label>
+                  <Select value={String(lastLesson)} onValueChange={(v) => setLastLesson(Number(v))}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: lessonsPerWeek }, (_, i) => i + 1).map((n) => (
+                        <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              {teachingWindowError && (
+                <p className="mt-2 text-xs text-destructive">{teachingWindowError}</p>
+              )}
+            </div>
+
+            {/* Previous term spillover */}
+            <div className="rounded-md border p-3">
+              <label className="flex cursor-pointer items-center gap-2">
+                <Checkbox
+                  checked={carryoverEnabled}
+                  onCheckedChange={(v) => setCarryoverEnabled(v === true)}
+                />
+                <span className="text-sm font-medium">Include unfinished work from the previous term</span>
+              </label>
+
+              {carryoverEnabled && (
+                <div className="space-y-2.5 border-t mt-3 pt-3">
+                  <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
+                    <div className="space-y-1">
+                      <Label className="text-xs">Topic</Label>
+                      <Input
+                        value={carryoverTopic}
+                        onChange={(e) => setCarryoverTopic(e.target.value)}
+                        placeholder="e.g., Genetics"
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Sub-topic</Label>
+                      <Input
+                        value={carryoverSubTopic}
+                        onChange={(e) => setCarryoverSubTopic(e.target.value)}
+                        placeholder="e.g., Gene mutations"
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Objectives <span className="text-muted-foreground">(optional)</span></Label>
+                    <Textarea
+                      value={carryoverObjectives}
+                      onChange={(e) => setCarryoverObjectives(e.target.value)}
+                      placeholder="What learners should be able to do"
+                      className="min-h-[52px] text-sm"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs">Lessons needed</Label>
+                    <Select value={String(carryoverLessons)} onValueChange={(v) => setCarryoverLessons(Number(v))}>
+                      <SelectTrigger className="h-9 w-28 text-sm"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <SelectItem key={n} value={String(n)}>{n} lesson{n > 1 ? "s" : ""}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="sticky bottom-0 z-10 -mx-5 flex items-center justify-between gap-3 border-t bg-white/95 px-5 pt-3 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+              <Button type="button" variant="outline" onClick={() => setStep(2)}>
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back
+              </Button>
+              <Button
+                type="button"
+                size="lg"
+                disabled={!canProceedStep3}
+                onClick={() => setStep(4)}
+                className="min-w-28 bg-blue-600 font-semibold shadow-sm hover:bg-blue-700"
+              >
+                Next <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Legacy duplicate Step 3 block
                 <SelectContent>
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                     <SelectItem key={n} value={String(n)}>{n}</SelectItem>
@@ -1041,7 +1275,7 @@ export function SchemeForm({
               </div>
             </div>
 
-            {/* Previous term spillover */}
+            Previous term spillover
             <div className="border rounded-md p-4 space-y-3">
               <label className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
@@ -1108,6 +1342,8 @@ export function SchemeForm({
           </CardContent>
         </Card>
       )}
+
+      */}
 
       {/* ─── Step 4: Breaks & Generate ─── */}
       {step === 4 && (
@@ -1239,7 +1475,7 @@ export function SchemeForm({
                   {finalPacing.difference === 0
                     ? "The suggested coverage is balanced. This is guidance only."
                     : Number(finalPacing.difference) > 0
-                      ? `${finalPacing.difference} teaching slots remain for remedial work, revision, assessment, or interruptions.`
+                      ? `${finalPacing.difference} teaching slot${Number(finalPacing.difference) === 1 ? "" : "s"} remain for ${openSlotPurpose === "Leave open" ? "teacher use" : openSlotPurpose.toLowerCase()}.`
                       : `${Math.abs(Number(finalPacing.difference))} suggested lessons exceed this timetable. The scheme can still be generated for the available slots.`}
                 </p>
                 <p className="mt-1 text-xs text-blue-700">This comparison is optional guidance and does not prevent generation.</p>
@@ -1260,7 +1496,7 @@ export function SchemeForm({
               </div>
               <p className="text-xs text-muted-foreground">
                 {finalPacing.availability === "complete"
-                  ? `Uses published lesson counts as optional guidance for ${selectedSubStrandIds.length} selected subtopics. Open slots can be used for remedial work or other school needs.`
+                  ? `Uses published lesson counts as optional guidance for ${selectedSubStrandIds.length} selected subtopics. Open slots are labelled for ${openSlotPurpose === "Leave open" ? "teacher use" : openSlotPurpose.toLowerCase()}.`
                   : `Distributes ${selectedSubStrandIds.length} subtopics across Week ${firstWeek}-${lastWeek}, ${lessonsPerWeek} lessons/week.`}
                 {" The generated scheme will open in preview, where you can review, edit, save, and download it."}
               </p>
