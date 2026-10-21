@@ -7,7 +7,7 @@ import { RecentDocuments } from "@/components/dashboard/recent-documents";
 import { GettingStarted } from "@/components/dashboard/getting-started";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/brand/logo-mark";
-import { FileText, BookOpen } from "lucide-react";
+import { ArrowRight, BookOpen, FileText } from "lucide-react";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -59,6 +59,7 @@ export default async function DashboardPage() {
   const needsProfile =
     !profile?.primaryGradeId || profile.primaryAreas.length === 0;
   const isNewTeacher = recentDocs.length === 0;
+  const latestDocument = recentDocs[0] ?? null;
 
   const modules = [
     {
@@ -83,16 +84,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Welcome banner */}
-      <div className="gradient-hero rounded-xl p-6 lg:p-8 text-white">
+      {/* Welcome header */}
+      <div className="rounded-xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:px-6">
         <div className="flex items-start gap-3">
-          <LogoMark size="lg" className="mt-0.5" />
-          <div>
-            <h1 className="text-2xl font-bold">
+          <LogoMark size="md" className="mt-0.5" />
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">
+              Teacher workspace
+            </p>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">
               Welcome back, {session.user.name}
             </h1>
-            <p className="text-blue-100 text-sm mt-1">
-              Create curriculum-aligned schemes of work and lesson plans.
+            <p className="mt-1 text-sm text-slate-600">
+              Continue preparing your classroom documents.
             </p>
           </div>
         </div>
@@ -104,7 +108,7 @@ export default async function DashboardPage() {
       ) : (
         <>
           {needsProfile && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 sm:flex sm:items-center sm:justify-between">
+            <div className="rounded-lg border border-amber-200/80 bg-amber-50/70 px-4 py-3 sm:flex sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-medium text-amber-900">
                   Complete your teaching profile
@@ -119,8 +123,39 @@ export default async function DashboardPage() {
             </div>
           )}
 
+          {latestDocument && (
+            <section className="rounded-xl border border-blue-200 bg-blue-50/55 p-5 shadow-sm sm:flex sm:items-center sm:justify-between sm:gap-6">
+              <div className="flex min-w-0 items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+                  {latestDocument.type === "scheme" ? (
+                    <BookOpen className="h-5 w-5" />
+                  ) : (
+                    <FileText className="h-5 w-5" />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+                    Continue where you left off
+                  </p>
+                  <h2 className="mt-1 truncate text-base font-semibold text-slate-950">
+                    {latestDocument.title || "Untitled document"}
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Updated {formatDistanceToNow(latestDocument.updatedAt, { addSuffix: true })}
+                  </p>
+                </div>
+              </div>
+              <Button asChild size="sm" className="mt-4 shrink-0 sm:mt-0">
+                <Link href={`/${latestDocument.type === "scheme" ? "schemes" : "lesson-plans"}/${latestDocument.id}`}>
+                  Continue editing
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </section>
+          )}
+
           {/* Module tiles */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {modules.map((m) => (
               <ModuleTile key={m.title} {...m} />
             ))}
