@@ -149,6 +149,10 @@ interface SchemeDefaults {
 
 interface SchemeFormProps {
   defaultGradeId?: string | null;
+  defaultGradeName?: string | null;
+  defaultLearningAreaId?: string | null;
+  defaultLearningAreaName?: string | null;
+  defaultSchoolName?: string | null;
   defaults?: SchemeDefaults;
 }
 
@@ -157,7 +161,14 @@ const YEAR_OPTIONS = [currentYear - 1, currentYear, currentYear + 1];
 
 // ─── Main Form ───
 
-export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
+export function SchemeForm({
+  defaultGradeId,
+  defaultGradeName,
+  defaultLearningAreaId,
+  defaultLearningAreaName,
+  defaultSchoolName,
+  defaults,
+}: SchemeFormProps) {
   const isEdit = !!defaults?.id;
   const action = isEdit ? updateSchemeOfWork : createSchemeOfWork;
   const [state, formAction, pending] = useActionState(action, null);
@@ -167,15 +178,18 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
   // Step 1: Learning Area & School Details
   const [gradeId, setGradeId] = useState(defaults?.gradeId || defaultGradeId || "");
-  const [learningAreaId, setLearningAreaId] = useState(defaults?.learningAreaId || "");
+  const [learningAreaId, setLearningAreaId] = useState(defaults?.learningAreaId || defaultLearningAreaId || "");
   const [title, setTitle] = useState(defaults?.title || "");
   const [autoTitle, setAutoTitle] = useState(!defaults?.title);
   const [term, setTerm] = useState(String(defaults?.term || 1));
   const [year, setYear] = useState(String(defaults?.year || currentYear));
-  const [schoolName, setSchoolName] = useState(defaults?.schemeData?.schoolName || "");
+  const [schoolName, setSchoolName] = useState(defaults?.schemeData?.schoolName || defaultSchoolName || "");
   const [referenceBook, setReferenceBook] = useState(defaults?.schemeData?.referenceBook || "");
   const [customReferenceBook, setCustomReferenceBook] = useState("");
-  const [cascadeNames, setCascadeNames] = useState<{ grade?: string; learningArea?: string }>({});
+  const [cascadeNames, setCascadeNames] = useState<{ grade?: string; learningArea?: string }>({
+    grade: defaultGradeName || undefined,
+    learningArea: defaultLearningAreaName || undefined,
+  });
 
   // Step 2: Topic selection
   const [strands, setStrands] = useState<StrandOption[]>([]);
@@ -653,25 +667,27 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
 
       {/* ─── Step 1: Learning Area & School Details ─── */}
       {step === 1 && (
-        <Card className="gap-0 overflow-hidden rounded-2xl shadow-sm">
-          <CardHeader className="gap-1 border-b bg-muted/20 px-5 py-4">
+          <Card className="max-w-5xl gap-0 overflow-hidden rounded-2xl shadow-sm">
+          <CardHeader className="gap-1 border-b bg-muted/20 px-5 py-3">
             <CardTitle className="text-base">Learning Area & School Details</CardTitle>
-            <p className="text-xs text-muted-foreground">Fields marked with * are mandatory</p>
+            <p className="text-xs text-muted-foreground">Complete the required details to build your scheme.</p>
           </CardHeader>
-          <CardContent className="space-y-4 px-5 py-5">
+          <CardContent className="space-y-3 px-5 py-4">
             <div className="space-y-1.5">
-              <Label className="text-sm font-medium" htmlFor="schoolName">School</Label>
+              <Label className="text-sm font-medium" htmlFor="schoolName">
+                School <span className="text-muted-foreground">(optional)</span>
+              </Label>
               <Input
                 id="schoolName"
                 value={schoolName}
                 onChange={(e) => setSchoolName(e.target.value)}
-                placeholder="e.g., Lions High School"
+                placeholder="e.g., Menengai High School"
               />
             </div>
 
             <CascadeDropdown
               defaultGradeId={defaults?.gradeId || defaultGradeId}
-              defaultLearningAreaId={defaults?.learningAreaId}
+              defaultLearningAreaId={defaults?.learningAreaId || defaultLearningAreaId}
               onChange={(sel: CascadeSelection) => {
                 const nextLearningAreaId = sel.learningAreaId || "";
                 if (nextLearningAreaId !== learningAreaId) {
@@ -685,11 +701,14 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               onNamesChange={(names) => setCascadeNames(names)}
               showStrand={false}
               showSLO={false}
+              required
             />
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium" htmlFor="referenceBook">Reference Book (KICD Approved)</Label>
+                <Label className="text-sm font-medium" htmlFor="referenceBook">
+                  Reference Book <span className="text-muted-foreground">(optional)</span>
+                </Label>
                 <Select
                   value={referenceBook}
                   onValueChange={(val) => {
@@ -733,14 +752,14 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                   id="title"
                   value={displayedTitle}
                   onChange={(e) => { setTitle(e.target.value); setAutoTitle(false); }}
-                  placeholder="Auto-generated"
+                  placeholder="Choose a grade and learning area for an auto-generated title"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium">Term *</Label>
+                <Label className="text-sm font-medium">Term <span className="text-destructive">*</span></Label>
                 <Select value={term} onValueChange={setTerm}>
                   <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -751,7 +770,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium">Year *</Label>
+                <Label className="text-sm font-medium">Year <span className="text-destructive">*</span></Label>
                 <Select value={year} onValueChange={setYear}>
                   <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -763,9 +782,20 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               </div>
             </div>
 
-            <div className="flex justify-end pt-1">
-              <Button type="button" disabled={!canProceedStep1} onClick={() => setStep(2)}>
-                Next <ArrowRight className="h-4 w-4 ml-2" />
+            <div className="flex items-center justify-end gap-3 border-t pt-3">
+              {!canProceedStep1 && (
+                <p className="text-xs text-muted-foreground">
+                  Select a grade and learning area to continue.
+                </p>
+              )}
+              <Button
+                type="button"
+                size="lg"
+                disabled={!canProceedStep1}
+                onClick={() => setStep(2)}
+                className="min-w-28 bg-blue-600 font-semibold shadow-sm hover:bg-blue-700"
+              >
+                Next <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </CardContent>
@@ -1193,7 +1223,7 @@ export function SchemeForm({ defaultGradeId, defaults }: SchemeFormProps) {
               </div>
               <p className="text-xs text-muted-foreground">
                 {finalPacing.availability === "complete"
-                  ? `Uses the published lesson counts as optional guidance for ${selectedSubStrandIds.length} selected subtopics. Open slots can be used for remedial work or other school needs.`
+                  ? `Uses published lesson counts as optional guidance for ${selectedSubStrandIds.length} selected subtopics. Open slots can be used for remedial work or other school needs.`
                   : `Distributes ${selectedSubStrandIds.length} subtopics across Week ${firstWeek}-${lastWeek}, ${lessonsPerWeek} lessons/week.`}
                 {" The generated scheme will open in preview, where you can review, edit, save, and download it."}
               </p>

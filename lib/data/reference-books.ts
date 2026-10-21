@@ -1,10 +1,9 @@
 /**
- * KICD-approved textbook publishers and common reference books
- * Based on KICD approved lists (updated 2026)
- * Sources: https://kicd.ac.ke/books/ and https://educationnews.co.ke/kicd-releases-a-full-list-of-approved-textbooks-for-schools/
+ * Reference book options used by the teacher planning forms.
+ * Grade 10 currently has one published option in the catalogue: Front Row.
  */
 
-// Major KICD-approved publishers
+// Publishers retained for lower-grade catalogue entries.
 export const PUBLISHERS = [
   "KLB (Kenya Literature Bureau)",
   "Longhorn Publishers",
@@ -27,6 +26,10 @@ export function getReferenceBookOptions(
   learningArea: string
 ): string[] {
   const subject = learningArea.toLowerCase();
+
+  if (grade.toLowerCase().includes("grade 10")) {
+    return [`Front Row ${learningArea} ${grade}`, "Other (specify below)"];
+  }
 
   const books: string[] = [];
 

@@ -28,6 +28,7 @@ interface CascadeDropdownProps {
   onNamesChange?: React.Dispatch<React.SetStateAction<{ grade?: string; learningArea?: string; strand?: string }>>;
   showStrand?: boolean;
   showSLO?: boolean;
+  required?: boolean;
 }
 
 export function CascadeDropdown({
@@ -40,6 +41,7 @@ export function CascadeDropdown({
   onNamesChange,
   showStrand = true,
   showSLO = true,
+  required = false,
 }: CascadeDropdownProps) {
   const [grades, setGrades] = useState<Option[]>([]);
   const [learningAreas, setLearningAreas] = useState<Option[]>([]);
@@ -201,7 +203,9 @@ export function CascadeDropdown({
       )}
 
       <div className="space-y-1.5">
-        <Label className="text-sm font-medium">Grade</Label>
+        <Label className="text-sm font-medium">
+          Grade {required && <span className="text-destructive">*</span>}
+        </Label>
         <Select
           value={selection.gradeId || ""}
           onValueChange={(val) => {
@@ -230,7 +234,9 @@ export function CascadeDropdown({
       </div>
 
       <div className="space-y-1.5">
-        <Label className="text-sm font-medium">Learning Area</Label>
+        <Label className="text-sm font-medium">
+          Learning Area {required && <span className="text-destructive">*</span>}
+        </Label>
         <Select
           value={selection.learningAreaId || ""}
           disabled={!selection.gradeId || loading.learningAreas}
@@ -264,6 +270,11 @@ export function CascadeDropdown({
             ))}
           </SelectContent>
         </Select>
+        {required && !selection.gradeId && (
+          <p className="text-xs text-muted-foreground">
+            Choose a grade first to load its learning areas.
+          </p>
+        )}
       </div>
 
       {showStrand && strands.length > 0 && (
