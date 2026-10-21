@@ -246,6 +246,14 @@ export function SchemeForm({
   const selectedSubStrands = strands.flatMap((strand) =>
     strand.subStrands.filter((sub) => selectedSubStrandIds.includes(sub.id))
   );
+  const totalSubStrands = strands.reduce((total, strand) => total + strand.subStrands.length, 0);
+  const selectedSuggestedLessons = selectedSubStrands.reduce(
+    (total, sub) => total + (sub.suggestedLessons || 0),
+    0
+  );
+  const hasTermGuidance = strands.some((strand) =>
+    strand.subStrands.some((sub) => sub.suggestedTerm !== null)
+  );
   const breakWeekSet = new Set<number>();
   if (!noBreaks) {
     for (const entry of breaks) {
@@ -318,7 +326,7 @@ export function SchemeForm({
       .then((data) => {
         const s = data.strands || [];
         setStrands(s);
-        setExpandedStrands(new Set(s.map((st: StrandOption) => st.id)));
+        setExpandedStrands(new Set());
       })
       .catch(() => setStrands([]))
       .finally(() => setLoadingStrands(false));
@@ -354,6 +362,16 @@ export function SchemeForm({
   const selectAllSubStrands = () => {
     const allIds = strands.flatMap((s) => s.subStrands.map((ss) => ss.id));
     setSelectedSubStrandIds(allIds);
+  };
+
+  const allStrandsExpanded = strands.length > 0 && strands.every((strand) => expandedStrands.has(strand.id));
+
+  const toggleAllStrands = () => {
+    setExpandedStrands(
+      allStrandsExpanded
+        ? new Set()
+        : new Set(strands.map((strand) => strand.id))
+    );
   };
 
   const addBreak = () => {
@@ -811,11 +829,13 @@ export function SchemeForm({
                 {cascadeNames.grade} {cascadeNames.learningArea}
               </CardTitle>
               <Badge variant="secondary">
-                {selectedSubStrandIds.length} subtopics selected
+                {selectedSubStrandIds.length} of {totalSubStrands} topics selected
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              Select the subtopics to cover in Term {term}. Click a strand to expand/collapse.
+              {hasTermGuidance
+                ? `Select the topics to cover in Term ${term}.`
+                : `Select the topics for this scheme. This curriculum does not prescribe term placement, so choose what you plan to teach in Term ${term}.`}
             </p>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -825,10 +845,20 @@ export function SchemeForm({
               </div>
             ) : (
               <>
-                <div className="flex gap-2 mb-3">
-                  <Button type="button" variant="outline" size="sm" onClick={selectAllSubStrands}>
-                    Select All for Term {term}
-                  </Button>
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                  <div className="flex flex-wrap gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={selectAllSubStrands}>
+                      Select All Topics
+                    </Button>
+                    <Button type="button" variant="ghost" size="sm" onClick={toggleAllStrands}>
+                      {allStrandsExpanded ? "Collapse all" : "Expand all"}
+                    </Button>
+                  </div>
+                  <div className="rounded-md bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground">
+                    <span className="font-medium text-foreground">{selectedSubStrandIds.length}</span> topics
+                    <span className="mx-1.5">·</span>
+                    <span className="font-medium text-foreground">{selectedSuggestedLessons}</span> suggested lessons
+                  </div>
                 </div>
 
                 {strands.map((strand) => {
@@ -888,13 +918,20 @@ export function SchemeForm({
               </>
             )}
 
-            <div className="flex justify-between pt-2">
-              <Button type="button" variant="outline" onClick={() => setStep(1)}>
-                <ArrowLeft className="h-4 w-4 mr-2" /> Back
-              </Button>
-              <Button type="button" disabled={!canProceedStep2} onClick={() => setStep(3)}>
-                Next <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
+            <div className="sticky bottom-0 z-10 -mx-6 mt-2 flex flex-wrap items-center justify-between gap-3 border-t bg-white/95 px-6 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+              <div className="text-xs text-muted-foreground">
+                {selectedSubStrandIds.length === 0
+                  ? "Select at least one topic to continue."
+                  : `${selectedSubStrandIds.length} topic${selectedSubStrandIds.length === 1 ? "" : "s"} selected`}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button type="button" variant="outline" onClick={() => setStep(1)}>
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                </Button>
+                <Button type="button" size="lg" disabled={!canProceedStep2} onClick={() => setStep(3)} className="min-w-28 bg-blue-600 font-semibold shadow-sm hover:bg-blue-700">
+                  Next <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
