@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
 import { ModuleTile } from "@/components/dashboard/module-tile";
 import { RecentDocuments } from "@/components/dashboard/recent-documents";
 import { GettingStarted } from "@/components/dashboard/getting-started";
