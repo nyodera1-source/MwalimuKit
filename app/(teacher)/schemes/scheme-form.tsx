@@ -1493,32 +1493,32 @@ export function SchemeForm({
       {/* ─── Step 4: Breaks & Generate ─── */}
       {step === 4 && (
         <Card>
-          <CardHeader>
+          <CardHeader className="gap-1 border-b bg-muted/20 px-5 py-3">
             <CardTitle className="text-lg">Term Breaks and Interruptions</CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Add any mid-term breaks, exams, reporting days, or holidays.
             </p>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <label className="flex items-center gap-2 cursor-pointer">
+          <CardContent className="space-y-3 px-5 py-4">
+            <label className="flex cursor-pointer items-center justify-between gap-2 rounded-md border bg-white px-3 py-2">
+              <span className="text-sm font-medium">No breaks or interruptions</span>
               <Checkbox
                 checked={noBreaks}
                 onCheckedChange={(v) => { setNoBreaks(v === true); if (v) setBreaks([]); }}
               />
-              <span className="text-sm">No Breaks</span>
             </label>
 
             {!noBreaks && (
               <>
                 {breaks.map((b, index) => (
-                  <div key={index} className="border rounded-md p-4 space-y-3 bg-amber-50">
+                  <div key={index} className="space-y-2 rounded-md border bg-amber-50 p-3">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium text-sm">{b.title || `Break ${index + 1}`}</h4>
-                      <Button type="button" variant="ghost" size="sm" onClick={() => removeBreak(index)}>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeBreak(index)} title="Remove break" aria-label={`Remove ${b.title || `break ${index + 1}`}`}>
                         <Trash2 className="h-4 w-4 text-red-500" />
                       </Button>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
                       <div>
                         <Label className="text-xs">Type of Break/Interruption</Label>
                         <Select
@@ -1606,14 +1606,14 @@ export function SchemeForm({
             )}
 
             {finalPacing.availability === "complete" && (
-              <div className="rounded-md border border-blue-200 bg-blue-50/60 p-3 text-sm">
-                <p className="font-medium text-blue-900">Suggested pacing (optional)</p>
-                <div className="flex flex-wrap gap-x-6 gap-y-1">
+              <div className="rounded-md border border-blue-200 bg-blue-50/60 px-3 py-2 text-sm">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-blue-950">
+                  <span className="font-medium text-blue-900">Suggested pacing</span>
                   <span>
-                    Suggested curriculum coverage: <strong>{finalPacing.suggestedLessons} lessons</strong>
+                    <strong>{finalPacing.suggestedLessons}</strong> suggested
                   </span>
                   <span>
-                    Final teaching capacity: <strong>{finalPacing.capacity} lessons</strong>
+                    <strong>{finalPacing.capacity}</strong> available
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-blue-700">
@@ -1621,29 +1621,30 @@ export function SchemeForm({
                     ? "The suggested coverage is balanced. This is guidance only."
                     : Number(finalPacing.difference) > 0
                       ? `${finalPacing.difference} teaching slot${Number(finalPacing.difference) === 1 ? "" : "s"} remain for ${openSlotPurpose === "Leave open" ? "teacher use" : openSlotPurpose.toLowerCase()}.`
-                      : `${Math.abs(Number(finalPacing.difference))} suggested lessons exceed this timetable. The scheme can still be generated for the available slots.`}
+                      : `${Math.abs(Number(finalPacing.difference))} suggested lesson${Math.abs(Number(finalPacing.difference)) === 1 ? "" : "s"} exceed this timetable. Remaining content can continue in a later term.`}
                 </p>
-                <p className="mt-1 text-xs text-blue-700">This comparison is optional guidance and does not prevent generation.</p>
+                <p className="mt-1 text-[11px] text-blue-700">Optional guidance only. Generation remains available.</p>
               </div>
             )}
 
-            <div className="border-t pt-4 space-y-3">
+            <div className="sticky bottom-0 z-10 -mx-5 space-y-2 border-t bg-white/95 px-5 pt-3 backdrop-blur supports-[backdrop-filter]:bg-white/80">
               <div className="flex flex-wrap items-center gap-3">
                 <Button
                   type="button"
+                  size="lg"
                   onClick={generatePreview}
                   disabled={pending}
-                  className="min-w-44"
+                  className="min-w-52 bg-blue-600 font-semibold shadow-sm hover:bg-blue-700"
                 >
                   <ClipboardPenLine className="h-4 w-4 mr-2" />
-                  {pending ? "Preparing preview..." : "Generate Preview"}
+                  {pending ? "Preparing preview..." : "Preview and download"}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
                 {finalPacing.availability === "complete"
                   ? `Uses published lesson counts as optional guidance for ${selectedSubStrandIds.length} selected subtopics. Open slots are labelled for ${openSlotPurpose === "Leave open" ? "teacher use" : openSlotPurpose.toLowerCase()}.`
                   : `Distributes ${selectedSubStrandIds.length} subtopics across Week ${firstWeek}-${lastWeek}, ${lessonsPerWeek} lessons/week.`}
-                {" The generated scheme will open in preview, where you can review, edit, save, and download it."}
+                {" Review the scheme first, then download the finished PDF from the preview page."}
               </p>
             </div>
 

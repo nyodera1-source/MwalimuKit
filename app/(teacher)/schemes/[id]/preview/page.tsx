@@ -82,11 +82,11 @@ export default async function PreviewSchemePage({
 
       <div className="max-w-7xl mx-auto">
         {/* Action Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/schemes">
-                <ArrowLeft className="h-4 w-4 mr-1" /> Back
+              <Link href={`/schemes/${id}`}>
+                <ArrowLeft className="h-4 w-4 mr-1" /> Back to edit
               </Link>
             </Button>
             <div>
@@ -102,10 +102,10 @@ export default async function PreviewSchemePage({
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/schemes/${id}`}>
-                <Pencil className="h-4 w-4 mr-2" /> Edit
-              </Link>
+            <Button size="lg" className="bg-blue-600 font-semibold shadow-sm hover:bg-blue-700" asChild>
+              <a href={`/api/schemes/${id}/export`} download>
+                <Download className="h-4 w-4 mr-2" /> Download PDF
+              </a>
             </Button>
             <form action={async () => { "use server"; await deleteSchemeOfWork(id); }}>
               <Button type="submit" variant="destructive" size="sm">
@@ -243,7 +243,7 @@ export default async function PreviewSchemePage({
                 <Pencil className="h-4 w-4 mr-2" /> Edit Scheme
               </Link>
             </Button>
-            <Button asChild>
+            <Button size="lg" className="bg-blue-600 font-semibold shadow-sm hover:bg-blue-700" asChild>
               <a href={`/api/schemes/${id}/export`} download>
                 <Download className="h-4 w-4 mr-2" /> Download PDF
               </a>
