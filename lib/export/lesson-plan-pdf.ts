@@ -140,6 +140,12 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
     y,
     { align: "center" }
   );
+  y += 7;
+
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(22, 101, 52);
+  doc.text("LESSON PLAN", pageWidth / 2, y, { align: "center" });
   doc.setTextColor(0, 0, 0);
   y += 8;
 
