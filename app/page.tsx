@@ -81,16 +81,14 @@ export default function HomePage() {
           <div className="flex-1 text-white">
             <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-6">
               <GraduationCap className="h-4 w-4" />
-              Built for Kenyan CBE Teachers
+              Made for Kenyan teachers
             </div>
             <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
-              CBE Plans Made
-              <br />
-              for Kenyan Teachers
+              Plan better. Teach better.
             </h2>
             <p className="mt-5 text-lg lg:text-xl text-blue-100 max-w-xl">
-              Create lesson plans and schemes of work aligned to the KICD
-              curriculum and your school timetable.
+              Create practical schemes of work and lesson plans for Grades 1–12,
+              tailored to your subject, grade, and school timetable.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button
@@ -98,14 +96,14 @@ export default function HomePage() {
                 className="rounded-full bg-white text-blue-600 hover:bg-blue-50 font-semibold px-8 shadow-lg"
                 asChild
               >
-                <Link href="/signup">Get Started Free</Link>
+                <Link href="/signup">Create a Free Plan</Link>
               </Button>
               <Button
                 size="lg"
                 className="rounded-full bg-white text-blue-600 hover:bg-blue-50 font-semibold px-8 shadow-lg"
                 asChild
               >
-                <Link href="/login">Log In</Link>
+                <Link href="/login">Sign In</Link>
               </Button>
             </div>
           </div>
@@ -121,6 +119,8 @@ export default function HomePage() {
                 className="aspect-[3/2] h-auto w-full object-cover"
                 priority
               />
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-[#1688FA]/80 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-[#1060c0]/25 to-transparent" />
             </div>
           </div>
         </div>
