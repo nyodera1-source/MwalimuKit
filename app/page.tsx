@@ -50,7 +50,7 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100 px-4 lg:px-8 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Wordmark size="md" className="w-[150px]" />
+            <Wordmark size="md" className="h-11 w-[185px]" />
           </div>
           <div className="hidden md:flex items-center gap-4 text-xs text-gray-500">
             <a href="tel:+254700000000" className="flex items-center gap-1.5 hover:text-gray-900 transition-colors">
