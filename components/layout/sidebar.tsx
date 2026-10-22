@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogoMark } from "@/components/brand/logo-mark";
+import { Wordmark } from "@/components/brand/wordmark";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -25,12 +25,8 @@ export function Sidebar() {
     <nav className="flex flex-col h-full bg-[#1a1f36] text-white">
       {/* Logo */}
       <div className="px-5 pt-6 pb-6">
-        <div className="flex items-center gap-2.5">
-          <LogoMark />
-          <div>
-            <h1 className="text-lg font-bold text-white">MwalimuKit</h1>
-            <p className="text-[11px] text-blue-300/60">Schemes &amp; Lesson Plans</p>
-          </div>
+        <div className="inline-flex rounded-md bg-white px-2 py-1">
+          <Wordmark size="md" className="w-[150px]" />
         </div>
       </div>
 

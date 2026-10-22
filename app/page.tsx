@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { LogoMark } from "@/components/brand/logo-mark";
+import { Wordmark } from "@/components/brand/wordmark";
 import { Button } from "@/components/ui/button";
 import {
   FileText,
@@ -50,8 +50,7 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100 px-4 lg:px-8 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <LogoMark />
-            <h1 className="text-xl font-bold text-gray-900"><em>MwalimuKit</em></h1>
+            <Wordmark size="md" className="w-[150px]" />
           </div>
           <div className="hidden md:flex items-center gap-4 text-xs text-gray-500">
             <a href="tel:+254700000000" className="flex items-center gap-1.5 hover:text-gray-900 transition-colors">
@@ -210,8 +209,7 @@ export default function HomePage() {
       <footer className="bg-gray-900 text-gray-400 px-4 py-10">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <LogoMark size="sm" />
-            <span className="font-semibold text-white"><em>MwalimuKit</em></span>
+            <Wordmark size="sm" className="w-[120px]" />
           </div>
           <p className="text-sm">
             Built for Kenyan CBE Teachers &middot; Grades 1-10

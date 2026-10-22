@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogoMark } from "@/components/brand/logo-mark";
+import { Wordmark } from "@/components/brand/wordmark";
 
 export default function AuthLayout({
   children,
@@ -9,9 +9,8 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gradient-hero px-4 py-12">
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2.5 mb-8">
-        <LogoMark size="lg" />
-        <span className="text-2xl font-bold text-white">MwalimuKit</span>
+      <Link href="/" className="mb-8 rounded-md bg-white px-3 py-2">
+        <Wordmark size="lg" className="w-[220px]" />
       </Link>
       {/* Auth card */}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">

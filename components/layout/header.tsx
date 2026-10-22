@@ -2,7 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import { Menu, LogOut } from "lucide-react";
-import { LogoMark } from "@/components/brand/logo-mark";
+import { Wordmark } from "@/components/brand/wordmark";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MobileNav } from "./sidebar";
@@ -30,12 +30,8 @@ export function Header({ userName }: HeaderProps) {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">
-          <div className="px-5 pt-6 pb-4 flex items-center gap-2.5">
-            <LogoMark />
-            <div>
-              <h1 className="text-lg font-bold">MwalimuKit</h1>
-              <p className="text-[11px] text-muted-foreground">CBE Teacher Toolkit</p>
-            </div>
+          <div className="px-5 pt-6 pb-4">
+            <Wordmark size="md" className="w-[150px]" />
           </div>
           <MobileNav />
         </SheetContent>

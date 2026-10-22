@@ -7,7 +7,7 @@ import { ModuleTile } from "@/components/dashboard/module-tile";
 import { RecentDocuments } from "@/components/dashboard/recent-documents";
 import { GettingStarted } from "@/components/dashboard/getting-started";
 import { Button } from "@/components/ui/button";
-import { LogoMark } from "@/components/brand/logo-mark";
+import { Wordmark } from "@/components/brand/wordmark";
 import { ArrowRight, BookOpen, FileText } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
       {/* Welcome header */}
       <div className="rounded-xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:px-6">
         <div className="flex items-start gap-3">
-          <LogoMark size="md" className="mt-0.5" />
+          <Wordmark size="md" className="mt-0.5 w-[150px]" />
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">
               Teacher workspace
