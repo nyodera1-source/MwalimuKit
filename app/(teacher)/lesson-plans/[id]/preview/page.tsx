@@ -150,6 +150,26 @@ export default async function PreviewLessonPlanPage({
                   <p className="font-medium capitalize">{plan.status}</p>
                 </div>
               </div>
+              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span className="text-muted-foreground">School</span>
+                  <p className="font-medium">{(content.schoolName as string) || "—"}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Class or stream</span>
+                  <p className="font-medium">{(content.classGroup as string) || "—"}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Time</span>
+                  <p className="font-medium">{(content.time as string) || "—"}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Lesson</span>
+                  <p className="font-medium">
+                    {Number(content.lessonNumber) || 1} of {Number(content.lessonCount) || 1}
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -199,6 +219,10 @@ export default async function PreviewLessonPlanPage({
                   </div>
                 </div>
               )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <PreviewField label="Lesson focus" value={content.lessonFocus as string} />
+                <PreviewField label="Key vocabulary" value={content.vocabulary as string} />
+              </div>
             </CardContent>
           </Card>
 
@@ -208,11 +232,19 @@ export default async function PreviewLessonPlanPage({
               <CardTitle className="text-lg">Lesson Content</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <PreviewField label="Prior knowledge" value={content.priorKnowledge as string} />
+                <PreviewField label="Teacher preparation" value={content.teacherPreparation as string} />
+              </div>
               <PreviewField label="Objectives" value={content.objectives as string} />
               <PreviewField label="Key Inquiry Question" value={content.keyInquiryQuestion as string} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <PreviewField label="Learning Resources" value={content.resources as string} />
                 <PreviewField label="Digital Resources" value={content.digitalResources as string} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <PreviewField label="Values and pertinent issues" value={content.valuesAndPcis as string} />
+                <PreviewField label="Safety notes" value={content.safetyNotes as string} />
               </div>
             </CardContent>
           </Card>
@@ -226,6 +258,10 @@ export default async function PreviewLessonPlanPage({
               <PreviewField label="Introduction (5-10 min)" value={activities.introduction} />
               <PreviewField label="Development (Main Activity)" value={activities.development} />
               <PreviewField label="Conclusion (5-10 min)" value={activities.conclusion} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <PreviewField label="Support and extension" value={content.differentiation as string} />
+                <PreviewField label="Homework or extension" value={content.homework as string} />
+              </div>
             </CardContent>
           </Card>
 

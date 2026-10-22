@@ -23,6 +23,19 @@ import { Eye, Loader2, CheckCircle, Info } from "lucide-react";
 interface LessonPlanContent {
   date?: string;
   duration?: number;
+  schoolName?: string;
+  classGroup?: string;
+  time?: string;
+  lessonFocus?: string;
+  lessonNumber?: number;
+  lessonCount?: number;
+  priorKnowledge?: string;
+  vocabulary?: string;
+  teacherPreparation?: string;
+  valuesAndPcis?: string;
+  safetyNotes?: string;
+  differentiation?: string;
+  homework?: string;
   objectives?: string;
   keyInquiryQuestion?: string;
   resources?: string;
@@ -53,6 +66,7 @@ interface LessonPlanDefaults {
 
 interface LessonPlanFormProps {
   teacherName: string;
+  defaultSchoolName?: string | null;
   defaultGradeId?: string | null;
   defaults?: LessonPlanDefaults;
 }
@@ -61,6 +75,16 @@ interface CurriculumSuggestions {
   objectives: string;
   keyInquiryQuestion: string;
   resources: string;
+  lessonFocus?: string;
+  lessonNumber?: number;
+  lessonCount?: number;
+  priorKnowledge?: string;
+  vocabulary?: string;
+  teacherPreparation?: string;
+  valuesAndPcis?: string;
+  safetyNotes?: string;
+  differentiation?: string;
+  homework?: string;
   activities: {
     introduction: string;
     development: string;
@@ -94,6 +118,7 @@ const LESSON_PLAN_STEPS = [
 
 export function LessonPlanForm({
   teacherName,
+  defaultSchoolName,
   defaultGradeId,
   defaults,
 }: LessonPlanFormProps) {
@@ -115,6 +140,33 @@ export function LessonPlanForm({
   const [assessmentStrategy, setAssessmentStrategy] = useState(
     defaults?.content?.assessmentStrategy || ""
   );
+  const [schoolName, setSchoolName] = useState(
+    defaults?.content?.schoolName || defaultSchoolName || ""
+  );
+  const [classGroup, setClassGroup] = useState(defaults?.content?.classGroup || "");
+  const [time, setTime] = useState(defaults?.content?.time || "");
+  const [lessonFocus, setLessonFocus] = useState(defaults?.content?.lessonFocus || "");
+  const [lessonNumber, setLessonNumber] = useState(
+    String(defaults?.content?.lessonNumber || 1)
+  );
+  const [lessonCount, setLessonCount] = useState(
+    String(defaults?.content?.lessonCount || 1)
+  );
+  const [priorKnowledge, setPriorKnowledge] = useState(
+    defaults?.content?.priorKnowledge || ""
+  );
+  const [vocabulary, setVocabulary] = useState(defaults?.content?.vocabulary || "");
+  const [teacherPreparation, setTeacherPreparation] = useState(
+    defaults?.content?.teacherPreparation || ""
+  );
+  const [valuesAndPcis, setValuesAndPcis] = useState(
+    defaults?.content?.valuesAndPcis || ""
+  );
+  const [safetyNotes, setSafetyNotes] = useState(defaults?.content?.safetyNotes || "");
+  const [differentiation, setDifferentiation] = useState(
+    defaults?.content?.differentiation || ""
+  );
+  const [homework, setHomework] = useState(defaults?.content?.homework || "");
   const [objectives, setObjectives] = useState(defaults?.content?.objectives || "");
   const [keyInquiryQuestion, setKeyInquiryQuestion] = useState(
     defaults?.content?.keyInquiryQuestion || ""
@@ -165,13 +217,23 @@ export function LessonPlanForm({
   const selectedSloKey = sloIds.join(",");
   useEffect(() => {
     if (!subStrandId) return;
-    const query = new URLSearchParams({ subStrandId });
+    const query = new URLSearchParams({ subStrandId, duration });
     if (selectedSloKey) query.set("sloIds", selectedSloKey);
 
     fetch(`/api/curriculum/suggestions?${query.toString()}`)
       .then((r) => r.json() as Promise<CurriculumSuggestions>)
       .then((data) => {
         if (isEdit || sloIds.length === 0) return;
+        setLessonFocus(data.lessonFocus || "");
+        setLessonNumber(String(data.lessonNumber || 1));
+        setLessonCount(String(data.lessonCount || 1));
+        setPriorKnowledge(data.priorKnowledge || "");
+        setVocabulary(data.vocabulary || "");
+        setTeacherPreparation(data.teacherPreparation || "");
+        setValuesAndPcis(data.valuesAndPcis || "");
+        setSafetyNotes(data.safetyNotes || "");
+        setDifferentiation(data.differentiation || "");
+        setHomework(data.homework || "");
         setObjectives(data.objectives || "");
         setKeyInquiryQuestion(data.keyInquiryQuestion || "");
         setResources(data.resources || "");
@@ -185,7 +247,7 @@ export function LessonPlanForm({
         }
       })
       .catch(() => undefined);
-  }, [subStrandId, selectedSloKey, isEdit, competencyIds.length, sloIds.length]);
+  }, [subStrandId, selectedSloKey, duration, isEdit, competencyIds.length, sloIds.length]);
 
   // Auto-save for existing plans (every 30 seconds)
   const planId = defaults?.id;
@@ -246,6 +308,8 @@ export function LessonPlanForm({
       <input type="hidden" name="isTemplate" value={String(isTemplate)} />
       <input type="hidden" name="assessmentStrategy" value={assessmentStrategy} />
       <input type="hidden" name="duration" value={duration} />
+      <input type="hidden" name="lessonNumber" value={lessonNumber} />
+      <input type="hidden" name="lessonCount" value={lessonCount} />
 
       {/* Error message */}
       {state?.error && (
@@ -351,6 +415,29 @@ export function LessonPlanForm({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
+              <Label htmlFor="schoolName">School</Label>
+              <Input
+                id="schoolName"
+                name="schoolName"
+                value={schoolName}
+                onChange={(e) => setSchoolName(e.target.value)}
+                placeholder="School name"
+              />
+            </div>
+            <div>
+              <Label htmlFor="classGroup">Class or stream (optional)</Label>
+              <Input
+                id="classGroup"
+                name="classGroup"
+                value={classGroup}
+                onChange={(e) => setClassGroup(e.target.value)}
+                placeholder="e.g., Grade 10 East"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
               <Label htmlFor="title">Lesson Title</Label>
               <Input
                 id="title"
@@ -374,7 +461,7 @@ export function LessonPlanForm({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="date">Date</Label>
               <Input
@@ -399,6 +486,55 @@ export function LessonPlanForm({
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <Label htmlFor="time">Time (optional)</Label>
+              <Input
+                id="time"
+                name="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                placeholder="e.g., 8:00-8:40 a.m."
+              />
+            </div>
+            <div>
+              <Label htmlFor="lessonNumber">Lesson sequence</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="lessonNumber"
+                  type="number"
+                  min={1}
+                  value={lessonNumber}
+                  onChange={(e) => setLessonNumber(e.target.value)}
+                  className="w-20"
+                />
+                <span className="text-sm text-muted-foreground">of {lessonCount}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="valuesAndPcis">Values and pertinent issues</Label>
+              <Textarea
+                id="valuesAndPcis"
+                name="valuesAndPcis"
+                value={valuesAndPcis}
+                onChange={(e) => setValuesAndPcis(e.target.value)}
+                placeholder="Values, life skills and pertinent contemporary issues"
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label htmlFor="safetyNotes">Safety notes</Label>
+              <Textarea
+                id="safetyNotes"
+                name="safetyNotes"
+                value={safetyNotes}
+                onChange={(e) => setSafetyNotes(e.target.value)}
+                placeholder="Safety precautions for this lesson"
+                rows={3}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -412,6 +548,54 @@ export function LessonPlanForm({
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="lessonFocus">Lesson focus</Label>
+              <Input
+                id="lessonFocus"
+                name="lessonFocus"
+                value={lessonFocus}
+                onChange={(e) => setLessonFocus(e.target.value)}
+                placeholder="The main focus of this lesson"
+              />
+            </div>
+            <div>
+              <Label htmlFor="vocabulary">Key vocabulary</Label>
+              <Input
+                id="vocabulary"
+                name="vocabulary"
+                value={vocabulary}
+                onChange={(e) => setVocabulary(e.target.value)}
+                placeholder="Important terms for the lesson"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="priorKnowledge">Prior knowledge</Label>
+              <Textarea
+                id="priorKnowledge"
+                name="priorKnowledge"
+                value={priorKnowledge}
+                onChange={(e) => setPriorKnowledge(e.target.value)}
+                placeholder="What learners should already know"
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label htmlFor="teacherPreparation">Teacher preparation</Label>
+              <Textarea
+                id="teacherPreparation"
+                name="teacherPreparation"
+                value={teacherPreparation}
+                onChange={(e) => setTeacherPreparation(e.target.value)}
+                placeholder="What the teacher should prepare before class"
+                rows={3}
+              />
+            </div>
+          </div>
+
           <div>
             <div className="flex items-center justify-between mb-1">
               <Label htmlFor="objectives">Lesson Objectives</Label>
@@ -531,6 +715,31 @@ export function LessonPlanForm({
               placeholder="Wrap-up, summary, homework assignment..."
               rows={3}
             />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="differentiation">Support and extension</Label>
+              <Textarea
+                id="differentiation"
+                name="differentiation"
+                value={differentiation}
+                onChange={(e) => setDifferentiation(e.target.value)}
+                placeholder="How will you support or extend learners?"
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label htmlFor="homework">Homework or extension</Label>
+              <Textarea
+                id="homework"
+                name="homework"
+                value={homework}
+                onChange={(e) => setHomework(e.target.value)}
+                placeholder="A short follow-up task for learners"
+                rows={3}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>

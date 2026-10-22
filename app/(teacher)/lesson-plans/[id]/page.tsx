@@ -25,7 +25,7 @@ export default async function EditLessonPlanPage({
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { fullName: true },
+    select: { fullName: true, schoolName: true },
   });
 
   const content = (plan.content as Record<string, unknown>) || {};
@@ -48,6 +48,7 @@ export default async function EditLessonPlanPage({
 
       <LessonPlanForm
         teacherName={user?.fullName || session.user.name || ""}
+        defaultSchoolName={user?.schoolName}
         defaults={{
           id: plan.id,
           title: plan.title || "",

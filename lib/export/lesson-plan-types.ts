@@ -10,6 +10,18 @@ export interface LessonPlanExportData {
   competencies: string[];
   date: string;
   duration: number;
+  classGroup?: string;
+  time?: string;
+  lessonFocus?: string;
+  lessonNumber?: number;
+  lessonCount?: number;
+  priorKnowledge?: string;
+  vocabulary?: string;
+  teacherPreparation?: string;
+  valuesAndPcis?: string;
+  safetyNotes?: string;
+  differentiation?: string;
+  homework?: string;
   objectives: string;
   keyInquiryQuestion: string;
   resources: string;

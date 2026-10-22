@@ -6,6 +6,7 @@ import {
   pilotActiveSubStrandWhere,
   pilotLearningAreaScope,
 } from "@/lib/curriculum/pilot";
+import { getLessonGuidance } from "@/lib/curriculum/lesson-guidance";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -18,9 +19,10 @@ export async function GET(request: NextRequest) {
   const selectedSloIds = new Set(
     (searchParams.get("sloIds") || "")
       .split(",")
-      .map((id) => id.trim())
+      .map((id: string) => id.trim())
       .filter(Boolean)
   );
+  const duration = Number(searchParams.get("duration")) || 40;
 
   if (!subStrandId && !strandId) {
     return NextResponse.json({ error: "subStrandId or strandId required" }, { status: 400 });
@@ -29,10 +31,12 @@ export async function GET(request: NextRequest) {
   let strandName = "";
   let subStrandName = "";
   let learningAreaName = "";
+  let lessonCount = 1;
   let slos: {
     id: string;
     description: string;
     cognitiveLevel: string | null;
+    suggestedLessons: number | null;
     competencies: { competency: { id: string; name: string } }[];
   }[] = [];
 
@@ -58,6 +62,7 @@ export async function GET(request: NextRequest) {
             id: true,
             description: true,
             cognitiveLevel: true,
+            suggestedLessons: true,
             competencies: {
               select: { competency: { select: { id: true, name: true } } },
             },
@@ -77,6 +82,10 @@ export async function GET(request: NextRequest) {
     subStrandName = ss.name;
     strandName = ss.strand.name;
     learningAreaName = ss.strand.learningArea.name;
+    lessonCount = Math.max(
+      1,
+      ss.suggestedLessons || Math.max(...ss.slos.map((slo) => slo.suggestedLessons || 1), 1),
+    );
     slos = ss.slos;
   } else if (strandId) {
     const s = await prisma.strand.findFirst({
@@ -104,6 +113,7 @@ export async function GET(request: NextRequest) {
                 id: true,
                 description: true,
                 cognitiveLevel: true,
+                suggestedLessons: true,
                 competencies: {
                   select: { competency: { select: { id: true, name: true } } },
                 },
@@ -139,12 +149,20 @@ export async function GET(request: NextRequest) {
   const keyInquiryQuestion = generateInquiryQuestion(learningAreaName, strandName, subStrandName);
 
   const resources = generateResourceSuggestions(learningAreaName, subStrandName);
-  const activities = generateActivitySuggestions(
+  const guidance = getLessonGuidance({
+    learningArea: learningAreaName,
+    strand: strandName,
+    subStrand: subStrandName,
+    duration,
+    lessonCount,
+    sloDescriptions,
+  });
+  const activities = guidance.activities || generateActivitySuggestions(
     learningAreaName,
     subStrandName || strandName,
     sloDescriptions,
   );
-  const assessment = generateAssessmentSuggestion(sloDescriptions, curriculumSlos);
+  const assessment = guidance.assessment || generateAssessmentSuggestion(sloDescriptions, curriculumSlos);
   const competencyIds = Array.from(
     new Set(curriculumSlos.flatMap((slo) => slo.competencies.map((entry) => entry.competency.id)))
   );
@@ -156,6 +174,16 @@ export async function GET(request: NextRequest) {
       resources,
       activities,
       assessment,
+      lessonFocus: guidance.lessonFocus,
+      lessonNumber: guidance.lessonNumber,
+      lessonCount: guidance.lessonCount,
+      priorKnowledge: guidance.priorKnowledge,
+      vocabulary: guidance.vocabulary,
+      teacherPreparation: guidance.teacherPreparation,
+      valuesAndPcis: guidance.valuesAndPcis,
+      safetyNotes: guidance.safetyNotes,
+      differentiation: guidance.differentiation,
+      homework: guidance.homework,
       competencyIds,
       sloDescriptions,
       context: { learningAreaName, strandName, subStrandName },
@@ -385,6 +413,7 @@ function generateResourceSuggestions(learningArea: string, subStrand: string): s
     "Business Studies": `${common}, Business documents, Newspapers, Sample financial records`,
     "Agriculture": `${common}, Farm tools, Soil samples, Seeds, Charts`,
     "Computer Science": `${common}, Computers/laptops, Internet access, Projector`,
+    "Wood Technology": `${common}, Wood samples or photographs, Safe hand tools, Furniture samples, Personal protective equipment`,
     "Home Science": `${common}, Kitchen equipment, Sewing materials, Nutrition charts`,
     "Fine Arts": `${common}, Drawing paper, Pencils, Paints, Brushes, Clay`,
     "Music and Dance": `${common}, Musical instruments, Audio player, Music scores`,

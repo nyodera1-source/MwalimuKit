@@ -165,6 +165,10 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
 
   // Curriculum Details
   drawSectionHeader("Curriculum Details");
+  if (data.schoolName?.trim()) drawRow("School", data.schoolName);
+  if (data.classGroup?.trim()) drawRow("Class / Stream", data.classGroup);
+  if (data.time?.trim()) drawRow("Time", data.time);
+  drawRow("Lesson", `${data.lessonNumber || 1} of ${data.lessonCount || 1}`);
   drawRow("Grade", data.grade);
   drawRow("Learning Area", data.learningArea);
   drawRow("Strand", data.strand);
@@ -175,12 +179,18 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
 
   // Lesson Content
   drawSectionHeader("Lesson Content");
+  drawRow("Lesson Focus", data.lessonFocus || data.subStrand);
+  if (data.priorKnowledge?.trim()) drawRow("Prior Knowledge", data.priorKnowledge);
+  if (data.vocabulary?.trim()) drawRow("Key Vocabulary", data.vocabulary);
+  if (data.teacherPreparation?.trim()) drawRow("Teacher Preparation", data.teacherPreparation);
   drawRow("Lesson Objectives", data.objectives);
   drawRow("Key Inquiry Question", data.keyInquiryQuestion);
   drawRow("Learning Resources", data.resources);
   if (data.digitalResources?.trim()) {
     drawRow("Digital Resources", data.digitalResources);
   }
+  if (data.valuesAndPcis?.trim()) drawRow("Values and Pertinent Issues", data.valuesAndPcis);
+  if (data.safetyNotes?.trim()) drawRow("Safety Notes", data.safetyNotes);
   y += 3;
 
   // Teaching Activities
@@ -196,6 +206,8 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   drawRow("Introduction", activityValues[0]);
   drawRow("Development", activityValues[1]);
   drawRow("Conclusion", activityValues[2]);
+  if (data.differentiation?.trim()) drawRow("Support and Extension", data.differentiation);
+  if (data.homework?.trim()) drawRow("Homework or Extension", data.homework);
   y += 3;
 
   // Assessment and Reflection
