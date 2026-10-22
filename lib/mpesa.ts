@@ -47,7 +47,25 @@ function getConfig() {
     throw new Error("MPESA_CALLBACK_URL must be a public HTTPS URL.");
   }
 
-  return { consumerKey, consumerSecret, shortcode, passkey, baseUrl, callbackUrl };
+  const transactionType =
+    process.env.MPESA_TRANSACTION_TYPE ||
+    (environment === "production" ? "CustomerBuyGoodsOnline" : "CustomerPayBillOnline");
+
+  if (transactionType !== "CustomerBuyGoodsOnline" && transactionType !== "CustomerPayBillOnline") {
+    throw new Error(
+      "MPESA_TRANSACTION_TYPE must be CustomerBuyGoodsOnline or CustomerPayBillOnline."
+    );
+  }
+
+  return {
+    consumerKey,
+    consumerSecret,
+    shortcode,
+    passkey,
+    baseUrl,
+    callbackUrl,
+    transactionType,
+  };
 }
 
 function darajaTimestamp() {
@@ -93,7 +111,7 @@ export async function initiateMpesaPayment(input: {
       BusinessShortCode: config.shortcode,
       Password: password,
       Timestamp: timestamp,
-      TransactionType: process.env.MPESA_TRANSACTION_TYPE || "CustomerPayBillOnline",
+      TransactionType: config.transactionType,
       Amount: input.amount,
       PartyA: input.phoneNumber,
       PartyB: config.shortcode,
