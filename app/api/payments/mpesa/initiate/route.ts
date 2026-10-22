@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
   initiateMpesaPayment,
+  isMpesaEnabled,
   isPaidProduct,
   normalizeKenyanPhone,
   PRODUCT_PRICES,
@@ -59,6 +60,13 @@ export async function POST(request: Request) {
             ? `/api/lesson-plans/${body.documentId}/export?format=pdf`
             : `/api/schemes/${body.documentId}/export`,
       });
+    }
+
+    if (!isMpesaEnabled()) {
+      return NextResponse.json(
+        { error: "M-PESA payments are temporarily paused. Please try again later." },
+        { status: 503 }
+      );
     }
 
     const phoneNumber = normalizeKenyanPhone(body.phoneNumber);

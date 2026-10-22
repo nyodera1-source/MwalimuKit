@@ -5,6 +5,11 @@ export const PRODUCT_PRICES: Record<PaidProduct, number> = {
   scheme_of_work: 20,
 };
 
+export function isMpesaEnabled() {
+  const value = process.env.MPESA_ENABLED?.trim().toLowerCase();
+  return !value || !["false", "0", "off", "no"].includes(value);
+}
+
 export function isPaidProduct(value: string): value is PaidProduct {
   return value === "lesson_plan" || value === "scheme_of_work";
 }
