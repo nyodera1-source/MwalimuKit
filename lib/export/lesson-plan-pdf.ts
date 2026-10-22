@@ -121,11 +121,11 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   }
 
   // "LESSON PLAN" header
-  doc.setFontSize(18);
+  doc.setFontSize(15);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...HEADER_COLOR);
   doc.text("LESSON PLAN", pageWidth / 2, y, { align: "center" });
-  y += 8;
+  y += 7;
 
   // School name (if available)
   if (data.schoolName) {
@@ -143,15 +143,21 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   y += 5;
 
   // Title
-  doc.setFontSize(13.5);
+  doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...HEADER_COLOR);
   const titleLines = doc.splitTextToSize(formatTitle(data.title), contentWidth);
   doc.text(titleLines, pageWidth / 2, y, { align: "center" });
-  y += titleLines.length * 6 + 2;
+  y += titleLines.length * 5 + 2;
+
+  // Subtle brand accent keeps the title area distinct without adding visual weight.
+  doc.setDrawColor(...ACCENT_COLOR);
+  doc.setLineWidth(0.5);
+  doc.line(pageWidth / 2 - 14, y, pageWidth / 2 + 14, y);
+  y += 3;
 
   // Sub-header
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(...MUTED_COLOR);
   doc.text(
@@ -161,7 +167,7 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
     { align: "center" }
   );
   doc.setTextColor(0, 0, 0);
-  y += 8;
+  y += 7;
 
   // Curriculum Details
   drawSectionHeader("Curriculum Details");
