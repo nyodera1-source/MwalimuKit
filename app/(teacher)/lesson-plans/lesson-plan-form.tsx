@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { CascadeDropdown } from "@/components/cbe/cascade-dropdown";
 import { CompetencyCheckboxGroup } from "@/components/cbe/competency-checkbox-group";
 import { createLessonPlan, updateLessonPlan } from "./actions";
-import { Eye, Loader2, CheckCircle, Lightbulb } from "lucide-react";
+import { Eye, Loader2, CheckCircle } from "lucide-react";
 
 interface LessonPlanContent {
   date?: string;
@@ -57,10 +57,20 @@ interface LessonPlanFormProps {
   defaults?: LessonPlanDefaults;
 }
 
-interface Suggestions {
+interface CurriculumSuggestions {
   objectives: string;
   keyInquiryQuestion: string;
   resources: string;
+  activities: {
+    introduction: string;
+    development: string;
+    conclusion: string;
+  };
+  assessment: {
+    strategy: string;
+    description: string;
+  };
+  competencyIds: string[];
 }
 
 const ASSESSMENT_STRATEGIES = [
@@ -96,25 +106,33 @@ export function LessonPlanForm({
   const [assessmentStrategy, setAssessmentStrategy] = useState(
     defaults?.content?.assessmentStrategy || ""
   );
+  const [objectives, setObjectives] = useState(defaults?.content?.objectives || "");
+  const [keyInquiryQuestion, setKeyInquiryQuestion] = useState(
+    defaults?.content?.keyInquiryQuestion || ""
+  );
+  const [resources, setResources] = useState(defaults?.content?.resources || "");
+  const [activitiesIntroduction, setActivitiesIntroduction] = useState(
+    defaults?.content?.activities?.introduction || ""
+  );
+  const [activitiesDevelopment, setActivitiesDevelopment] = useState(
+    defaults?.content?.activities?.development || ""
+  );
+  const [activitiesConclusion, setActivitiesConclusion] = useState(
+    defaults?.content?.activities?.conclusion || ""
+  );
+  const [assessmentDescription, setAssessmentDescription] = useState(
+    defaults?.content?.assessmentDescription || ""
+  );
   const [duration, setDuration] = useState(
     String(defaults?.content?.duration || "40")
   );
   const [isTemplate, setIsTemplate] = useState(defaults?.isTemplate || false);
-
-  // Suggestions state
-  const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
-  const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Auto-save state
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const formRef = useRef<HTMLFormElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
   const autoSaveTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Refs for applying curriculum suggestions
-  const objectivesRef = useRef<HTMLTextAreaElement>(null);
-  const inquiryRef = useRef<HTMLInputElement>(null);
-  const resourcesRef = useRef<HTMLTextAreaElement>(null);
 
   // Track cascade names for auto-title
   const [cascadeNames, setCascadeNames] = useState<{
@@ -131,54 +149,32 @@ export function LessonPlanForm({
     .join(" - ");
   const displayedTitle = autoTitle && generatedTitle ? generatedTitle : title;
 
-  // Fetch suggestions when sub-strand changes
+  // Curriculum selections drive the default lesson content. Existing plans are
+  // left untouched so editing never overwrites a teacher's custom work.
+  const selectedSloKey = sloIds.join(",");
   useEffect(() => {
     if (!subStrandId) return;
-    fetch(`/api/curriculum/suggestions?subStrandId=${subStrandId}`)
-      .then((r) => r.json())
+    const query = new URLSearchParams({ subStrandId });
+    if (selectedSloKey) query.set("sloIds", selectedSloKey);
+
+    fetch(`/api/curriculum/suggestions?${query.toString()}`)
+      .then((r) => r.json() as Promise<CurriculumSuggestions>)
       .then((data) => {
-        setSuggestions({
-          objectives: data.objectives || "",
-          keyInquiryQuestion: data.keyInquiryQuestion || "",
-          resources: data.resources || "",
-        });
-        // Auto-show suggestions for new plans
-        if (!isEdit) setShowSuggestions(true);
+        if (isEdit || sloIds.length === 0) return;
+        setObjectives(data.objectives || "");
+        setKeyInquiryQuestion(data.keyInquiryQuestion || "");
+        setResources(data.resources || "");
+        setActivitiesIntroduction(data.activities?.introduction || "");
+        setActivitiesDevelopment(data.activities?.development || "");
+        setActivitiesConclusion(data.activities?.conclusion || "");
+        setAssessmentStrategy(data.assessment?.strategy || "");
+        setAssessmentDescription(data.assessment?.description || "");
+        if (competencyIds.length === 0 && data.competencyIds?.length) {
+          setCompetencyIds(data.competencyIds);
+        }
       })
-      .catch(() => setSuggestions(null));
-  }, [subStrandId, isEdit]);
-
-  // Apply a suggestion to a field
-  const applySuggestion = (field: "objectives" | "keyInquiryQuestion" | "resources") => {
-    if (!suggestions) return;
-    const value = suggestions[field];
-    if (field === "objectives" && objectivesRef.current) {
-      objectivesRef.current.value = value;
-    } else if (field === "keyInquiryQuestion" && inquiryRef.current) {
-      inquiryRef.current.value = value;
-    } else if (field === "resources" && resourcesRef.current) {
-      resourcesRef.current.value = value;
-    }
-    // Trigger change event for React
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-      field === "keyInquiryQuestion" ? HTMLInputElement.prototype : HTMLTextAreaElement.prototype,
-      "value"
-    )?.set;
-    const el = field === "objectives" ? objectivesRef.current
-      : field === "keyInquiryQuestion" ? inquiryRef.current
-      : resourcesRef.current;
-    if (el && nativeInputValueSetter) {
-      nativeInputValueSetter.call(el, value);
-      el.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-  };
-
-  const applyAllSuggestions = () => {
-    applySuggestion("objectives");
-    applySuggestion("keyInquiryQuestion");
-    applySuggestion("resources");
-    setShowSuggestions(false);
-  };
+      .catch(() => undefined);
+  }, [subStrandId, selectedSloKey, isEdit, competencyIds.length, sloIds.length]);
 
   // Auto-save for existing plans (every 30 seconds)
   const planId = defaults?.id;
@@ -278,7 +274,6 @@ export function LessonPlanForm({
             defaultSubStrandId={defaults?.subStrandId}
             defaultSloIds={defaults?.sloIds}
             onChange={(sel) => {
-              if (sel.subStrandId !== subStrandId) setShowSuggestions(false);
               setGradeId(sel.gradeId || "");
               setLearningAreaId(sel.learningAreaId || "");
               setStrandId(sel.strandId || "");
@@ -290,9 +285,6 @@ export function LessonPlanForm({
           />
 
           <div className="pt-4 border-t">
-            <Label className="text-sm font-medium mb-2 block">
-              Core Competencies
-            </Label>
             <CompetencyCheckboxGroup
               selectedIds={competencyIds}
               onChange={setCompetencyIds}
@@ -300,43 +292,6 @@ export function LessonPlanForm({
           </div>
         </CardContent>
       </Card>
-
-      {/* Suggestions Banner */}
-      {suggestions && showSuggestions && (
-        <Card className="border-blue-200 bg-blue-50/50">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <Lightbulb className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
-              <div className="flex-1 space-y-2">
-                <p className="text-sm font-medium text-blue-900">
-                  Suggestions based on your curriculum selection
-                </p>
-                <p className="text-xs text-blue-700">
-                  We can pre-fill objectives, inquiry question and resources based on the selected SLOs. You can edit them after.
-                </p>
-                <div className="flex gap-2 pt-1">
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="default"
-                    onClick={applyAllSuggestions}
-                  >
-                    Apply All Suggestions
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setShowSuggestions(false)}
-                  >
-                    Dismiss
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Section 2: Lesson Details */}
       <Card>
@@ -407,24 +362,13 @@ export function LessonPlanForm({
           <div>
             <div className="flex items-center justify-between mb-1">
               <Label htmlFor="objectives">Lesson Objectives</Label>
-              {suggestions && !showSuggestions && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 text-xs text-blue-600"
-                  onClick={() => applySuggestion("objectives")}
-                >
-                  <Lightbulb className="h-3 w-3 mr-1" />
-                  Suggest
-                </Button>
-              )}
+              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
             </div>
             <Textarea
-              ref={objectivesRef}
               id="objectives"
               name="objectives"
-              defaultValue={content.objectives}
+              value={objectives}
+              onChange={(e) => setObjectives(e.target.value)}
               placeholder="By the end of the lesson, the learner should be able to..."
               rows={3}
             />
@@ -433,24 +377,13 @@ export function LessonPlanForm({
           <div>
             <div className="flex items-center justify-between mb-1">
               <Label htmlFor="keyInquiryQuestion">Key Inquiry Question</Label>
-              {suggestions && !showSuggestions && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 text-xs text-blue-600"
-                  onClick={() => applySuggestion("keyInquiryQuestion")}
-                >
-                  <Lightbulb className="h-3 w-3 mr-1" />
-                  Suggest
-                </Button>
-              )}
+              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
             </div>
             <Input
-              ref={inquiryRef}
               id="keyInquiryQuestion"
               name="keyInquiryQuestion"
-              defaultValue={content.keyInquiryQuestion}
+              value={keyInquiryQuestion}
+              onChange={(e) => setKeyInquiryQuestion(e.target.value)}
               placeholder="What question drives this lesson?"
             />
           </div>
@@ -459,24 +392,13 @@ export function LessonPlanForm({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <Label htmlFor="resources">Learning Resources</Label>
-                {suggestions && !showSuggestions && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 text-xs text-blue-600"
-                    onClick={() => applySuggestion("resources")}
-                  >
-                    <Lightbulb className="h-3 w-3 mr-1" />
-                    Suggest
-                  </Button>
-                )}
+                <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
               </div>
               <Textarea
-                ref={resourcesRef}
                 id="resources"
                 name="resources"
-                defaultValue={content.resources}
+                value={resources}
+                onChange={(e) => setResources(e.target.value)}
                 placeholder="Textbooks, charts, models, etc."
                 rows={3}
               />
@@ -502,48 +424,60 @@ export function LessonPlanForm({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="activitiesIntroduction">
-              Introduction
+            <div className="flex items-center justify-between mb-1">
+              <Label htmlFor="activitiesIntroduction">
+                Introduction
               <Badge variant="outline" className="ml-2 text-xs font-normal">
                 5-10 min
               </Badge>
-            </Label>
+              </Label>
+              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
+            </div>
             <Textarea
               id="activitiesIntroduction"
               name="activitiesIntroduction"
-              defaultValue={content.activities?.introduction}
+              value={activitiesIntroduction}
+              onChange={(e) => setActivitiesIntroduction(e.target.value)}
               placeholder="How will you introduce the lesson? Prior knowledge activation, motivation..."
               rows={3}
             />
           </div>
 
           <div>
-            <Label htmlFor="activitiesDevelopment">
-              Development
+            <div className="flex items-center justify-between mb-1">
+              <Label htmlFor="activitiesDevelopment">
+                Development
               <Badge variant="outline" className="ml-2 text-xs font-normal">
                 Main activity
               </Badge>
-            </Label>
+              </Label>
+              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
+            </div>
             <Textarea
               id="activitiesDevelopment"
               name="activitiesDevelopment"
-              defaultValue={content.activities?.development}
+              value={activitiesDevelopment}
+              onChange={(e) => setActivitiesDevelopment(e.target.value)}
               placeholder="Step-by-step teaching and learning activities..."
               rows={5}
             />
           </div>
 
           <div>
-            <Label htmlFor="activitiesConclusion">
-              Conclusion
+            <div className="flex items-center justify-between mb-1">
+              <Label htmlFor="activitiesConclusion">
+                Conclusion
               <Badge variant="outline" className="ml-2 text-xs font-normal">
                 5-10 min
               </Badge>
-            </Label>
+              </Label>
+              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
+            </div>
             <Textarea
               id="activitiesConclusion"
               name="activitiesConclusion"
-              defaultValue={content.activities?.conclusion}
+              value={activitiesConclusion}
+              onChange={(e) => setActivitiesConclusion(e.target.value)}
               placeholder="Wrap-up, summary, homework assignment..."
               rows={3}
             />
@@ -559,7 +493,10 @@ export function LessonPlanForm({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label>Assessment Strategy</Label>
+              <div className="flex items-center justify-between mb-1">
+                <Label>Assessment Strategy</Label>
+                <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
+              </div>
               <Select
                 value={assessmentStrategy}
                 onValueChange={setAssessmentStrategy}
@@ -577,11 +514,15 @@ export function LessonPlanForm({
               </Select>
             </div>
             <div>
-              <Label htmlFor="assessmentDescription">Assessment Details</Label>
+              <div className="flex items-center justify-between mb-1">
+                <Label htmlFor="assessmentDescription">Assessment Details</Label>
+                <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
+              </div>
               <Textarea
                 id="assessmentDescription"
                 name="assessmentDescription"
-                defaultValue={content.assessmentDescription}
+                value={assessmentDescription}
+                onChange={(e) => setAssessmentDescription(e.target.value)}
                 placeholder="Describe how you will assess learners..."
                 rows={3}
               />

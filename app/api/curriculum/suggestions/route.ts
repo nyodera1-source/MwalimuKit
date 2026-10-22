@@ -15,6 +15,12 @@ export async function GET(request: NextRequest) {
 
   const subStrandId = searchParams.get("subStrandId");
   const strandId = searchParams.get("strandId");
+  const selectedSloIds = new Set(
+    (searchParams.get("sloIds") || "")
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean)
+  );
 
   if (!subStrandId && !strandId) {
     return NextResponse.json({ error: "subStrandId or strandId required" }, { status: 400 });
@@ -23,7 +29,12 @@ export async function GET(request: NextRequest) {
   let strandName = "";
   let subStrandName = "";
   let learningAreaName = "";
-  let slos: { description: string; cognitiveLevel: string | null }[] = [];
+  let slos: {
+    id: string;
+    description: string;
+    cognitiveLevel: string | null;
+    competencies: { competency: { id: string; name: string } }[];
+  }[] = [];
 
   if (subStrandId) {
     const ss = await prisma.subStrand.findFirst({
@@ -43,7 +54,14 @@ export async function GET(request: NextRequest) {
         slos: {
           where: { verification: { not: "superseded" } },
           orderBy: { order: "asc" },
-          select: { description: true, cognitiveLevel: true },
+          select: {
+            id: true,
+            description: true,
+            cognitiveLevel: true,
+            competencies: {
+              select: { competency: { select: { id: true, name: true } } },
+            },
+          },
         },
         strand: {
           include: { learningArea: { select: { name: true } } },
@@ -82,7 +100,14 @@ export async function GET(request: NextRequest) {
             slos: {
               where: { verification: { not: "superseded" } },
               orderBy: { order: "asc" },
-              select: { description: true, cognitiveLevel: true },
+              select: {
+                id: true,
+                description: true,
+                cognitiveLevel: true,
+                competencies: {
+                  select: { competency: { select: { id: true, name: true } } },
+                },
+              },
             },
           },
         },
@@ -99,8 +124,13 @@ export async function GET(request: NextRequest) {
     slos = s.subStrands.flatMap((subStrand) => subStrand.slos);
   }
 
-  // Generate suggestions based on the SLOs and context
-  const sloDescriptions = slos.map((s) => s.description);
+  // Generate defaults from the selected curriculum outcomes. Before any SLO
+  // is selected, keep the response available for the topic-level context.
+  const selectedSlos = selectedSloIds.size > 0
+    ? slos.filter((slo) => selectedSloIds.has(slo.id))
+    : [];
+  const curriculumSlos = selectedSloIds.size > 0 ? selectedSlos : slos;
+  const sloDescriptions = curriculumSlos.map((s) => s.description);
 
   const objectives = sloDescriptions.length > 0
     ? `By the end of the lesson, the learner should be able to:\n${sloDescriptions.map((d) => `- ${d}`).join("\n")}`
@@ -108,13 +138,25 @@ export async function GET(request: NextRequest) {
 
   const keyInquiryQuestion = generateInquiryQuestion(learningAreaName, strandName, subStrandName);
 
-  const resources = generateResourceSuggestions(learningAreaName);
+  const resources = generateResourceSuggestions(learningAreaName, subStrandName);
+  const activities = generateActivitySuggestions(
+    learningAreaName,
+    subStrandName || strandName,
+    sloDescriptions,
+  );
+  const assessment = generateAssessmentSuggestion(sloDescriptions, curriculumSlos);
+  const competencyIds = Array.from(
+    new Set(curriculumSlos.flatMap((slo) => slo.competencies.map((entry) => entry.competency.id)))
+  );
 
   return NextResponse.json(
     {
       objectives,
       keyInquiryQuestion,
       resources,
+      activities,
+      assessment,
+      competencyIds,
       sloDescriptions,
       context: { learningAreaName, strandName, subStrandName },
     },
@@ -328,7 +370,7 @@ function generateInquiryQuestion(
   return `How can understanding ${topic.toLowerCase()} help us in our daily lives?`;
 }
 
-function generateResourceSuggestions(learningArea: string): string {
+function generateResourceSuggestions(learningArea: string, subStrand: string): string {
   const common = "Learner's textbook, Chalkboard/whiteboard, Writing materials";
 
   const specific: Record<string, string> = {
@@ -349,5 +391,42 @@ function generateResourceSuggestions(learningArea: string): string {
     "Physical Education": `${common}, Sports equipment, Whistle, Cones, First aid kit`,
   };
 
-  return specific[learningArea] || common;
+  const subjectResources = specific[learningArea] || common;
+  return subStrand
+    ? `${subjectResources}, Examples and exercises on ${subStrand}`
+    : subjectResources;
+}
+
+function generateActivitySuggestions(
+  learningArea: string,
+  topic: string,
+  outcomes: string[],
+) {
+  const outcomeFocus = outcomes.length > 0
+    ? outcomes.map((outcome) => `Learners work on: ${outcome}`).join("\n")
+    : `Learners explore ${topic}.`;
+
+  return {
+    introduction: `Activate prior knowledge of ${topic} through short oral questions and a familiar example.`,
+    development: `${outcomeFocus}\n\nUse guided examples, pair or group work, and learner explanations to practise the selected outcomes in ${learningArea}.`,
+    conclusion: `Learners share one key idea and complete a short check for understanding based on ${topic}.`,
+  };
+}
+
+function generateAssessmentSuggestion(
+  outcomes: string[],
+  slos: { cognitiveLevel: string | null }[],
+) {
+  const hasPracticalOutcome = slos.some((slo) =>
+    ["apply", "analyze", "create"].includes((slo.cognitiveLevel || "").toLowerCase())
+  );
+  const strategy = hasPracticalOutcome ? "Observation" : "Oral";
+  const focus = outcomes.length > 0
+    ? outcomes.map((outcome) => `- ${outcome}`).join("\n")
+    : "the selected learning outcomes";
+
+  return {
+    strategy,
+    description: `Check learner responses, explanations, and classwork against the selected outcomes:\n${focus}`,
+  };
 }
