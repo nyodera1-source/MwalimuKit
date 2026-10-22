@@ -110,12 +110,12 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          {/* Right column — classroom image */}
+          {/* Right column — MwalimuKit planning preview */}
           <div className="hidden md:block flex-1 relative">
             <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20">
               <Image
-                src="/images/hero-classroom.jpg"
-                alt="Kenyan classroom with students learning"
+                src="/brand/mwalimukit-mathematics-planning.png"
+                alt="MwalimuKit scheme of work and lesson plan templates"
                 width={600}
                 height={400}
                 className="w-full h-auto object-cover"
