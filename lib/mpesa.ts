@@ -57,10 +57,26 @@ function getConfig() {
     );
   }
 
+  const businessShortcode =
+    transactionType === "CustomerBuyGoodsOnline"
+      ? process.env.MPESA_STORE_NUMBER
+      : shortcode;
+  const partyB =
+    transactionType === "CustomerBuyGoodsOnline"
+      ? process.env.MPESA_TILL_NUMBER
+      : shortcode;
+
+  if (!businessShortcode || !partyB) {
+    throw new Error(
+      "Till payments require MPESA_STORE_NUMBER and MPESA_TILL_NUMBER in the production environment."
+    );
+  }
+
   return {
     consumerKey,
     consumerSecret,
-    shortcode,
+    shortcode: businessShortcode,
+    partyB,
     passkey,
     baseUrl,
     callbackUrl,
@@ -114,7 +130,7 @@ export async function initiateMpesaPayment(input: {
       TransactionType: config.transactionType,
       Amount: input.amount,
       PartyA: input.phoneNumber,
-      PartyB: config.shortcode,
+      PartyB: config.partyB,
       PhoneNumber: input.phoneNumber,
       CallBackURL: config.callbackUrl,
       AccountReference: input.accountReference,
