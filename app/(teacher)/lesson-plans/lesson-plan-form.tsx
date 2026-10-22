@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { CascadeDropdown } from "@/components/cbe/cascade-dropdown";
 import { CompetencyCheckboxGroup } from "@/components/cbe/competency-checkbox-group";
 import { createLessonPlan, updateLessonPlan } from "./actions";
-import { Eye, Loader2, CheckCircle } from "lucide-react";
+import { Eye, Loader2, CheckCircle, Info } from "lucide-react";
 
 interface LessonPlanContent {
   date?: string;
@@ -263,12 +263,14 @@ export function LessonPlanForm({
         </div>
       )}
 
-      <div className="rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
-        <p className="font-medium">Curriculum content is pre-filled for you.</p>
-        <p className="mt-1">
-          You can edit, add to, or remove any suggested content in the lesson details, objectives, inquiry question, resources, activities, and assessment sections.
-          Reflection can be added after the lesson.
-        </p>
+      <div className="flex items-start gap-3 rounded-lg border border-blue-300 bg-blue-100 px-5 py-4 text-blue-950 shadow-sm">
+        <Info className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
+        <div>
+          <p className="font-semibold">Your lesson plan is ready to customise.</p>
+          <p className="mt-1 text-sm leading-6">
+            Curriculum content has been pre-filled for you. Review each section and edit, add to, or remove any suggested content to suit your class. Reflection can be completed after the lesson.
+          </p>
+        </div>
       </div>
 
       {/* Section 1: Curriculum Selection */}
@@ -294,10 +296,11 @@ export function LessonPlanForm({
             showSLO={true}
           />
 
-          <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-900">
-            {subStrandId && sloIds.length > 0
-              ? "Your lesson content is now prepared from the selected curriculum outcomes. Review and adapt it before downloading."
-              : "Select a sub-strand to load its curriculum outcomes and prepare the lesson content."}
+          <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+            <p className="font-medium">Choose the relevant core competencies.</p>
+            <p className="mt-1">
+              Select the competencies that best support this strand and the learning outcomes selected above.
+            </p>
           </div>
 
           <div className="pt-4 border-t">
