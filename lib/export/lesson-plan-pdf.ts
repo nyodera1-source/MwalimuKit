@@ -150,12 +150,6 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   doc.text(titleLines, pageWidth / 2, y, { align: "center" });
   y += titleLines.length * 5 + 2;
 
-  // Subtle brand accent keeps the title area distinct without adding visual weight.
-  doc.setDrawColor(...ACCENT_COLOR);
-  doc.setLineWidth(0.5);
-  doc.line(pageWidth / 2 - 14, y, pageWidth / 2 + 14, y);
-  y += 3;
-
   // Sub-header
   doc.setFontSize(8.5);
   doc.setFont("helvetica", "normal");
@@ -167,7 +161,7 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
     { align: "center" }
   );
   doc.setTextColor(0, 0, 0);
-  y += 7;
+  y += 8;
 
   // Curriculum Details
   drawSectionHeader("Curriculum Details");
