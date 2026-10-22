@@ -108,12 +108,9 @@ const ASSESSMENT_STRATEGIES = [
 const DURATION_OPTIONS = [30, 40, 60, 80, 90, 120];
 
 const LESSON_PLAN_STEPS = [
-  "Choose curriculum",
-  "Select competencies",
-  "Review details",
-  "Personalise content",
-  "Review activities",
-  "Finish assessment",
+  "Choose topic",
+  "Confirm settings",
+  "Preview and download",
 ];
 
 export function LessonPlanForm({
@@ -339,9 +336,9 @@ export function LessonPlanForm({
       <div className="flex items-start gap-3 rounded-lg border border-blue-300 bg-blue-100 px-5 py-4 text-blue-950 shadow-sm">
         <Info className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
         <div>
-          <p className="font-semibold">Your lesson plan is ready to customise.</p>
+          <p className="font-semibold">Your lesson plan is prepared from the curriculum.</p>
           <p className="mt-1 text-sm leading-6">
-            Curriculum content has been pre-filled for you. Review each section and edit, add to, or remove any suggested content to suit your class. Reflection can be completed after the lesson.
+            Choose the topic and confirm a few settings. The system will prepare the lesson content for you. You can review or customise the generated plan before downloading it.
           </p>
         </div>
       </div>
@@ -350,7 +347,7 @@ export function LessonPlanForm({
         aria-label="Lesson plan steps"
         className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm"
       >
-        <ol className="grid grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-6 md:gap-2">
+        <ol className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-2">
           {LESSON_PLAN_STEPS.map((step, index) => (
             <li key={step} className="flex items-center gap-2 text-sm text-slate-700">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-700">
@@ -362,12 +359,12 @@ export function LessonPlanForm({
         </ol>
       </nav>
 
-      {/* Step 1: Choose curriculum */}
+      {/* Step 1: Choose lesson topic */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">1. Choose your curriculum</CardTitle>
+          <CardTitle className="text-lg">1. Choose the lesson topic</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Select the grade, learning area, strand, sub-strand, and learning outcomes for this lesson.
+            Select the grade, learning area, strand, and sub-strand. Learning outcomes will be included automatically.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -385,31 +382,31 @@ export function LessonPlanForm({
               setSloIds(sel.sloIds || []);
             }}
             onNamesChange={(names) => setCascadeNames(names)}
-            showSLO={true}
+            showSLO={false}
+            autoSelectSLO={true}
           />
 
-          <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-            <p className="font-medium">2. Select the relevant core competencies</p>
-            <p className="mt-1">
-              Choose the competencies that best support this strand and the selected learning outcomes.
+          <details className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
+            <summary className="cursor-pointer text-sm font-medium text-slate-800">
+              Adjust core competencies (optional)
+            </summary>
+            <p className="mb-3 mt-2 text-sm text-muted-foreground">
+              Relevant competencies are suggested from the selected curriculum outcomes.
             </p>
-          </div>
-
-          <div className="pt-4 border-t">
             <CompetencyCheckboxGroup
               selectedIds={competencyIds}
               onChange={setCompetencyIds}
             />
-          </div>
+          </details>
         </CardContent>
       </Card>
 
-      {/* Step 3: Review lesson details */}
+      {/* Step 2: Confirm lesson settings */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">3. Review your lesson details</CardTitle>
+          <CardTitle className="text-lg">2. Confirm lesson settings</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Check the pre-filled title, teacher name, date, and lesson duration.
+            Most details are pre-filled. Change only what is specific to this class or lesson.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -512,42 +509,31 @@ export function LessonPlanForm({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="valuesAndPcis">Values and pertinent issues</Label>
-              <Textarea
-                id="valuesAndPcis"
-                name="valuesAndPcis"
-                value={valuesAndPcis}
-                onChange={(e) => setValuesAndPcis(e.target.value)}
-                placeholder="Values, life skills and pertinent contemporary issues"
-                rows={3}
-              />
-            </div>
-            <div>
-              <Label htmlFor="safetyNotes">Safety notes</Label>
-              <Textarea
-                id="safetyNotes"
-                name="safetyNotes"
-                value={safetyNotes}
-                onChange={(e) => setSafetyNotes(e.target.value)}
-                placeholder="Safety precautions for this lesson"
-                rows={3}
-              />
-            </div>
-          </div>
         </CardContent>
       </Card>
 
-      {/* Step 4: Personalise lesson content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">4. Review and personalise the lesson content</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            The curriculum has filled these fields for you. Edit, add to, or remove any suggested content to suit your class.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      {/* Optional generated content review */}
+      <details open={isEdit} className="group rounded-xl border bg-white shadow-sm">
+        <summary className="cursor-pointer list-none px-6 py-5 [&::-webkit-details-marker]:hidden">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold">3. Review generated content <span className="text-sm font-normal text-muted-foreground">(optional)</span></h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                The system has prepared these sections from the curriculum. Open this area only if you want to edit them.
+              </p>
+            </div>
+            <Badge variant="outline">Optional review</Badge>
+          </div>
+        </summary>
+        <div className="space-y-6 border-t p-4 md:p-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Lesson content</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Edit, add to, or remove any suggested content to suit your class.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="lessonFocus">Lesson focus</Label>
@@ -648,13 +634,38 @@ export function LessonPlanForm({
               />
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Step 5: Review activities */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="valuesAndPcis">Values and pertinent issues</Label>
+              <Textarea
+                id="valuesAndPcis"
+                name="valuesAndPcis"
+                value={valuesAndPcis}
+                onChange={(e) => setValuesAndPcis(e.target.value)}
+                placeholder="Values, life skills and pertinent contemporary issues"
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label htmlFor="safetyNotes">Safety notes</Label>
+              <Textarea
+                id="safetyNotes"
+                name="safetyNotes"
+                value={safetyNotes}
+                onChange={(e) => setSafetyNotes(e.target.value)}
+                placeholder="Safety precautions for this lesson"
+                rows={3}
+              />
+            </div>
+          </div>
+            </CardContent>
+          </Card>
+
+      {/* Teaching and learning activities */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">5. Review the teaching and learning activities</CardTitle>
+          <CardTitle className="text-lg">Teaching and learning activities</CardTitle>
           <p className="text-sm text-muted-foreground">
             Check the suggested introduction, main activity, and conclusion. Adapt, add to, or remove steps as needed.
           </p>
@@ -744,10 +755,10 @@ export function LessonPlanForm({
         </CardContent>
       </Card>
 
-      {/* Step 6: Review assessment and reflection */}
+      {/* Assessment and reflection */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">6. Review assessment and reflection</CardTitle>
+          <CardTitle className="text-lg">Assessment and reflection</CardTitle>
           <p className="text-sm text-muted-foreground">
             Confirm the assessment details. Reflection can be completed after teaching the lesson.
           </p>
@@ -810,6 +821,8 @@ export function LessonPlanForm({
           )}
         </CardContent>
       </Card>
+        </div>
+      </details>
 
       {/* Actions */}
       <Card>

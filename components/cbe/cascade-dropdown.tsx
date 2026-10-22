@@ -33,6 +33,7 @@ interface CascadeDropdownProps {
   }>>;
   showStrand?: boolean;
   showSLO?: boolean;
+  autoSelectSLO?: boolean;
   required?: boolean;
 }
 
@@ -46,8 +47,10 @@ export function CascadeDropdown({
   onNamesChange,
   showStrand = true,
   showSLO = true,
+  autoSelectSLO = false,
   required = false,
 }: CascadeDropdownProps) {
+  const shouldLoadSLO = showSLO || autoSelectSLO;
   const [grades, setGrades] = useState<Option[]>([]);
   const [learningAreas, setLearningAreas] = useState<Option[]>([]);
   const [strands, setStrands] = useState<Option[]>([]);
@@ -58,7 +61,7 @@ export function CascadeDropdown({
     learningAreas: Boolean(defaultGradeId),
     strands: Boolean(defaultLearningAreaId),
     subStrands: Boolean(defaultStrandId),
-    slos: Boolean(defaultSubStrandId && showSLO),
+    slos: Boolean(defaultSubStrandId && shouldLoadSLO),
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -166,7 +169,7 @@ export function CascadeDropdown({
 
   // Fetch SLOs when sub-strand changes
   useEffect(() => {
-    if (selection.subStrandId && showSLO) {
+    if (selection.subStrandId && shouldLoadSLO) {
       queueMicrotask(() => setLoading((prev) => ({ ...prev, slos: true })));
       fetch(`/api/curriculum/slos?subStrandId=${selection.subStrandId}`)
         .then((r) => {
@@ -193,7 +196,7 @@ export function CascadeDropdown({
     } else {
       queueMicrotask(() => setSlos([]));
     }
-  }, [selection.subStrandId, showSLO]);
+  }, [selection.subStrandId, showSLO, shouldLoadSLO]);
 
   const updateSelection = useCallback(
     (updates: Partial<CascadeSelection>) => {
@@ -383,6 +386,16 @@ export function CascadeDropdown({
 
       {showSLO && loading.slos && (
         <p className="text-sm text-muted-foreground">Loading learning outcomes...</p>
+      )}
+
+      {autoSelectSLO && selection.subStrandId && (
+        <p className="md:col-span-2 text-sm text-muted-foreground">
+          {loading.slos
+            ? "Preparing the curriculum outcomes..."
+            : slos.length > 0
+              ? `${slos.length} curriculum outcomes included automatically.`
+              : "Curriculum outcomes could not be loaded yet."}
+        </p>
       )}
     </div>
   );
