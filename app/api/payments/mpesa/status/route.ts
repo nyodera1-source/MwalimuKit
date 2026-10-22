@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isMpesaEnabled } from "@/lib/mpesa";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -10,7 +11,10 @@ export async function GET(request: NextRequest) {
 
   const paymentId = request.nextUrl.searchParams.get("paymentId");
   if (!paymentId) {
-    return NextResponse.json({ error: "Payment ID is required." }, { status: 400 });
+    return NextResponse.json(
+      { enabled: isMpesaEnabled() },
+      { headers: { "Cache-Control": "no-store" } }
+    );
   }
 
   const payment = await prisma.payment.findFirst({

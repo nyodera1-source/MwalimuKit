@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle, Download, Loader2, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,26 @@ export function PaidDownloadButton({
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [mpesaEnabled, setMpesaEnabled] = useState<boolean | null>(null);
   const details = PRODUCT_LABELS[product];
+  const downloadUrl = product === "lesson_plan"
+    ? `/api/lesson-plans/${documentId}/export?format=pdf`
+    : `/api/schemes/${documentId}/export`;
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/payments/mpesa/status", { cache: "no-store" })
+      .then((response) => response.json() as Promise<{ enabled?: boolean }>)
+      .then((data) => {
+        if (active) setMpesaEnabled(data.enabled !== false);
+      })
+      .catch(() => {
+        if (active) setMpesaEnabled(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function reset() {
     setPhoneNumber("");
@@ -107,11 +126,19 @@ export function PaidDownloadButton({
     }
   }
 
+  function handleDownloadClick() {
+    if (mpesaEnabled === false) {
+      window.location.assign(downloadUrl);
+      return;
+    }
+    setOpen(true);
+  }
+
   return (
     <>
-      <Button size={size} className={className} onClick={() => setOpen(true)}>
+      <Button size={size} className={className} onClick={handleDownloadClick} disabled={mpesaEnabled === null}>
         <Download className="h-4 w-4" />
-        Download PDF - KES {details.price}
+        {mpesaEnabled === false ? "Download PDF" : `Download PDF - KES ${details.price}`}
       </Button>
 
       <Dialog open={open} onOpenChange={(nextOpen) => { setOpen(nextOpen); if (!nextOpen) reset(); }}>
