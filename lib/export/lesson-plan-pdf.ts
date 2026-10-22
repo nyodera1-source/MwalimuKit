@@ -39,10 +39,6 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
       .join("\n");
   }
 
-  function formatTitle(title: string) {
-    return title.replace(/\s+-\s+/g, " | ");
-  }
-
   function drawSectionHeader(title: string) {
     checkPageBreak(12);
     doc.setFillColor(...HEADER_COLOR);
@@ -120,21 +116,13 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
     y += rowHeight;
   }
 
-  // "LESSON PLAN" header
-  doc.setFontSize(15);
+  // The school is the document's primary identity.
+  const schoolName = data.schoolName?.trim().toUpperCase() || "LESSON PLAN";
+  doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...HEADER_COLOR);
-  doc.text("LESSON PLAN", pageWidth / 2, y, { align: "center" });
+  doc.text(schoolName, pageWidth / 2, y, { align: "center" });
   y += 7;
-
-  // School name (if available)
-  if (data.schoolName) {
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(...MUTED_COLOR);
-    doc.text(data.schoolName, pageWidth / 2, y, { align: "center" });
-    y += 6;
-  }
 
   // Divider line
   doc.setDrawColor(...HEADER_COLOR);
@@ -142,15 +130,7 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   doc.line(margin, y, pageWidth - margin, y);
   y += 5;
 
-  // Title
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(...HEADER_COLOR);
-  const titleLines = doc.splitTextToSize(formatTitle(data.title), contentWidth);
-  doc.text(titleLines, pageWidth / 2, y, { align: "center" });
-  y += titleLines.length * 5 + 2;
-
-  // Sub-header
+  // Keep only the useful document metadata here; curriculum details follow below.
   doc.setFontSize(8.5);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(...MUTED_COLOR);
@@ -165,7 +145,6 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
 
   // Curriculum Details
   drawSectionHeader("Curriculum Details");
-  if (data.schoolName?.trim()) drawRow("School", data.schoolName);
   if (data.classGroup?.trim()) drawRow("Class / Stream", data.classGroup);
   if (data.time?.trim()) drawRow("Time", data.time);
   drawRow("Lesson", `${data.lessonNumber || 1} of ${data.lessonCount || 1}`);

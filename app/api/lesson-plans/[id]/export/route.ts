@@ -78,7 +78,7 @@ export async function GET(
     competencies: competencies.map((c) => c.name),
     date: (content.date as string) || "",
     duration: (content.duration as number) || 0,
-    schoolName: (content.schoolName as string) || "",
+    schoolName: ((content.schoolName as string) || "").trim().toUpperCase(),
     classGroup: (content.classGroup as string) || "",
     time: (content.time as string) || "",
     lessonFocus: (content.lessonFocus as string) || "",

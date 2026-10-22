@@ -84,7 +84,7 @@ export async function createLessonPlan(prevState: unknown, formData: FormData) {
       content: {
         date,
         duration,
-        schoolName,
+        schoolName: schoolName?.trim().toUpperCase(),
         classGroup,
         time,
         lessonFocus,
@@ -201,7 +201,7 @@ export async function updateLessonPlan(prevState: unknown, formData: FormData) {
       content: {
         date,
         duration,
-        schoolName,
+        schoolName: schoolName?.trim().toUpperCase(),
         classGroup,
         time,
         lessonFocus,

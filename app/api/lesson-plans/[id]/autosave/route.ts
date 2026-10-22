@@ -35,7 +35,7 @@ export async function PATCH(
   const content = {
     date: formData.get("date") as string,
     duration: Number(formData.get("duration")) || 40,
-    schoolName: formData.get("schoolName") as string,
+    schoolName: ((formData.get("schoolName") as string) || "").trim().toUpperCase(),
     classGroup: formData.get("classGroup") as string,
     time: formData.get("time") as string,
     lessonFocus: formData.get("lessonFocus") as string,

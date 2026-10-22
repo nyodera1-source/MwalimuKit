@@ -52,6 +52,9 @@ export default async function PreviewLessonPlanPage({
 
   const content = (plan.content as Record<string, unknown>) || {};
   const activities = (content.activities as Record<string, string>) || {};
+  const schoolName = typeof content.schoolName === "string"
+    ? content.schoolName.trim().toUpperCase()
+    : "";
 
   return (
     <>
@@ -153,7 +156,7 @@ export default async function PreviewLessonPlanPage({
               <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
                   <span className="text-muted-foreground">School</span>
-                  <p className="font-medium">{(content.schoolName as string) || "—"}</p>
+                  <p className="font-medium">{schoolName || "—"}</p>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Class or stream</span>
