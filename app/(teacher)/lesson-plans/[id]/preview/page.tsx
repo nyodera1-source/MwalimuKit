@@ -245,6 +245,21 @@ export default async function PreviewLessonPlanPage({
             </CardContent>
           </Card>
         </div>
+
+        <div className="mt-6 flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <Button variant="outline" asChild>
+            <Link href="/lesson-plans">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Lesson Plans
+            </Link>
+          </Button>
+          <Button size="lg" asChild>
+            <a href={`/api/lesson-plans/${id}/export?format=pdf`} download>
+              <Download className="mr-2 h-4 w-4" />
+              Download PDF
+            </a>
+          </Button>
+        </div>
       </div>
     </>
   );

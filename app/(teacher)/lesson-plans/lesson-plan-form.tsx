@@ -263,6 +263,14 @@ export function LessonPlanForm({
         </div>
       )}
 
+      <div className="rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+        <p className="font-medium">Curriculum content is pre-filled for you.</p>
+        <p className="mt-1">
+          You can edit, add to, or remove any suggested content in the lesson details, objectives, inquiry question, resources, activities, and assessment sections.
+          Reflection can be added after the lesson.
+        </p>
+      </div>
+
       {/* Section 1: Curriculum Selection */}
       <Card>
         <CardHeader>
@@ -288,8 +296,8 @@ export function LessonPlanForm({
 
           <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-900">
             {subStrandId && sloIds.length > 0
-              ? "Your lesson content is prepared from the selected curriculum outcomes. Review or edit it before downloading."
-              : "Select a sub-strand to load its curriculum outcomes and lesson content."}
+              ? "Your lesson content is now prepared from the selected curriculum outcomes. Review and adapt it before downloading."
+              : "Select a sub-strand to load its curriculum outcomes and prepare the lesson content."}
           </div>
 
           <div className="pt-4 border-t">
@@ -366,7 +374,7 @@ export function LessonPlanForm({
         <CardHeader>
           <CardTitle className="text-lg">Lesson Content</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Content is prepared from the selected curriculum outcomes. You can adjust any field for your class.
+            These fields are based on the selected curriculum outcomes. Edit, add to, or remove any suggested content to suit your class.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -429,6 +437,9 @@ export function LessonPlanForm({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Teaching & Learning Activities</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Review the suggested activities and adapt, add to, or remove steps as needed.
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -494,6 +505,9 @@ export function LessonPlanForm({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">{isEdit ? "Assessment & Reflection" : "Assessment"}</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Adjust the suggested assessment to match your class. Add reflection after teaching the lesson.
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
