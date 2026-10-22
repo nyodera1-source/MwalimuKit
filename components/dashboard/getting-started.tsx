@@ -14,20 +14,27 @@ export function GettingStarted({ needsProfile }: { needsProfile: boolean }) {
   return (
     <div className="space-y-4">
       <section
-        className="relative isolate overflow-hidden rounded-xl border border-slate-200 bg-slate-50 px-5 py-5 shadow-sm sm:px-6"
-        style={{ backgroundImage: "url('/brand/mwalimukit-mathematics-planning.png')" }}
+        className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-sm"
       >
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-50 via-slate-50/95 to-slate-50/40" />
-        <div className="relative max-w-xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">
-            Start with a teaching document
-          </p>
-          <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950">
-            Create your first classroom-ready plan
-          </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Build a full-term scheme of work or prepare one focused lesson.
-          </p>
+        <div className="grid md:grid-cols-[1fr_46%]">
+          <div className="flex items-center px-5 py-6 sm:px-6">
+            <div className="max-w-xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">
+                Start with a teaching document
+              </p>
+              <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950">
+                Create your first classroom-ready plan
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Build a full-term scheme of work or prepare one focused lesson.
+              </p>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            className="min-h-[170px] bg-slate-200 bg-cover bg-center"
+            style={{ backgroundImage: "url('/brand/mwalimukit-mathematics-planning.png')" }}
+          />
         </div>
       </section>
 
