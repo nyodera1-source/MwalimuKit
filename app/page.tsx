@@ -207,7 +207,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 px-4 py-10">
+      <footer className="border-t border-slate-200 bg-slate-100 px-4 py-10 text-slate-600">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Wordmark size="sm" className="w-[120px]" />
