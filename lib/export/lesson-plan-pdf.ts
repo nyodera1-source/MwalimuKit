@@ -8,49 +8,78 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   const contentWidth = pageWidth - margin * 2;
   let y = margin;
 
-  const HEADER_COLOR = [55, 65, 81] as const; // Professional dark gray (gray-700)
-  const GRAY_BG = [249, 250, 251] as const; // Light gray (gray-50)
-  const LINE_HEIGHT = 5;
+  const HEADER_COLOR = [39, 55, 78] as const;
+  const TEXT_COLOR = [31, 41, 55] as const;
+  const MUTED_COLOR = [100, 116, 139] as const;
+  const LABEL_BG = [242, 246, 250] as const;
+  const BORDER_COLOR = [203, 213, 225] as const;
+  const ACCENT_COLOR = [238, 122, 32] as const;
+  const LINE_HEIGHT = 4.5;
+  const LABEL_WIDTH = 48;
+  const BOTTOM_LIMIT = doc.internal.pageSize.getHeight() - margin - 8;
 
   function checkPageBreak(needed: number) {
-    const pageHeight = doc.internal.pageSize.getHeight();
-    if (y + needed > pageHeight - margin) {
+    if (y + needed > BOTTOM_LIMIT) {
       doc.addPage();
       y = margin;
     }
   }
 
+  function estimateRowHeight(value: string, valueWidth = contentWidth - LABEL_WIDTH) {
+    const lines = doc.splitTextToSize(value || "Not specified", valueWidth - 6);
+    return Math.max(7, lines.length * LINE_HEIGHT + 3);
+  }
+
+  function formatActivity(value: string | undefined) {
+    if (!value?.trim()) return "Not specified";
+    return value
+      .split(/\r?\n/)
+      .map((line) => line.replace(/^Learners work on:\s*/i, "- ").trim())
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  function formatTitle(title: string) {
+    return title.replace(/\s+-\s+/g, " | ");
+  }
+
   function drawSectionHeader(title: string) {
-    checkPageBreak(10);
+    checkPageBreak(12);
     doc.setFillColor(...HEADER_COLOR);
     doc.rect(margin, y, contentWidth, 7, "F");
+    doc.setFillColor(...ACCENT_COLOR);
+    doc.rect(margin, y, 2.5, 7, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
     doc.text(title, margin + 3, y + 5);
     doc.setTextColor(0, 0, 0);
-    y += 9;
+    y += 10;
   }
 
-  function drawRow(label: string, value: string) {
-    const labelWidth = 45;
+  function drawRow(label: string, value: string, emptyValue = "Not specified") {
+    const labelWidth = LABEL_WIDTH;
     const valueWidth = contentWidth - labelWidth;
-    const valueLines = doc.splitTextToSize(value || "—", valueWidth - 6);
+    const valueLines = doc.splitTextToSize(value?.trim() || emptyValue, valueWidth - 6);
     const rowHeight = Math.max(7, valueLines.length * LINE_HEIGHT + 3);
 
-    checkPageBreak(rowHeight + 2);
+    checkPageBreak(rowHeight + 1);
+    doc.setDrawColor(...BORDER_COLOR);
+    doc.setLineWidth(0.25);
 
     // Label cell
-    doc.setFillColor(...GRAY_BG);
+    doc.setFillColor(...LABEL_BG);
     doc.rect(margin, y, labelWidth, rowHeight, "FD");
     doc.setFontSize(8);
     doc.setFont("helvetica", "bold");
+    doc.setTextColor(...TEXT_COLOR);
     doc.text(label, margin + 2, y + 4.5);
 
     // Value cell
     doc.rect(margin + labelWidth, y, valueWidth, rowHeight, "D");
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
+    doc.setFontSize(8.8);
+    doc.setTextColor(...TEXT_COLOR);
     doc.text(valueLines, margin + labelWidth + 3, y + 4.5);
 
     y += rowHeight;
@@ -58,11 +87,11 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
 
   function drawListRow(label: string, items: string[]) {
     if (items.length === 0) {
-      drawRow(label, "—");
+      drawRow(label, "", "Not specified");
       return;
     }
 
-    const labelWidth = 45;
+    const labelWidth = LABEL_WIDTH;
     const valueWidth = contentWidth - labelWidth;
     const bulletLines: string[] = [];
     for (const item of items) {
@@ -71,17 +100,21 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
     }
     const rowHeight = Math.max(7, bulletLines.length * LINE_HEIGHT + 3);
 
-    checkPageBreak(rowHeight + 2);
+    checkPageBreak(rowHeight + 1);
 
-    doc.setFillColor(...GRAY_BG);
+    doc.setDrawColor(...BORDER_COLOR);
+    doc.setLineWidth(0.25);
+    doc.setFillColor(...LABEL_BG);
     doc.rect(margin, y, labelWidth, rowHeight, "FD");
     doc.setFontSize(8);
     doc.setFont("helvetica", "bold");
+    doc.setTextColor(...TEXT_COLOR);
     doc.text(label, margin + 2, y + 4.5);
 
     doc.rect(margin + labelWidth, y, valueWidth, rowHeight, "D");
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
+    doc.setFontSize(8.8);
+    doc.setTextColor(...TEXT_COLOR);
     doc.text(bulletLines, margin + labelWidth + 3, y + 4.5);
 
     y += rowHeight;
@@ -96,31 +129,31 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
 
   // School name (if available)
   if (data.schoolName) {
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(80, 80, 80);
+    doc.setTextColor(...MUTED_COLOR);
     doc.text(data.schoolName, pageWidth / 2, y, { align: "center" });
     y += 6;
   }
 
   // Divider line
   doc.setDrawColor(...HEADER_COLOR);
-  doc.setLineWidth(0.5);
+  doc.setLineWidth(0.35);
   doc.line(margin, y, pageWidth - margin, y);
   y += 5;
 
   // Title
-  doc.setFontSize(14);
+  doc.setFontSize(13.5);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...HEADER_COLOR);
-  const titleLines = doc.splitTextToSize(data.title, contentWidth);
+  const titleLines = doc.splitTextToSize(formatTitle(data.title), contentWidth);
   doc.text(titleLines, pageWidth / 2, y, { align: "center" });
   y += titleLines.length * 6 + 2;
 
   // Sub-header
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
-  doc.setTextColor(100, 100, 100);
+  doc.setTextColor(...MUTED_COLOR);
   doc.text(
     `Teacher: ${data.teacherName}  |  Date: ${data.date}  |  Duration: ${data.duration} min`,
     pageWidth / 2,
@@ -137,7 +170,7 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   drawRow("Strand", data.strand);
   drawRow("Sub-Strand", data.subStrand);
   drawListRow("Specific Learning Outcomes", data.slos);
-  drawRow("Core Competencies", data.competencies.join(", ") || "—");
+  drawRow("Core Competencies", data.competencies.join(", "));
   y += 3;
 
   // Lesson Content
@@ -145,30 +178,44 @@ export function generateLessonPlanPdf(data: LessonPlanExportData): Buffer {
   drawRow("Lesson Objectives", data.objectives);
   drawRow("Key Inquiry Question", data.keyInquiryQuestion);
   drawRow("Learning Resources", data.resources);
-  drawRow("Digital Resources", data.digitalResources);
+  if (data.digitalResources?.trim()) {
+    drawRow("Digital Resources", data.digitalResources);
+  }
   y += 3;
 
   // Teaching Activities
+  const activityValues = [
+    formatActivity(data.activities.introduction),
+    formatActivity(data.activities.development),
+    formatActivity(data.activities.conclusion),
+  ];
+  const activityHeight =
+    12 + activityValues.reduce((total, value) => total + estimateRowHeight(value), 0);
+  checkPageBreak(activityHeight);
   drawSectionHeader("Teaching & Learning Activities");
-  drawRow("Introduction", data.activities.introduction || "");
-  drawRow("Development", data.activities.development || "");
-  drawRow("Conclusion", data.activities.conclusion || "");
+  drawRow("Introduction", activityValues[0]);
+  drawRow("Development", activityValues[1]);
+  drawRow("Conclusion", activityValues[2]);
   y += 3;
 
-  // Assessment & Reflection
-  drawSectionHeader("Assessment & Reflection");
+  // Assessment and Reflection
+  drawSectionHeader("Assessment and Reflection");
   drawRow("Assessment Strategy", data.assessmentStrategy);
   drawRow("Assessment Details", data.assessmentDescription);
-  drawRow("Reflection", data.reflection);
+  drawRow(
+    "Reflection",
+    data.reflection?.trim() ? data.reflection : "To be completed after the lesson."
+  );
 
   // Footer on each page
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
     doc.setFontSize(7);
-    doc.setTextColor(150, 150, 150);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...MUTED_COLOR);
     doc.text(
-      `Generated by MwalimuKit  -  Page ${i} of ${totalPages}`,
+      `MwalimuKit  -  Page ${i} of ${totalPages}`,
       pageWidth / 2,
       doc.internal.pageSize.getHeight() - 8,
       { align: "center" }
