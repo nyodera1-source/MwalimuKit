@@ -83,6 +83,15 @@ const ASSESSMENT_STRATEGIES = [
 
 const DURATION_OPTIONS = [30, 40, 60, 80, 90, 120];
 
+const LESSON_PLAN_STEPS = [
+  "Choose curriculum",
+  "Select competencies",
+  "Review details",
+  "Personalise content",
+  "Review activities",
+  "Finish assessment",
+];
+
 export function LessonPlanForm({
   teacherName,
   defaultGradeId,
@@ -273,10 +282,29 @@ export function LessonPlanForm({
         </div>
       </div>
 
-      {/* Section 1: Curriculum Selection */}
+      <nav
+        aria-label="Lesson plan steps"
+        className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm"
+      >
+        <ol className="grid grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-6 md:gap-2">
+          {LESSON_PLAN_STEPS.map((step, index) => (
+            <li key={step} className="flex items-center gap-2 text-sm text-slate-700">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-700">
+                {index + 1}
+              </span>
+              <span className="leading-tight">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      {/* Step 1: Choose curriculum */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Curriculum Selection</CardTitle>
+          <CardTitle className="text-lg">1. Choose your curriculum</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Select the grade, learning area, strand, sub-strand, and learning outcomes for this lesson.
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <CascadeDropdown
@@ -297,9 +325,9 @@ export function LessonPlanForm({
           />
 
           <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-            <p className="font-medium">Choose the relevant core competencies.</p>
+            <p className="font-medium">2. Select the relevant core competencies</p>
             <p className="mt-1">
-              Select the competencies that best support this strand and the learning outcomes selected above.
+              Choose the competencies that best support this strand and the selected learning outcomes.
             </p>
           </div>
 
@@ -312,10 +340,13 @@ export function LessonPlanForm({
         </CardContent>
       </Card>
 
-      {/* Section 2: Lesson Details */}
+      {/* Step 3: Review lesson details */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Lesson Details</CardTitle>
+          <CardTitle className="text-lg">3. Review your lesson details</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Check the pre-filled title, teacher name, date, and lesson duration.
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -372,12 +403,12 @@ export function LessonPlanForm({
         </CardContent>
       </Card>
 
-      {/* Section 3: Lesson Content */}
+      {/* Step 4: Personalise lesson content */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Lesson Content</CardTitle>
+          <CardTitle className="text-lg">4. Review and personalise the lesson content</CardTitle>
           <p className="text-sm text-muted-foreground">
-            These fields are based on the selected curriculum outcomes. Edit, add to, or remove any suggested content to suit your class.
+            The curriculum has filled these fields for you. Edit, add to, or remove any suggested content to suit your class.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -436,12 +467,12 @@ export function LessonPlanForm({
         </CardContent>
       </Card>
 
-      {/* Section 4: Teaching & Learning Activities */}
+      {/* Step 5: Review activities */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Teaching & Learning Activities</CardTitle>
+          <CardTitle className="text-lg">5. Review the teaching and learning activities</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Review the suggested activities and adapt, add to, or remove steps as needed.
+            Check the suggested introduction, main activity, and conclusion. Adapt, add to, or remove steps as needed.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -504,12 +535,12 @@ export function LessonPlanForm({
         </CardContent>
       </Card>
 
-      {/* Section 5: Assessment & Reflection */}
+      {/* Step 6: Review assessment and reflection */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">{isEdit ? "Assessment & Reflection" : "Assessment"}</CardTitle>
+          <CardTitle className="text-lg">6. Review assessment and reflection</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Adjust the suggested assessment to match your class. Add reflection after teaching the lesson.
+            Confirm the assessment details. Reflection can be completed after teaching the lesson.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
