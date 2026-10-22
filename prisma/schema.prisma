@@ -34,6 +34,7 @@ model User {
   assignments   Assignment[]
   teachingNotes TeachingNotes[]
   activityForms ActivityForm[]
+  payments     Payment[]
 
   @@map("users")
 }
@@ -248,6 +249,34 @@ model SchemeOfWork {
   learningArea LearningArea @relation(fields: [learningAreaId], references: [id])
 
   @@map("schemes_of_work")
+}
+
+model Payment {
+  id                  String    @id @default(cuid())
+  userId              String    @map("user_id")
+  product             String
+  documentId          String    @map("document_id")
+  amount              Int
+  currency            String    @default("KES")
+  phoneNumber         String    @map("phone_number")
+  accountReference    String    @map("account_reference")
+  status              String    @default("pending")
+  merchantRequestId   String?   @map("merchant_request_id")
+  checkoutRequestId   String?   @map("checkout_request_id")
+  mpesaReceiptNumber  String?   @map("mpesa_receipt_number")
+  resultCode          Int?      @map("result_code")
+  resultDescription   String?   @map("result_description")
+  callbackPayload     Json?     @map("callback_payload")
+  paidAt              DateTime? @map("paid_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, product, documentId])
+  @@index([checkoutRequestId])
+  @@index([status])
+  @@map("payments")
 }
 
 model Exam {

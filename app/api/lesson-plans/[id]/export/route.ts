@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { generateLessonPlanPdf } from "@/lib/export/lesson-plan-pdf";
+import { PRODUCT_PRICES } from "@/lib/mpesa";
 
 export async function GET(
   _request: NextRequest,
@@ -27,6 +28,23 @@ export async function GET(
 
   if (!plan || plan.userId !== session.user.id) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const paid = await prisma.payment.findFirst({
+    where: {
+      userId: session.user.id,
+      product: "lesson_plan",
+      documentId: id,
+      status: "completed",
+    },
+    select: { id: true },
+  });
+
+  if (!paid) {
+    return NextResponse.json(
+      { error: "Payment required before downloading this lesson plan.", amount: PRODUCT_PRICES.lesson_plan },
+      { status: 402 }
+    );
   }
 
   // Fetch SLO descriptions

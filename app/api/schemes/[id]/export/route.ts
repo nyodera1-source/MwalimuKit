@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { generateSchemeOfWorkPdf } from "@/lib/export/scheme-of-work-pdf";
 import type { SchemeConfig } from "@/lib/export/scheme-of-work-types";
+import { PRODUCT_PRICES } from "@/lib/mpesa";
 
 export async function GET(
   _request: NextRequest,
@@ -26,6 +27,23 @@ export async function GET(
 
   if (!scheme || scheme.userId !== session.user.id) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const paid = await prisma.payment.findFirst({
+    where: {
+      userId: session.user.id,
+      product: "scheme_of_work",
+      documentId: id,
+      status: "completed",
+    },
+    select: { id: true },
+  });
+
+  if (!paid) {
+    return NextResponse.json(
+      { error: "Payment required before downloading this scheme of work.", amount: PRODUCT_PRICES.scheme_of_work },
+      { status: 402 }
+    );
   }
 
   const data = (scheme.weeks as unknown as SchemeConfig) || {};

@@ -5,8 +5,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Download, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { deleteLessonPlan } from "../../actions";
+import { PaidDownloadButton } from "@/components/payments/paid-download-button";
 
 export default async function PreviewLessonPlanPage({
   params,
@@ -116,12 +117,7 @@ export default async function PreviewLessonPlanPage({
                 Edit
               </Link>
             </Button>
-            <Button size="sm" asChild>
-              <a href={`/api/lesson-plans/${id}/export?format=pdf`} download>
-                <Download className="h-4 w-4 mr-2" />
-                Download PDF
-              </a>
-            </Button>
+            <PaidDownloadButton product="lesson_plan" documentId={id} size="sm" />
             <form action={async () => { "use server"; await deleteLessonPlan(id); }}>
               <Button type="submit" variant="destructive" size="sm">
                 <Trash2 className="h-4 w-4 mr-2" />
@@ -253,12 +249,7 @@ export default async function PreviewLessonPlanPage({
               Back to Lesson Plans
             </Link>
           </Button>
-          <Button size="lg" asChild>
-            <a href={`/api/lesson-plans/${id}/export?format=pdf`} download>
-              <Download className="mr-2 h-4 w-4" />
-              Download PDF
-            </a>
-          </Button>
+          <PaidDownloadButton product="lesson_plan" documentId={id} size="lg" />
         </div>
       </div>
     </>

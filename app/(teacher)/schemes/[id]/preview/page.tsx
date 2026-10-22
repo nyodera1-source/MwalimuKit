@@ -5,9 +5,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Download, FilePlus2, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, FilePlus2, Pencil, Trash2 } from "lucide-react";
 import { deleteSchemeOfWork } from "../../actions";
 import type { SchemeConfig } from "@/lib/export/scheme-of-work-types";
+import { PaidDownloadButton } from "@/components/payments/paid-download-button";
 
 export default async function PreviewSchemePage({
   params,
@@ -102,11 +103,12 @@ export default async function PreviewSchemePage({
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button size="lg" className="bg-blue-600 font-semibold shadow-sm hover:bg-blue-700" asChild>
-              <a href={`/api/schemes/${id}/export`} download>
-                <Download className="h-4 w-4 mr-2" /> Download PDF
-              </a>
-            </Button>
+            <PaidDownloadButton
+              product="scheme_of_work"
+              documentId={id}
+              size="lg"
+              className="bg-blue-600 font-semibold shadow-sm hover:bg-blue-700"
+            />
             <form action={async () => { "use server"; await deleteSchemeOfWork(id); }}>
               <Button type="submit" variant="destructive" size="sm">
                 <Trash2 className="h-4 w-4 mr-2" /> Delete
@@ -243,11 +245,12 @@ export default async function PreviewSchemePage({
                 <Pencil className="h-4 w-4 mr-2" /> Edit Scheme
               </Link>
             </Button>
-            <Button size="lg" className="bg-blue-600 font-semibold shadow-sm hover:bg-blue-700" asChild>
-              <a href={`/api/schemes/${id}/export`} download>
-                <Download className="h-4 w-4 mr-2" /> Download PDF
-              </a>
-            </Button>
+            <PaidDownloadButton
+              product="scheme_of_work"
+              documentId={id}
+              size="lg"
+              className="bg-blue-600 font-semibold shadow-sm hover:bg-blue-700"
+            />
           </div>
         </div>
       </div>
