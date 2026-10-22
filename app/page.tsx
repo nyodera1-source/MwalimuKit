@@ -110,14 +110,15 @@ export default function HomePage() {
             </div>
           </div>
           {/* Right column — MwalimuKit planning preview */}
-          <div className="hidden md:block flex-1 relative">
-            <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20">
+          <div className="relative hidden flex-1 md:block">
+            <div className="absolute -inset-4 rounded-[2rem] bg-blue-950/20 blur-2xl" />
+            <div className="relative overflow-hidden rounded-[1.75rem] shadow-[0_24px_60px_rgba(7,38,105,0.32)] ring-1 ring-white/25">
               <Image
                 src="/brand/mwalimukit-mathematics-planning.png"
                 alt="MwalimuKit scheme of work and lesson plan templates"
                 width={600}
                 height={400}
-                className="w-full h-auto object-cover"
+                className="aspect-[3/2] h-auto w-full object-cover"
                 priority
               />
             </div>
