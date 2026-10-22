@@ -25,7 +25,12 @@ interface CascadeDropdownProps {
   defaultSubStrandId?: string | null;
   defaultSloIds?: string[];
   onChange: (selection: CascadeSelection) => void;
-  onNamesChange?: React.Dispatch<React.SetStateAction<{ grade?: string; learningArea?: string; strand?: string }>>;
+  onNamesChange?: React.Dispatch<React.SetStateAction<{
+    grade?: string;
+    learningArea?: string;
+    strand?: string;
+    subStrand?: string;
+  }>>;
   showStrand?: boolean;
   showSLO?: boolean;
   required?: boolean;
@@ -170,6 +175,14 @@ export function CascadeDropdown({
         })
         .then((data) => {
           setSlos(data);
+          if (data.length > 0) {
+            setSelection((prev) => {
+              if (prev.sloIds.length > 0) return prev;
+              const next = { ...prev, sloIds: data.map((slo: Option) => slo.id) };
+              queueMicrotask(() => onChange(next));
+              return next;
+            });
+          }
           setError(null);
         })
         .catch(() => {
@@ -311,9 +324,13 @@ export function CascadeDropdown({
           <Label>Sub-Strand</Label>
           <Select
             value={selection.subStrandId || ""}
-            onValueChange={(val) =>
-              updateSelection({ subStrandId: val, sloIds: [] })
-            }
+            onValueChange={(val) => {
+              const subStrand = subStrands.find((ss) => ss.id === val);
+              queueMicrotask(() =>
+                onNamesChange?.((prev) => ({ ...prev, subStrand: subStrand?.name }))
+              );
+              updateSelection({ subStrandId: val, sloIds: [] });
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder={loading.subStrands ? "Loading sub-strands..." : "Select sub-strand"} />
@@ -331,7 +348,10 @@ export function CascadeDropdown({
 
       {showSLO && slos.length > 0 && (
         <div className="space-y-2">
-          <Label>Specific Learning Outcomes</Label>
+          <div className="flex items-center justify-between gap-3">
+            <Label>Specific Learning Outcomes</Label>
+            <span className="text-xs text-muted-foreground">All selected by default</span>
+          </div>
           <div className="space-y-2 rounded-md border p-3">
             {slos.map((slo) => (
               <div key={slo.id} className="flex items-start gap-2">

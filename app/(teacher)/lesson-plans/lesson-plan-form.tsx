@@ -139,11 +139,13 @@ export function LessonPlanForm({
     grade?: string;
     learningArea?: string;
     strand?: string;
+    subStrand?: string;
   }>({});
   const generatedTitle = [
     cascadeNames.grade,
     cascadeNames.learningArea,
     cascadeNames.strand,
+    cascadeNames.subStrand,
   ]
     .filter(Boolean)
     .join(" - ");
@@ -284,6 +286,12 @@ export function LessonPlanForm({
             showSLO={true}
           />
 
+          <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-900">
+            {subStrandId && sloIds.length > 0
+              ? "Your lesson content is prepared from the selected curriculum outcomes. Review or edit it before downloading."
+              : "Select a sub-strand to load its curriculum outcomes and lesson content."}
+          </div>
+
           <div className="pt-4 border-t">
             <CompetencyCheckboxGroup
               selectedIds={competencyIds}
@@ -357,12 +365,14 @@ export function LessonPlanForm({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Lesson Content</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Content is prepared from the selected curriculum outcomes. You can adjust any field for your class.
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
             <div className="flex items-center justify-between mb-1">
               <Label htmlFor="objectives">Lesson Objectives</Label>
-              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
             </div>
             <Textarea
               id="objectives"
@@ -377,7 +387,6 @@ export function LessonPlanForm({
           <div>
             <div className="flex items-center justify-between mb-1">
               <Label htmlFor="keyInquiryQuestion">Key Inquiry Question</Label>
-              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
             </div>
             <Input
               id="keyInquiryQuestion"
@@ -392,7 +401,6 @@ export function LessonPlanForm({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <Label htmlFor="resources">Learning Resources</Label>
-                <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
               </div>
               <Textarea
                 id="resources"
@@ -404,12 +412,12 @@ export function LessonPlanForm({
               />
             </div>
             <div>
-              <Label htmlFor="digitalResources">Digital Resources</Label>
+              <Label htmlFor="digitalResources">Digital Resources (optional)</Label>
               <Textarea
                 id="digitalResources"
                 name="digitalResources"
                 defaultValue={content.digitalResources}
-                placeholder="Videos, apps, websites, etc."
+                placeholder="Add a video, app, website, or other digital tool if needed."
                 rows={3}
               />
             </div>
@@ -431,7 +439,6 @@ export function LessonPlanForm({
                 5-10 min
               </Badge>
               </Label>
-              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
             </div>
             <Textarea
               id="activitiesIntroduction"
@@ -451,7 +458,6 @@ export function LessonPlanForm({
                 Main activity
               </Badge>
               </Label>
-              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
             </div>
             <Textarea
               id="activitiesDevelopment"
@@ -471,7 +477,6 @@ export function LessonPlanForm({
                 5-10 min
               </Badge>
               </Label>
-              <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
             </div>
             <Textarea
               id="activitiesConclusion"
@@ -488,14 +493,13 @@ export function LessonPlanForm({
       {/* Section 5: Assessment & Reflection */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Assessment & Reflection</CardTitle>
+          <CardTitle className="text-lg">{isEdit ? "Assessment & Reflection" : "Assessment"}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <div className="flex items-center justify-between mb-1">
                 <Label>Assessment Strategy</Label>
-                <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
               </div>
               <Select
                 value={assessmentStrategy}
@@ -516,7 +520,6 @@ export function LessonPlanForm({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <Label htmlFor="assessmentDescription">Assessment Details</Label>
-                <Badge variant="secondary" className="text-xs font-normal">From curriculum</Badge>
               </div>
               <Textarea
                 id="assessmentDescription"
@@ -529,21 +532,25 @@ export function LessonPlanForm({
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="reflection">
-              Reflection
-              <span className="text-muted-foreground text-xs ml-2">
-                (Fill after lesson delivery)
-              </span>
-            </Label>
-            <Textarea
-              id="reflection"
-              name="reflection"
-              defaultValue={content.reflection}
-              placeholder="What went well? What would you change? Were objectives met?"
-              rows={3}
-            />
-          </div>
+          {!isEdit ? (
+            <input type="hidden" name="reflection" value="" />
+          ) : (
+            <div>
+              <Label htmlFor="reflection">
+                Reflection
+                <span className="text-muted-foreground text-xs ml-2">
+                  (Complete after lesson delivery)
+                </span>
+              </Label>
+              <Textarea
+                id="reflection"
+                name="reflection"
+                defaultValue={content.reflection}
+                placeholder="What went well? What would you change? Were objectives met?"
+                rows={3}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -577,7 +584,7 @@ export function LessonPlanForm({
                 ) : (
                   <Eye className="h-4 w-4 mr-2" />
                 )}
-                Save & Preview
+                Preview and Download
               </Button>
             </div>
           </div>
