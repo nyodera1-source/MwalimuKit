@@ -51,7 +51,8 @@ export function PaidDownloadButton({
         if (active) setMpesaEnabled(data.enabled !== false);
       })
       .catch(() => {
-        if (active) setMpesaEnabled(true);
+        // Fail closed if the feature flag cannot be read.
+        if (active) setMpesaEnabled(false);
       });
     return () => {
       active = false;
@@ -69,7 +70,8 @@ export function PaidDownloadButton({
   async function waitForPayment(id: string) {
     for (let attempt = 0; attempt < 40; attempt += 1) {
       await new Promise((resolve) => setTimeout(resolve, 3000));
-      const response = await fetch(`/api/payments/mpesa/status?paymentId=${id}`, {
+      const reconcile = attempt === 39 ? "&reconcile=1" : "";
+      const response = await fetch(`/api/payments/mpesa/status?paymentId=${id}${reconcile}`, {
         cache: "no-store",
       });
       const data = (await response.json()) as {

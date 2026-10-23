@@ -26,6 +26,7 @@ interface LessonGuidanceInput {
   subStrand: string;
   duration: number;
   lessonCount: number;
+  lessonNumber: number;
   sloDescriptions: string[];
 }
 
@@ -307,18 +308,31 @@ export function getLessonGuidance(input: LessonGuidanceInput): LessonGuidance {
   const introduction = duration <= 40 ? 5 : 10;
   const conclusion = duration <= 40 ? 5 : 10;
   const development = duration - introduction - conclusion;
-  const objectives = curriculumObjectives(input.sloDescriptions);
   const lessonCount = Math.max(1, input.lessonCount || 1);
+  const lessonNumber = Math.min(lessonCount, Math.max(1, input.lessonNumber || 1));
+  const outcomesPerLesson = Math.max(1, Math.ceil(input.sloDescriptions.length / lessonCount));
+  const lessonOutcomes = input.sloDescriptions.length > 0
+    ? input.sloDescriptions.slice(
+        (lessonNumber - 1) * outcomesPerLesson,
+        lessonNumber * outcomesPerLesson,
+      )
+    : [];
+  const focusedOutcomes = lessonOutcomes.length > 0
+    ? lessonOutcomes
+    : input.sloDescriptions.length > 0
+      ? [input.sloDescriptions[(lessonNumber - 1) % input.sloDescriptions.length]]
+      : [];
+  const objectives = curriculumObjectives(focusedOutcomes);
   const topic = input.subStrand || input.strand || input.learningArea;
-  const firstOutcome = input.sloDescriptions[0] || `explain the main ideas in ${topic}`;
-  const selectedOutcomeSummary = input.sloDescriptions.length > 0
-    ? input.sloDescriptions.slice(0, 3).join("; ")
+  const firstOutcome = focusedOutcomes[0] || `explain the main ideas in ${topic}`;
+  const selectedOutcomeSummary = focusedOutcomes.length > 0
+    ? focusedOutcomes.slice(0, 3).join("; ")
     : `the main ideas in ${topic}`;
   const profile = getAreaProfile(input.learningArea);
 
   const generic: LessonGuidance = {
     lessonFocus: topic,
-    lessonNumber: 1,
+    lessonNumber,
     lessonCount,
     priorKnowledge: `Learners recall related ideas from earlier work and share a familiar example of ${topic} from their home, school or community.`,
     vocabulary: `${topic}; key terms from the selected learning outcomes`,
@@ -344,7 +358,7 @@ export function getLessonGuidance(input: LessonGuidanceInput): LessonGuidance {
   ) {
     return {
       lessonFocus: "Meaning, scope and importance of Wood Technology",
-      lessonNumber: 1,
+      lessonNumber,
       lessonCount,
       priorKnowledge: "Learners identify wooden furniture, buildings, tools and household products they have seen or used at home and in the community.",
       vocabulary: "wood technology, woodwork, timber, workshop, furniture, joinery, wood product",

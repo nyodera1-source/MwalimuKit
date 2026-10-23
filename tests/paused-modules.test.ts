@@ -55,6 +55,9 @@ const ACTIVE_API_ROUTES = [
   "/api/lesson-plans/[id]/autosave",
   "/api/lesson-plans/[id]/export",
   "/api/lesson-plans/generate",
+  "/api/payments/mpesa/callback",
+  "/api/payments/mpesa/initiate",
+  "/api/payments/mpesa/status",
   "/api/schemes/[id]/export",
   "/api/schemes/generate",
 ];

@@ -7,7 +7,7 @@ export const PRODUCT_PRICES: Record<PaidProduct, number> = {
 
 export function isMpesaEnabled() {
   const value = process.env.MPESA_ENABLED?.trim().toLowerCase();
-  return !value || !["false", "0", "off", "no"].includes(value);
+  return ["true", "1", "on", "yes"].includes(value || "");
 }
 
 export function isPaidProduct(value: string): value is PaidProduct {
@@ -162,5 +162,40 @@ export async function initiateMpesaPayment(input: {
     merchantRequestId: data.MerchantRequestID || null,
     checkoutRequestId: data.CheckoutRequestID,
     customerMessage: data.CustomerMessage || "Check your phone and enter your M-PESA PIN.",
+  };
+}
+
+export async function queryMpesaPayment(checkoutRequestId: string) {
+  const config = getConfig();
+  const timestamp = darajaTimestamp();
+  const password = Buffer.from(`${config.shortcode}${config.passkey}${timestamp}`).toString("base64");
+  const accessToken = await getAccessToken(config);
+  const response = await fetch(`${config.baseUrl}/mpesa/stkpushquery/v1/query`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      BusinessShortCode: config.shortcode,
+      Password: password,
+      Timestamp: timestamp,
+      CheckoutRequestID: checkoutRequestId,
+    }),
+    cache: "no-store",
+  });
+  const data = (await response.json()) as {
+    ResultCode?: string;
+    ResultDesc?: string;
+    errorMessage?: string;
+  };
+
+  if (!response.ok || typeof data.ResultCode === "undefined") {
+    throw new Error(data.errorMessage || data.ResultDesc || "Could not verify the M-PESA payment.");
+  }
+
+  return {
+    resultCode: Number(data.ResultCode),
+    resultDescription: data.ResultDesc || "",
   };
 }

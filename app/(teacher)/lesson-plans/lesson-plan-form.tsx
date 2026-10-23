@@ -247,7 +247,7 @@ export function LessonPlanForm({
       if (!subStrandId || sloIds.length === 0) return;
 
       setIsPreparingCurriculum(true);
-      const query = new URLSearchParams({ subStrandId, duration });
+      const query = new URLSearchParams({ subStrandId, duration, lessonNumber });
       if (selectedSloKey) query.set("sloIds", selectedSloKey);
 
       try {
@@ -264,7 +264,7 @@ export function LessonPlanForm({
         setIsPreparingCurriculum(false);
       }
     },
-    [applyCurriculumSuggestions, duration, isEdit, selectedSloKey, sloIds.length, subStrandId]
+    [applyCurriculumSuggestions, duration, isEdit, lessonNumber, selectedSloKey, sloIds.length, subStrandId]
   );
 
   useEffect(() => {
@@ -341,7 +341,12 @@ export function LessonPlanForm({
   }, [state?.error]);
 
   const content = defaults?.content || {};
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Nairobi",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
   const lessonTotal = Number(lessonCount) || 1;
 
   return (

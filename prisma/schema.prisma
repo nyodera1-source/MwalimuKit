@@ -262,8 +262,8 @@ model Payment {
   accountReference    String    @map("account_reference")
   status              String    @default("pending")
   merchantRequestId   String?   @map("merchant_request_id")
-  checkoutRequestId   String?   @map("checkout_request_id")
-  mpesaReceiptNumber  String?   @map("mpesa_receipt_number")
+  checkoutRequestId   String?   @unique @map("checkout_request_id")
+  mpesaReceiptNumber  String?   @unique @map("mpesa_receipt_number")
   resultCode          Int?      @map("result_code")
   resultDescription   String?   @map("result_description")
   callbackPayload     Json?     @map("callback_payload")
@@ -274,7 +274,6 @@ model Payment {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, product, documentId])
-  @@index([checkoutRequestId])
   @@index([status])
   @@map("payments")
 }

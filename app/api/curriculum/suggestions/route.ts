@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
       .filter(Boolean)
   );
   const duration = Number(searchParams.get("duration")) || 40;
+  const requestedLessonNumber = Number(searchParams.get("lessonNumber")) || 1;
 
   if (!subStrandId && !strandId) {
     return NextResponse.json({ error: "subStrandId or strandId required" }, { status: 400 });
@@ -140,7 +141,18 @@ export async function GET(request: NextRequest) {
     ? slos.filter((slo) => selectedSloIds.has(slo.id))
     : [];
   const curriculumSlos = selectedSloIds.size > 0 ? selectedSlos : slos;
-  const sloDescriptions = curriculumSlos.map((s) => s.description);
+  const safeLessonNumber = Math.min(lessonCount, Math.max(1, requestedLessonNumber));
+  const outcomesPerLesson = Math.max(1, Math.ceil(curriculumSlos.length / lessonCount));
+  const lessonSlos = curriculumSlos.slice(
+    (safeLessonNumber - 1) * outcomesPerLesson,
+    safeLessonNumber * outcomesPerLesson,
+  );
+  const focusedSlos = lessonSlos.length > 0
+    ? lessonSlos
+    : curriculumSlos.length > 0
+      ? [curriculumSlos[(safeLessonNumber - 1) % curriculumSlos.length]]
+      : [];
+  const sloDescriptions = focusedSlos.map((s) => s.description);
 
   const objectives = sloDescriptions.length > 0
     ? `By the end of the lesson, the learner should be able to:\n${sloDescriptions.map((d) => `- ${d}`).join("\n")}`
@@ -155,6 +167,7 @@ export async function GET(request: NextRequest) {
     subStrand: subStrandName,
     duration,
     lessonCount,
+    lessonNumber: safeLessonNumber,
     sloDescriptions,
   });
   const activities = guidance.activities || generateActivitySuggestions(
@@ -162,9 +175,9 @@ export async function GET(request: NextRequest) {
     subStrandName || strandName,
     sloDescriptions,
   );
-  const assessment = guidance.assessment || generateAssessmentSuggestion(sloDescriptions, curriculumSlos);
+  const assessment = guidance.assessment || generateAssessmentSuggestion(sloDescriptions, focusedSlos);
   const competencyIds = Array.from(
-    new Set(curriculumSlos.flatMap((slo) => slo.competencies.map((entry) => entry.competency.id)))
+    new Set(focusedSlos.flatMap((slo) => slo.competencies.map((entry) => entry.competency.id)))
   );
 
   return NextResponse.json(
@@ -175,7 +188,7 @@ export async function GET(request: NextRequest) {
       activities,
       assessment,
       lessonFocus: guidance.lessonFocus,
-      lessonNumber: guidance.lessonNumber,
+      lessonNumber: safeLessonNumber,
       lessonCount: guidance.lessonCount,
       priorKnowledge: guidance.priorKnowledge,
       vocabulary: guidance.vocabulary,

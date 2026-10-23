@@ -58,46 +58,6 @@ export default async function PreviewLessonPlanPage({
 
   return (
     <>
-      {/* Copy protection styles */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            .preview-protected {
-              -webkit-user-select: none;
-              -moz-user-select: none;
-              -ms-user-select: none;
-              user-select: none;
-            }
-          `,
-        }}
-      />
-
-      {/* Copy protection script */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            document.addEventListener('contextmenu', function(e) {
-              if (e.target.closest('.preview-protected')) {
-                e.preventDefault();
-              }
-            });
-            document.addEventListener('copy', function(e) {
-              if (e.target.closest && e.target.closest('.preview-protected')) {
-                e.preventDefault();
-              }
-            });
-            document.addEventListener('keydown', function(e) {
-              if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'a' || e.key === 'p')) {
-                var el = document.querySelector('.preview-protected');
-                if (el && el.contains(document.activeElement || e.target)) {
-                  e.preventDefault();
-                }
-              }
-            });
-          `,
-        }}
-      />
-
       <div className="max-w-4xl mx-auto">
         {/* Action Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
@@ -130,8 +90,7 @@ export default async function PreviewLessonPlanPage({
           </div>
         </div>
 
-        {/* Preview Content — copy-protected */}
-        <div className="preview-protected space-y-4">
+        <div className="space-y-4">
           {/* Header Info */}
           <Card>
             <CardContent className="pt-6">

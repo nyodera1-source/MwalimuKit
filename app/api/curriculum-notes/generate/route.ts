@@ -6,6 +6,16 @@ import { NextRequest, NextResponse } from "next/server";
 // The AI generation itself happens via /api/notes/generate (client-side call).
 
 export async function POST(req: NextRequest) {
+  // Shared curriculum notes must not be writable by individual teachers. The
+  // route remains available for a future reviewed/admin workflow, but is
+  // explicitly disabled until that provenance boundary exists.
+  if (process.env.CURRICULUM_NOTES_WRITES_ENABLED !== "true") {
+    return NextResponse.json(
+      { error: "Curriculum notes are not currently available." },
+      { status: 410 },
+    );
+  }
+
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });

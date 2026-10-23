@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateTeachingNotes } from "@/lib/ai/generate-teaching-notes";
+import { validateCurriculumChain } from "@/lib/curriculum/validate";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { readJsonBody, RequestBodyTooLargeError, InvalidJsonBodyError } from "@/lib/request";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -9,7 +12,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const body = await request.json();
+  let body: {
+    gradeId?: string;
+    learningAreaId?: string;
+    strandId?: string;
+    subStrandId?: string;
+    noteType?: string;
+    fast?: boolean;
+  };
+  try {
+    body = await readJsonBody<typeof body>(request, 32_768);
+  } catch (error) {
+    if (error instanceof RequestBodyTooLargeError || error instanceof InvalidJsonBodyError) {
+      return NextResponse.json({ error: error.message }, { status: error instanceof RequestBodyTooLargeError ? 413 : 400 });
+    }
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
   const { gradeId, learningAreaId, strandId, subStrandId, noteType, fast } = body;
 
   if (!gradeId || !learningAreaId || !strandId || !subStrandId || !noteType) {
@@ -17,6 +35,9 @@ export async function POST(request: NextRequest) {
       { error: "Missing required fields" },
       { status: 400 }
     );
+  }
+  if (typeof noteType !== "string" || noteType.length > 120) {
+    return NextResponse.json({ error: "Invalid note type" }, { status: 400 });
   }
 
   // Fetch curriculum names and SLO descriptions
@@ -36,7 +57,7 @@ export async function POST(request: NextRequest) {
     }),
     prisma.sLO.findMany({
       where: { subStrandId },
-      select: { description: true },
+      select: { id: true, description: true },
     }),
   ]);
 
@@ -51,6 +72,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: "No SLOs found for this sub-strand" },
       { status: 400 }
+    );
+  }
+
+  const curriculumCheck = await validateCurriculumChain({
+    gradeId,
+    learningAreaId,
+    strandId,
+    subStrandId,
+    sloIds: slos.map((slo) => slo.id),
+  });
+  if (!curriculumCheck.ok) {
+    return NextResponse.json({ error: curriculumCheck.message }, { status: 400 });
+  }
+
+  const rate = checkRateLimit(`ai-notes:${session.user.id}`, 10, 10 * 60 * 1000);
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: "Too many AI requests. Please wait before trying again." },
+      { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } },
     );
   }
 

@@ -18,19 +18,12 @@ function readDatabaseUrl() {
 }
 
 export async function GET() {
-  const { raw, parsed, error } = readDatabaseUrl();
+  const { raw, parsed } = readDatabaseUrl();
 
   if (!raw || !parsed) {
     return NextResponse.json(
-      {
-        ok: false,
-        databaseUrlPresent: Boolean(raw),
-        databaseUrlError: error,
-        authSecretPresent: Boolean(
-          process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET
-        ),
-      },
-      { status: 500 }
+      { ok: false },
+      { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   }
 
@@ -43,33 +36,11 @@ export async function GET() {
   try {
     await pool.query("select 1");
 
-    return NextResponse.json({
-      ok: true,
-      databaseUrlPresent: true,
-      databaseHost: parsed.hostname,
-      databasePort: parsed.port,
-      databaseName: parsed.pathname.replace(/^\//, ""),
-      authSecretPresent: Boolean(
-        process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET
-      ),
-    });
+    return NextResponse.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
   } catch (dbError) {
-    const error = dbError as NodeJS.ErrnoException;
-
     return NextResponse.json(
-      {
-        ok: false,
-        databaseUrlPresent: true,
-        databaseHost: parsed.hostname,
-        databasePort: parsed.port,
-        databaseName: parsed.pathname.replace(/^\//, ""),
-        authSecretPresent: Boolean(
-          process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET
-        ),
-        errorCode: error.code,
-        errorMessage: error.message,
-      },
-      { status: 500 }
+      { ok: false },
+      { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   } finally {
     await pool.end();
