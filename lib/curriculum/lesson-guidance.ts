@@ -44,22 +44,39 @@ export function getLessonGuidance(input: LessonGuidanceInput): LessonGuidance {
   const development = duration - introduction - conclusion;
   const objectives = curriculumObjectives(input.sloDescriptions);
   const lessonCount = Math.max(1, input.lessonCount || 1);
+  const topic = input.subStrand || input.strand || input.learningArea;
+  const firstOutcome = input.sloDescriptions[0] || `explain the main ideas in ${topic}`;
+  const selectedOutcomeSummary = input.sloDescriptions.length > 0
+    ? input.sloDescriptions.slice(0, 3).join("; ")
+    : `the main ideas in ${topic}`;
+  const needsPracticalSafety = [
+    "Agriculture",
+    "Biology",
+    "Chemistry",
+    "Fine Arts",
+    "Home Science",
+    "Physical Education",
+    "Physics",
+    "Wood Technology",
+  ].includes(input.learningArea);
 
   const generic: LessonGuidance = {
-    lessonFocus: input.subStrand || input.strand,
+    lessonFocus: topic,
     lessonNumber: 1,
     lessonCount,
-    priorKnowledge: `Learners recall relevant ideas from earlier work and describe examples of ${input.subStrand || input.strand} from their surroundings.`,
-    vocabulary: `${input.subStrand || input.strand}, key terms from the selected learning outcomes`,
-    teacherPreparation: "Review the selected curriculum outcomes, prepare locally available resources, and organise learners for pair or group work.",
-    valuesAndPcis: "Values and pertinent issues should be connected to the selected learning outcomes and the learners' local context.",
-    safetyNotes: "Review the safety needs of the selected activity before the lesson and demonstrate safe use of any equipment.",
-    differentiation: "Support learners with examples, word banks and mixed-ability grouping. Extend confident learners with an application or explanation task.",
-    homework: `Find one example of ${input.subStrand || input.strand} in the local environment and explain how it relates to today's lesson.`,
+    priorKnowledge: `Learners recall related ideas from earlier work and share a familiar example of ${topic} from their home, school or community.`,
+    vocabulary: `${topic}; key terms from the selected learning outcomes`,
+    teacherPreparation: `Review the selected outcomes for ${topic}, prepare locally available examples or resources, and organise learners for pair or group work.`,
+    valuesAndPcis: "Values: responsibility, respect and collaboration. Link the lesson to the learners' local context and relevant everyday applications.",
+    safetyNotes: needsPracticalSafety
+      ? "Review the safety needs of the selected activity before the lesson and demonstrate safe use of any equipment or materials."
+      : "Maintain normal classroom safety routines and ensure that learning materials are used responsibly.",
+    differentiation: `Support learners with examples, a word bank and mixed-ability grouping. Extend confident learners with an application or explanation task linked to ${topic}.`,
+    homework: `Find one example of ${topic} in the local environment and explain how it relates to today's lesson.`,
     activities: {
-      introduction: `${introduction} min\nTeacher: Activate prior knowledge with short questions and a familiar example.\nLearners: Share what they already know and make an initial prediction.\nCheck: Listen for correct vocabulary and address misconceptions before the main activity.`,
-      development: `${development} min\n1. Teacher introduces the selected concept using the curriculum outcomes and prepared examples.\n2. Learners work in pairs or groups to investigate the examples and explain their findings.\n3. Groups report back while the teacher consolidates the correct ideas on the board.\nCompetencies: Communication and Collaboration; Critical Thinking and Problem Solving.`,
-      conclusion: `${conclusion} min\nLearners summarise the key idea, answer an exit question and record the homework task.\nTeacher checks whether the lesson objectives were met and notes learners who need support.`,
+      introduction: `${introduction} min\nTeacher: Introduce ${topic} through short questions and a familiar local example.\nLearners: Share what they already know and make an initial prediction.\nCheck: Listen for the vocabulary needed for this lesson and address misconceptions before the main activity.`,
+      development: `${development} min\n1. Teacher introduces ${topic} and connects the lesson to the first outcome: ${firstOutcome}.\n2. Learners work in pairs or groups using prepared examples to investigate the selected outcomes: ${selectedOutcomeSummary}.\n3. Groups explain their findings while the teacher consolidates accurate ideas and links them to the lesson focus.\nCompetencies: Communication and Collaboration; Critical Thinking and Problem Solving.`,
+      conclusion: `${conclusion} min\nLearners summarise the key idea, answer an exit question about ${topic} and record the homework task.\nTeacher checks the selected outcomes and notes learners who need additional support.`,
     },
     assessment: {
       strategy: "Observation",

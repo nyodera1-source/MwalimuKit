@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { CascadeDropdown } from "@/components/cbe/cascade-dropdown";
 import { CompetencyCheckboxGroup } from "@/components/cbe/competency-checkbox-group";
 import { createLessonPlan, updateLessonPlan } from "./actions";
-import { Eye, Loader2, CheckCircle, Info } from "lucide-react";
+import { Eye, Loader2, CheckCircle, Info, RotateCcw } from "lucide-react";
 
 interface LessonPlanContent {
   date?: string;
@@ -185,12 +185,15 @@ export function LessonPlanForm({
     String(defaults?.content?.duration || "40")
   );
   const [isTemplate, setIsTemplate] = useState(defaults?.isTemplate || false);
+  const [isPreparingCurriculum, setIsPreparingCurriculum] = useState(false);
+  const [curriculumSnapshot, setCurriculumSnapshot] = useState<CurriculumSuggestions | null>(null);
 
   // Auto-save state
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const formRef = useRef<HTMLFormElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
   const autoSaveTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const preferencesLoaded = useRef(false);
 
   // Track cascade names for auto-title
   const [cascadeNames, setCascadeNames] = useState<{
@@ -212,39 +215,92 @@ export function LessonPlanForm({
   // Curriculum selections drive the default lesson content. Existing plans are
   // left untouched so editing never overwrites a teacher's custom work.
   const selectedSloKey = sloIds.join(",");
-  useEffect(() => {
-    if (!subStrandId) return;
-    const query = new URLSearchParams({ subStrandId, duration });
-    if (selectedSloKey) query.set("sloIds", selectedSloKey);
+  const applyCurriculumSuggestions = useCallback(
+    (data: CurriculumSuggestions, replaceCompetencies = false) => {
+      setLessonFocus(data.lessonFocus || "");
+      setLessonNumber(String(data.lessonNumber || 1));
+      setLessonCount(String(data.lessonCount || 1));
+      setPriorKnowledge(data.priorKnowledge || "");
+      setVocabulary(data.vocabulary || "");
+      setTeacherPreparation(data.teacherPreparation || "");
+      setValuesAndPcis(data.valuesAndPcis || "");
+      setSafetyNotes(data.safetyNotes || "");
+      setDifferentiation(data.differentiation || "");
+      setHomework(data.homework || "");
+      setObjectives(data.objectives || "");
+      setKeyInquiryQuestion(data.keyInquiryQuestion || "");
+      setResources(data.resources || "");
+      setActivitiesIntroduction(data.activities?.introduction || "");
+      setActivitiesDevelopment(data.activities?.development || "");
+      setActivitiesConclusion(data.activities?.conclusion || "");
+      setAssessmentStrategy(data.assessment?.strategy || "");
+      setAssessmentDescription(data.assessment?.description || "");
+      if (replaceCompetencies || competencyIds.length === 0) {
+        setCompetencyIds(data.competencyIds || []);
+      }
+    },
+    [competencyIds.length]
+  );
 
-    fetch(`/api/curriculum/suggestions?${query.toString()}`)
-      .then((r) => r.json() as Promise<CurriculumSuggestions>)
-      .then((data) => {
-        if (isEdit || sloIds.length === 0) return;
-        setLessonFocus(data.lessonFocus || "");
-        setLessonNumber(String(data.lessonNumber || 1));
-        setLessonCount(String(data.lessonCount || 1));
-        setPriorKnowledge(data.priorKnowledge || "");
-        setVocabulary(data.vocabulary || "");
-        setTeacherPreparation(data.teacherPreparation || "");
-        setValuesAndPcis(data.valuesAndPcis || "");
-        setSafetyNotes(data.safetyNotes || "");
-        setDifferentiation(data.differentiation || "");
-        setHomework(data.homework || "");
-        setObjectives(data.objectives || "");
-        setKeyInquiryQuestion(data.keyInquiryQuestion || "");
-        setResources(data.resources || "");
-        setActivitiesIntroduction(data.activities?.introduction || "");
-        setActivitiesDevelopment(data.activities?.development || "");
-        setActivitiesConclusion(data.activities?.conclusion || "");
-        setAssessmentStrategy(data.assessment?.strategy || "");
-        setAssessmentDescription(data.assessment?.description || "");
-        if (competencyIds.length === 0 && data.competencyIds?.length) {
-          setCompetencyIds(data.competencyIds);
+  const loadCurriculumSuggestions = useCallback(
+    async (replaceCurrentContent = false) => {
+      if (!subStrandId || sloIds.length === 0) return;
+
+      setIsPreparingCurriculum(true);
+      const query = new URLSearchParams({ subStrandId, duration });
+      if (selectedSloKey) query.set("sloIds", selectedSloKey);
+
+      try {
+        const response = await fetch(`/api/curriculum/suggestions?${query.toString()}`);
+        if (!response.ok) throw new Error("Could not load curriculum suggestions");
+        const data = (await response.json()) as CurriculumSuggestions;
+        setCurriculumSnapshot(data);
+        if (replaceCurrentContent || !isEdit) {
+          applyCurriculumSuggestions(data, replaceCurrentContent);
         }
-      })
-      .catch(() => undefined);
-  }, [subStrandId, selectedSloKey, duration, isEdit, competencyIds.length, sloIds.length]);
+      } catch {
+        // Keep the existing content available if a refresh is temporarily unavailable.
+      } finally {
+        setIsPreparingCurriculum(false);
+      }
+    },
+    [applyCurriculumSuggestions, duration, isEdit, selectedSloKey, sloIds.length, subStrandId]
+  );
+
+  useEffect(() => {
+    if (!subStrandId || isEdit || sloIds.length === 0) return;
+    void loadCurriculumSuggestions();
+  }, [isEdit, loadCurriculumSuggestions, sloIds.length, subStrandId]);
+
+  // Remember only practical, non-sensitive preferences for the next lesson plan.
+  useEffect(() => {
+    if (isEdit || preferencesLoaded.current) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem("mwalimukit.lesson-plan-preferences") || "null") as {
+        classGroup?: string;
+        time?: string;
+        duration?: string;
+        assessmentStrategy?: string;
+      } | null;
+      if (saved?.classGroup && !defaults?.content?.classGroup) setClassGroup(saved.classGroup);
+      if (saved?.time && !defaults?.content?.time) setTime(saved.time);
+      if (saved?.duration && !defaults?.content?.duration) setDuration(saved.duration);
+      if (saved?.assessmentStrategy && !defaults?.content?.assessmentStrategy) {
+        setAssessmentStrategy(saved.assessmentStrategy);
+      }
+    } catch {
+      // Ignore unavailable or malformed browser storage.
+    }
+    preferencesLoaded.current = true;
+  }, [defaults?.content?.assessmentStrategy, defaults?.content?.classGroup, defaults?.content?.duration, defaults?.content?.time, isEdit]);
+
+  useEffect(() => {
+    if (isEdit || !preferencesLoaded.current) return;
+    localStorage.setItem(
+      "mwalimukit.lesson-plan-preferences",
+      JSON.stringify({ classGroup, time, duration, assessmentStrategy })
+    );
+  }, [assessmentStrategy, classGroup, duration, isEdit, time]);
 
   // Auto-save for existing plans (every 30 seconds)
   const planId = defaults?.id;
@@ -286,6 +342,7 @@ export function LessonPlanForm({
 
   const content = defaults?.content || {};
   const today = new Date().toISOString().split("T")[0];
+  const lessonTotal = Number(lessonCount) || 1;
 
   return (
     <form ref={formRef} action={formAction} className="space-y-6">
@@ -338,7 +395,7 @@ export function LessonPlanForm({
         <div>
           <p className="font-semibold">Your lesson plan is prepared from the curriculum.</p>
           <p className="mt-1 text-sm leading-6">
-            Choose the topic and confirm a few settings. The system will prepare the lesson content for you. You can review or customise the generated plan before downloading it.
+            Choose the topic and confirm a few settings. The system will prepare the lesson content for you. You can review or customise it before downloading.
           </p>
         </div>
       </div>
@@ -364,7 +421,7 @@ export function LessonPlanForm({
         <CardHeader>
           <CardTitle className="text-lg">1. Choose the lesson topic</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Select the grade, learning area, strand, and sub-strand. Learning outcomes will be included automatically.
+            Select the topic for this lesson. The curriculum outcomes and suggested content will be included automatically.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -435,7 +492,10 @@ export function LessonPlanForm({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="title">Lesson Title</Label>
+              <div className="mb-1 flex items-center justify-between gap-2">
+                <Label htmlFor="title">Lesson title</Label>
+                {autoTitle && <Badge variant="outline" className="text-xs font-normal">From curriculum</Badge>}
+              </div>
               <Input
                 id="title"
                 name="title"
@@ -458,7 +518,7 @@ export function LessonPlanForm({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             <div>
               <Label htmlFor="date">Date</Label>
               <Input
@@ -494,18 +554,20 @@ export function LessonPlanForm({
               />
             </div>
             <div>
-              <Label htmlFor="lessonNumber">Lesson sequence</Label>
+              <Label htmlFor="lessonNumber">Lesson number</Label>
               <div className="flex items-center gap-2">
                 <Input
                   id="lessonNumber"
                   type="number"
                   min={1}
+                  max={lessonTotal}
                   value={lessonNumber}
                   onChange={(e) => setLessonNumber(e.target.value)}
                   className="w-20"
                 />
-                <span className="text-sm text-muted-foreground">of {lessonCount}</span>
+                <Badge variant="outline" className="font-normal">of {lessonTotal}</Badge>
               </div>
+              <p className="mt-1 text-xs text-muted-foreground">The curriculum suggests {lessonTotal} lesson{lessonTotal === 1 ? "" : "s"} for this sub-strand.</p>
             </div>
           </div>
 
@@ -519,10 +581,23 @@ export function LessonPlanForm({
             <div>
               <h2 className="text-lg font-semibold">3. Review generated content <span className="text-sm font-normal text-muted-foreground">(optional)</span></h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                The system has prepared these sections from the curriculum. Open this area only if you want to edit them.
+                The system has prepared these sections from the selected outcomes. Open this area only if you want to edit them.
               </p>
             </div>
-            <Badge variant="outline">Optional review</Badge>
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              {curriculumSnapshot && <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">Curriculum prepared</Badge>}
+              <Badge variant="outline">Optional review</Badge>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => void loadCurriculumSuggestions(true)}
+                disabled={isPreparingCurriculum || !subStrandId || sloIds.length === 0}
+              >
+                {isPreparingCurriculum ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
+                Restore curriculum suggestions
+              </Button>
+            </div>
           </div>
         </summary>
         <div className="space-y-6 border-t p-4 md:p-6">
@@ -530,7 +605,7 @@ export function LessonPlanForm({
             <CardHeader>
               <CardTitle className="text-lg">Lesson content</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Edit, add to, or remove any suggested content to suit your class.
+                Edit, add to, or remove any suggested content to suit your class. The original curriculum suggestions can be restored above.
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -760,7 +835,7 @@ export function LessonPlanForm({
         <CardHeader>
           <CardTitle className="text-lg">Assessment and reflection</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Confirm the assessment details. Reflection can be completed after teaching the lesson.
+            Confirm the suggested assessment. Reflection can be completed after teaching the lesson.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -832,7 +907,14 @@ export function LessonPlanForm({
               {state.error}
             </div>
           )}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="mb-4 flex items-start gap-3 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-950">
+            <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+            <div>
+              <p className="font-medium">Your lesson plan is ready to preview.</p>
+              <p className="text-sm text-emerald-800">The selected curriculum outcomes and lesson sequence will be included in the downloadable plan.</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <div className="flex items-center gap-2">
               <Checkbox
                 id="isTemplate"
@@ -854,7 +936,7 @@ export function LessonPlanForm({
                 ) : (
                   <Eye className="h-4 w-4 mr-2" />
                 )}
-                Preview and Download
+                Preview and download
               </Button>
             </div>
           </div>
