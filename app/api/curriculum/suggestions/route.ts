@@ -395,6 +395,29 @@ function generateInquiryQuestion(
     return areaQuestions[0];
   }
 
+  const area = learningArea.toLowerCase();
+  if (area.includes("computer") || area.includes("information and communication")) {
+    return `How can we use ${topic.toLowerCase()} responsibly to solve problems in our digital world?`;
+  }
+  if (area.includes("sports") || area.includes("physical")) {
+    return `How can practising ${topic.toLowerCase()} improve performance, health and teamwork?`;
+  }
+  if (area.includes("religious") || area.includes("religion")) {
+    return `How can the lessons from ${topic.toLowerCase()} guide responsible choices in daily life?`;
+  }
+  if (area.includes("music") || area.includes("dance") || area.includes("theatre") || area.includes("film") || area.includes("creative")) {
+    return `How can we use ${topic.toLowerCase()} to communicate ideas and express ourselves?`;
+  }
+  if (area.includes("technology") || area.includes("construction") || area.includes("aviation") || area.includes("pre-technical")) {
+    return `How can understanding ${topic.toLowerCase()} help us design, make or improve useful products?`;
+  }
+  if (area.includes("science")) {
+    return `What evidence can help us explain ${topic.toLowerCase()}?`;
+  }
+  if (area.includes("language") || area.includes("literature") || area.includes("fasihi") || area.includes("arabic") || area.includes("french") || area.includes("german") || area.includes("mandarin")) {
+    return `How does ${topic.toLowerCase()} help us communicate, interpret texts or express ideas?`;
+  }
+
   return `How can understanding ${topic.toLowerCase()} help us in our daily lives?`;
 }
 
@@ -412,12 +435,33 @@ function generateResourceSuggestions(learningArea: string, subStrand: string): s
     "Geography": `${common}, Maps, Atlas, Globe, Photographs, Weather instruments`,
     "Business Studies": `${common}, Business documents, Newspapers, Sample financial records`,
     "Agriculture": `${common}, Farm tools, Soil samples, Seeds, Charts`,
+    "Agriculture and Nutrition": `${common}, Farm tools, Soil samples, Seeds, Food samples, Nutrition charts`,
+    "Applied Agriculture": `${common}, Farm tools, Soil samples, Seeds, Farm records, Charts`,
     "Computer Science": `${common}, Computers/laptops, Internet access, Projector`,
+    "Information and Communication Technology (ICT)": `${common}, Computers/laptops, Offline digital files, Projector`,
+    "General Science": `${common}, Safe specimens, Charts and models, Measuring instruments`,
+    "Integrated Science": `${common}, Safe specimens, Charts and models, Measuring instruments`,
     "Wood Technology": `${common}, Wood samples or photographs, Safe hand tools, Furniture samples, Personal protective equipment`,
+    "Metal Technology": `${common}, Metal samples, Technical drawings, Safe hand tools, Personal protective equipment`,
+    "Building Construction": `${common}, Building material samples, Drawings, Measuring tools, Personal protective equipment`,
+    "Aviation Technology": `${common}, Aircraft diagrams, Safe models, Measuring instruments, Projector`,
+    "Pre-Technical Studies": `${common}, Material samples, Drawings, Measuring tools, Safe hand tools`,
     "Home Science": `${common}, Kitchen equipment, Sewing materials, Nutrition charts`,
     "Fine Arts": `${common}, Drawing paper, Pencils, Paints, Brushes, Clay`,
     "Music and Dance": `${common}, Musical instruments, Audio player, Music scores`,
+    "Theatre and Film": `${common}, Scripts, Storyboards, Props, Audio-visual equipment`,
+    "Creative Arts and Sports": `${common}, Art materials, Sports equipment, Whistle, Cones`,
+    "Sports and Recreation": `${common}, Sports equipment, Whistle, Cones, First aid kit`,
     "Physical Education": `${common}, Sports equipment, Whistle, Cones, First aid kit`,
+    "Arabic": `${common}, Arabic texts, Dictionary, Audio recordings`,
+    "French": `${common}, French texts, Dictionary, Audio recordings`,
+    "German": `${common}, German texts, Dictionary, Audio recordings`,
+    "Mandarin Chinese": `${common}, Mandarin texts, Dictionary, Audio recordings`,
+    "Fasihi ya Kiswahili": `${common}, Vitabu vya fasihi, Kamusi, Audio recordings`,
+    "Literature in English": `${common}, Set texts, Dictionary, Audio recordings`,
+    "Christian Religious Education": `${common}, Bible, Maps, Photographs, Community examples`,
+    "Islamic Religious Education": `${common}, Qur'an, Hadith extracts, Maps, Community examples`,
+    "Hindu Religious Education": `${common}, Selected religious texts, Images, Community examples`,
   };
 
   const subjectResources = specific[learningArea] || common;
