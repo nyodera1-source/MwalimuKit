@@ -36,4 +36,12 @@ describe("middleware matcher covers paused routes", () => {
     );
     assert.ok(!matcher.includes("/api/auth/:path*"));
   });
+
+  test("scheme pages keep authentication on the active host", async () => {
+    const matcher = await loadMatcher();
+    assert.ok(
+      !matcher.includes("/schemes/:path*"),
+      "Scheme pages authenticate in their server components so a middleware host redirect cannot drop the teacher session."
+    );
+  });
 });

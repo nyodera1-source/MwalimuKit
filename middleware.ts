@@ -45,7 +45,6 @@ export const config = {
     // Active journey.
     "/dashboard/:path*",
     "/lesson-plans/:path*",
-    "/schemes/:path*",
     "/profile/:path*",
 
     // Paused page routes.
