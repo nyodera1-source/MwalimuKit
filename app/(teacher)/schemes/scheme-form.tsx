@@ -247,6 +247,7 @@ export function SchemeForm({
   const [entries, setEntries] = useState<LessonEntry[]>(
     defaults?.schemeData?.entries || []
   );
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   // Previous term carryover
   const [carryoverEnabled, setCarryoverEnabled] = useState(
@@ -764,12 +765,27 @@ export function SchemeForm({
   const schemeDataJson = buildSchemeData();
 
   const generatePreview = () => {
-    const generatedEntries = generateEntries();
-    if (generatedEntries.length === 0 || !formRef.current) return;
+    setPreviewError(null);
 
-    const formData = new FormData(formRef.current);
-    formData.set("schemeData", buildSchemeData(generatedEntries));
-    formAction(formData);
+    try {
+      const generatedEntries = generateEntries();
+      if (generatedEntries.length === 0) {
+        setPreviewError(
+          "We could not create the scheme yet. Select at least one sub-strand and make sure the teaching window includes a lesson."
+        );
+        return;
+      }
+      if (!formRef.current) {
+        setPreviewError("The scheme form is not ready. Please refresh the page and try again.");
+        return;
+      }
+
+      const formData = new FormData(formRef.current);
+      formData.set("schemeData", buildSchemeData(generatedEntries));
+      formAction(formData);
+    } catch {
+      setPreviewError("We could not prepare the scheme preview. Please review your selections and try again.");
+    }
   };
 
   const canProceedStep1 = gradeId && learningAreaId && term && year;
@@ -1628,6 +1644,11 @@ export function SchemeForm({
             )}
 
             <div className="sticky bottom-0 z-10 -mx-5 space-y-2 border-t bg-white/95 px-5 pt-3 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+              {previewError && (
+                <div role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {previewError}
+                </div>
+              )}
               <div className="flex flex-wrap items-center gap-3">
                 <Button
                   type="button"
