@@ -81,7 +81,7 @@ export function PaidDownloadButton({
       };
 
       if (data.status === "completed" && data.downloadUrl) {
-        window.location.assign(data.downloadUrl);
+        await downloadPdf();
         return;
       }
       if (data.status === "failed" || data.status === "cancelled") {
@@ -90,6 +90,43 @@ export function PaidDownloadButton({
     }
 
     throw new Error("We are still waiting for M-PESA confirmation. Please try again shortly.");
+  }
+
+  async function downloadPdf() {
+    setBusy(true);
+    setError("");
+
+    try {
+      const response = await fetch(downloadUrl, { cache: "no-store" });
+      if (!response.ok) {
+        let message = `Download failed (${response.status}).`;
+        try {
+          const data = (await response.json()) as { error?: string };
+          if (data.error) message = data.error;
+        } catch {
+          // Keep the status-based message when the server did not return JSON.
+        }
+        throw new Error(message);
+      }
+
+      const blob = await response.blob();
+      const contentDisposition = response.headers.get("content-disposition");
+      const filename = contentDisposition?.match(/filename="([^"]+)"/)?.[1]
+        || `${details.name.replace(/\s+/g, "-")}.pdf`;
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      setOpen(false);
+    } catch (downloadError) {
+      setError(downloadError instanceof Error ? downloadError.message : "The PDF could not be downloaded.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function startPayment() {
@@ -113,7 +150,7 @@ export function PaidDownloadButton({
 
       if (!response.ok) throw new Error(data.error || "Could not start the payment.");
       if (data.status === "completed" && data.downloadUrl) {
-        window.location.assign(data.downloadUrl);
+        await downloadPdf();
         return;
       }
       if (!data.paymentId) throw new Error("M-PESA did not return a payment reference.");
@@ -130,7 +167,7 @@ export function PaidDownloadButton({
 
   function handleDownloadClick() {
     if (mpesaEnabled === false) {
-      window.location.assign(downloadUrl);
+      void downloadPdf();
       return;
     }
     setOpen(true);
@@ -138,9 +175,9 @@ export function PaidDownloadButton({
 
   return (
     <>
-      <Button size={size} className={className} onClick={handleDownloadClick} disabled={mpesaEnabled === null}>
-        <Download className="h-4 w-4" />
-        {mpesaEnabled === false ? "Download PDF" : `Download PDF - KES ${details.price}`}
+      <Button size={size} className={className} onClick={handleDownloadClick} disabled={mpesaEnabled === null || busy}>
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+        {busy ? "Preparing download..." : mpesaEnabled === false ? "Download PDF" : `Download PDF - KES ${details.price}`}
       </Button>
 
       <Dialog open={open} onOpenChange={(nextOpen) => { setOpen(nextOpen); if (!nextOpen) reset(); }}>
