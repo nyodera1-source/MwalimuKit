@@ -200,7 +200,8 @@ export function SchemeForm({
   const action = isEdit ? updateSchemeOfWork : createSchemeOfWork;
   const [state, formAction, pending] = useActionState(action, null);
   const formRef = useRef<HTMLFormElement>(null);
-  const schemeDataInputRef = useRef<HTMLInputElement>(null);
+  const previewSubmissionRequested = useRef(false);
+  const previewRequestId = useRef(0);
 
   const [step, setStep] = useState(1);
 
@@ -249,6 +250,7 @@ export function SchemeForm({
     defaults?.schemeData?.entries || []
   );
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [previewRequest, setPreviewRequest] = useState<{ data: string; id: number } | null>(null);
 
   // Previous term carryover
   const [carryoverEnabled, setCarryoverEnabled] = useState(
@@ -765,6 +767,17 @@ export function SchemeForm({
 
   const schemeDataJson = buildSchemeData();
 
+  useEffect(() => {
+    if (!previewRequest || pending || previewSubmissionRequested.current) return;
+    if (!formRef.current) {
+      setPreviewError("The scheme form is not ready. Please refresh the page and try again.");
+      return;
+    }
+
+    previewSubmissionRequested.current = true;
+    formRef.current.requestSubmit();
+  }, [pending, previewRequest]);
+
   const generatePreview = () => {
     setPreviewError(null);
 
@@ -781,10 +794,11 @@ export function SchemeForm({
         return;
       }
 
-      if (schemeDataInputRef.current) {
-        schemeDataInputRef.current.value = buildSchemeData(generatedEntries);
-      }
-      formRef.current.requestSubmit();
+      previewSubmissionRequested.current = false;
+      setPreviewRequest({
+        data: buildSchemeData(generatedEntries),
+        id: previewRequestId.current++,
+      });
     } catch {
       setPreviewError("We could not prepare the scheme preview. Please review your selections and try again.");
     }
@@ -818,7 +832,7 @@ export function SchemeForm({
       <input type="hidden" name="term" value={term} />
       <input type="hidden" name="year" value={year} />
       <input type="hidden" name="title" value={displayedTitle} />
-      <input ref={schemeDataInputRef} type="hidden" name="schemeData" value={schemeDataJson} readOnly />
+      <input type="hidden" name="schemeData" value={previewRequest?.data || schemeDataJson} readOnly />
       <input type="hidden" name="status" value="draft" />
 
       {state?.error && (
@@ -1649,6 +1663,11 @@ export function SchemeForm({
               {previewError && (
                 <div role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
                   {previewError}
+                </div>
+              )}
+              {state?.error && (
+                <div role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {state.error}
                 </div>
               )}
               <div className="flex flex-wrap items-center gap-3">
