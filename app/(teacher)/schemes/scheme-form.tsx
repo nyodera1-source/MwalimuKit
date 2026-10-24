@@ -200,6 +200,7 @@ export function SchemeForm({
   const action = isEdit ? updateSchemeOfWork : createSchemeOfWork;
   const [state, formAction, pending] = useActionState(action, null);
   const formRef = useRef<HTMLFormElement>(null);
+  const schemeDataInputRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState(1);
 
@@ -780,9 +781,10 @@ export function SchemeForm({
         return;
       }
 
-      const formData = new FormData(formRef.current);
-      formData.set("schemeData", buildSchemeData(generatedEntries));
-      formAction(formData);
+      if (schemeDataInputRef.current) {
+        schemeDataInputRef.current.value = buildSchemeData(generatedEntries);
+      }
+      formRef.current.requestSubmit();
     } catch {
       setPreviewError("We could not prepare the scheme preview. Please review your selections and try again.");
     }
@@ -816,7 +818,7 @@ export function SchemeForm({
       <input type="hidden" name="term" value={term} />
       <input type="hidden" name="year" value={year} />
       <input type="hidden" name="title" value={displayedTitle} />
-      <input type="hidden" name="schemeData" value={schemeDataJson} />
+      <input ref={schemeDataInputRef} type="hidden" name="schemeData" value={schemeDataJson} readOnly />
       <input type="hidden" name="status" value="draft" />
 
       {state?.error && (
