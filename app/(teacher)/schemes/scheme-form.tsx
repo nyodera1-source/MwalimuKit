@@ -200,8 +200,6 @@ export function SchemeForm({
   const action = isEdit ? updateSchemeOfWork : createSchemeOfWork;
   const [state, formAction, pending] = useActionState(action, null);
   const formRef = useRef<HTMLFormElement>(null);
-  const previewSubmissionRequested = useRef(false);
-  const previewRequestId = useRef(0);
 
   const [step, setStep] = useState(1);
 
@@ -250,7 +248,7 @@ export function SchemeForm({
     defaults?.schemeData?.entries || []
   );
   const [previewError, setPreviewError] = useState<string | null>(null);
-  const [previewRequest, setPreviewRequest] = useState<{ data: string; id: number } | null>(null);
+  const [previewBusy, setPreviewBusy] = useState(false);
 
   // Previous term carryover
   const [carryoverEnabled, setCarryoverEnabled] = useState(
@@ -767,16 +765,37 @@ export function SchemeForm({
 
   const schemeDataJson = buildSchemeData();
 
-  useEffect(() => {
-    if (!previewRequest || pending || previewSubmissionRequested.current) return;
-    if (!formRef.current) {
-      setPreviewError("The scheme form is not ready. Please refresh the page and try again.");
-      return;
-    }
+  const savePreview = async (generatedSchemeData: string) => {
+    setPreviewBusy(true);
+    setPreviewError(null);
 
-    previewSubmissionRequested.current = true;
-    formRef.current.requestSubmit();
-  }, [pending, previewRequest]);
+    try {
+      const response = await fetch("/api/schemes/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: defaults?.id,
+          title: displayedTitle,
+          gradeId,
+          learningAreaId,
+          term,
+          year,
+          schemeData: generatedSchemeData,
+          status: "draft",
+        }),
+      });
+      const result = (await response.json()) as { error?: string; redirectUrl?: string };
+
+      if (!response.ok || !result.redirectUrl) {
+        throw new Error(result.error || "We could not save this scheme. Please try again.");
+      }
+
+      window.location.assign(result.redirectUrl);
+    } catch (error) {
+      setPreviewError(error instanceof Error ? error.message : "We could not save this scheme. Please try again.");
+      setPreviewBusy(false);
+    }
+  };
 
   const generatePreview = () => {
     setPreviewError(null);
@@ -794,11 +813,7 @@ export function SchemeForm({
         return;
       }
 
-      previewSubmissionRequested.current = false;
-      setPreviewRequest({
-        data: buildSchemeData(generatedEntries),
-        id: previewRequestId.current++,
-      });
+      void savePreview(buildSchemeData(generatedEntries));
     } catch {
       setPreviewError("We could not prepare the scheme preview. Please review your selections and try again.");
     }
@@ -832,7 +847,7 @@ export function SchemeForm({
       <input type="hidden" name="term" value={term} />
       <input type="hidden" name="year" value={year} />
       <input type="hidden" name="title" value={displayedTitle} />
-      <input type="hidden" name="schemeData" value={previewRequest?.data || schemeDataJson} readOnly />
+      <input type="hidden" name="schemeData" value={schemeDataJson} readOnly />
       <input type="hidden" name="status" value="draft" />
 
       {state?.error && (
@@ -1675,11 +1690,11 @@ export function SchemeForm({
                   type="button"
                   size="lg"
                   onClick={generatePreview}
-                  disabled={pending}
+                  disabled={pending || previewBusy}
                   className="min-w-52 bg-blue-600 font-semibold shadow-sm hover:bg-blue-700"
                 >
                   <ClipboardPenLine className="h-4 w-4 mr-2" />
-                  {pending ? "Preparing preview..." : "Preview and download"}
+                  {previewBusy ? "Saving scheme..." : pending ? "Preparing preview..." : "Preview and download"}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
