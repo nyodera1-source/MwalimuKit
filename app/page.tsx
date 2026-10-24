@@ -207,14 +207,85 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-slate-100 px-4 py-10 text-slate-600">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Wordmark size="sm" className="w-[120px]" />
+      <footer className="border-t border-slate-200 bg-slate-950 px-4 py-12 text-slate-300">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
+            <div className="max-w-sm">
+              <div className="inline-flex rounded-md bg-white px-3 py-2">
+                <Wordmark size="sm" className="w-[120px]" />
+              </div>
+              <p className="mt-5 text-sm leading-6 text-slate-400">
+                Curriculum-aligned planning tools that help Kenyan teachers
+                prepare, teach, and download better lessons with less effort.
+              </p>
+              <p className="mt-4 text-sm font-medium text-slate-200">
+                Built for Kenyan CBE teachers &middot; Grades 1-12
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-wide text-white">
+                Tools
+              </h4>
+              <nav className="mt-4 flex flex-col items-start gap-3 text-sm" aria-label="Tools">
+                <Link href="/lesson-plans" className="transition-colors hover:text-white">
+                  Lesson Plans
+                </Link>
+                <Link href="/schemes" className="transition-colors hover:text-white">
+                  Schemes of Work
+                </Link>
+                <Link href="/signup" className="transition-colors hover:text-white">
+                  Create a free account
+                </Link>
+                <Link href="/login" className="transition-colors hover:text-white">
+                  Log in
+                </Link>
+              </nav>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-wide text-white">
+                What you get
+              </h4>
+              <ul className="mt-4 flex flex-col gap-3 text-sm text-slate-400">
+                <li>Curriculum-based content</li>
+                <li>Editable teacher-friendly plans</li>
+                <li>Printable PDF downloads</li>
+                <li>Practical Kenyan classroom context</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-wide text-white">
+                Support
+              </h4>
+              <p className="mt-4 text-sm leading-6 text-slate-400">
+                Need help with your account or a download? Our team is ready
+                to help.
+              </p>
+              <div className="mt-4 flex flex-col items-start gap-3 text-sm">
+                <a
+                  href="mailto:info@mwalimukit.com"
+                  className="inline-flex items-center gap-2 transition-colors hover:text-white"
+                >
+                  <Mail className="h-4 w-4" />
+                  info@mwalimukit.com
+                </a>
+                <a
+                  href="tel:+254700000000"
+                  className="inline-flex items-center gap-2 transition-colors hover:text-white"
+                >
+                  <Phone className="h-4 w-4" />
+                  +254 700 000 000
+                </a>
+              </div>
+            </div>
           </div>
-          <p className="text-sm">
-            Built for Kenyan CBE Teachers &middot; Grades 1-10
-          </p>
+
+          <div className="mt-10 flex flex-col gap-3 border-t border-slate-800 pt-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+            <p>&copy; {new Date().getFullYear()} MwalimuKit. All rights reserved.</p>
+            <p>Plan better. Teach better.</p>
+          </div>
         </div>
       </footer>
     </div>
