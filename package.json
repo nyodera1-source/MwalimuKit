@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "prisma migrate deploy && prisma generate && tsx scripts/ensure-curriculum.ts && next build",
+    "build": "prisma generate && next build",
+    "db:deploy": "prisma migrate deploy",
+    "db:verify": "tsx scripts/ensure-curriculum.ts",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",
