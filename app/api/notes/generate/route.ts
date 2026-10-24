@@ -6,6 +6,13 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { readJsonBody, RequestBodyTooLargeError, InvalidJsonBodyError } from "@/lib/request";
 import { NextRequest, NextResponse } from "next/server";
 
+const NOTE_TYPES = ["lecture", "discussion", "revision"] as const;
+type NoteType = (typeof NOTE_TYPES)[number];
+
+function isNoteType(value: unknown): value is NoteType {
+  return typeof value === "string" && NOTE_TYPES.includes(value as NoteType);
+}
+
 export async function POST(request: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -36,7 +43,7 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-  if (typeof noteType !== "string" || noteType.length > 120) {
+  if (!isNoteType(noteType)) {
     return NextResponse.json({ error: "Invalid note type" }, { status: 400 });
   }
 
